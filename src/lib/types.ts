@@ -62,6 +62,10 @@ export interface DailyLog {
   energy: number;
   confidence: number;
   hours: number;
+  problemsSolved?: { easy: number; medium: number; hard: number };
+  conceptsLearned?: string[];
+  struggles?: string;
+  tomorrowPlan?: { morning: string; afternoon: string };
 }
 
 export interface AppState {

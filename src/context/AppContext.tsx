@@ -38,6 +38,7 @@ interface AppContextType {
   updateEnergy: (val: number) => void;
   updateConfidence: (val: number) => void;
   updateHours: (val: number) => void;
+  updateDailyLog: (updates: Partial<DailyLog>) => void;
 
   // Roadmap
   toggleWeekTask: (week: number, taskId: string) => void;
@@ -75,7 +76,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState, initialized] = useLocalStorage<AppState>('placeprep_v5', INITIAL_STATE);
 
   const mutate = useCallback((updater: (s: AppState) => AppState) => {
-    setState((prev) => updater(prev));
+    setState((prev: AppState) => updater(prev));
   }, [setState]);
 
   // ── Profile ──────────────────────────────────────────────────────────────
@@ -86,12 +87,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // ── Daily Log helpers ─────────────────────────────────────────────────────
   const getTodayLog = useCallback((): DailyLog => {
     const t = today();
-    return state.dailyLogs.find((l) => l.date === t) ?? {
+    const existing = state.dailyLogs.find((l) => l.date === t);
+    return {
       date: t,
       completedHabits: [],
       energy: 7,
       confidence: 6,
       hours: 0,
+      problemsSolved: { easy: 0, medium: 0, hard: 0 },
+      conceptsLearned: ['', '', ''],
+      struggles: '',
+      tomorrowPlan: { morning: '', afternoon: '' },
+      ...existing,
     };
   }, [state.dailyLogs]);
 
@@ -99,7 +106,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const t = today();
     mutate((s) => {
       const existing = s.dailyLogs.find((l) => l.date === t);
-      const base: DailyLog = existing ?? { date: t, completedHabits: [], energy: 7, confidence: 6, hours: 0 };
+      const base: DailyLog = {
+        date: t,
+        completedHabits: [],
+        energy: 7,
+        confidence: 6,
+        hours: 0,
+        problemsSolved: { easy: 0, medium: 0, hard: 0 },
+        conceptsLearned: ['', '', ''],
+        struggles: '',
+        tomorrowPlan: { morning: '', afternoon: '' },
+        ...existing,
+      };
       const updated = updater(base);
       const others = s.dailyLogs.filter((l) => l.date !== t);
       return { ...s, dailyLogs: [...others, updated] };
@@ -128,6 +146,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateHours = useCallback((val: number) => {
     upsertTodayLog((log) => ({ ...log, hours: val }));
+  }, [upsertTodayLog]);
+
+  const updateDailyLog = useCallback((updates: Partial<DailyLog>) => {
+    upsertTodayLog((log) => ({ ...log, ...updates }));
   }, [upsertTodayLog]);
 
   const touchToday = useCallback(() => {
@@ -231,6 +253,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     updateEnergy,
     updateConfidence,
     updateHours,
+    updateDailyLog,
     toggleWeekTask,
     updateWeekFocus,
     addWeekTask,
