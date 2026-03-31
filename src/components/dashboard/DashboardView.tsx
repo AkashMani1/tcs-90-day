@@ -138,13 +138,10 @@ function TimeMatrix({ hours }: { hours: number }) {
 }
 
 function BiometricMonitor({ log, totalHours }: { log: any; totalHours: number }) {
+  // Only Focus Clock remains in simplified view
   return (
     <div className="flex flex-col gap-6 py-2">
-      <HeartbeatVisual value={log.energy} />
-      <ConfidenceGauge value={log.confidence} />
-      <div className="mt-4">
-        <TimeMatrix hours={totalHours} />
-      </div>
+      <TimeMatrix hours={totalHours} />
     </div>
   );
 }
@@ -188,20 +185,18 @@ function getHeatColor(count: number) {
   return 'bg-primary border-primary/50 shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]';
 }
 
-function Heatmap({ dailyLogs }: { dailyLogs: { date: string; completedHabits: string[] }[] }) {
-  const DAYS = 140; 
+function Heatmap({ dailyLogs, compact = false }: { dailyLogs: { date: string; completedHabits: string[] }[]; compact?: boolean }) {
+  const DAYS = compact ? 70 : 140; 
   const ref = new Date();
   const logMap = new Map(dailyLogs.map((l) => [l.date, l.completedHabits.length]));
 
   const cells: { date: Date; count: number }[] = [];
   for (let i = DAYS - 1; i >= 0; i--) {
     const d = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() - i);
-    // CRITICAL: Use the same local date string format as the app handles
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     const key = `${year}-${month}-${day}`;
-    
     const real = logMap.get(key);
     cells.push({ date: d, count: real !== undefined ? real : 0 });
   }
@@ -215,14 +210,14 @@ function Heatmap({ dailyLogs }: { dailyLogs: { date: string; completedHabits: st
 
   return (
     <div className="w-full flex">
-      <div className="flex flex-1 justify-between gap-1.5 w-full overflow-hidden">
+      <div className={`flex flex-1 justify-between ${compact ? 'gap-1' : 'gap-1.5'} w-full overflow-hidden`}>
         {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-1.5 flex-1">
+          <div key={wi} className={`flex flex-col ${compact ? 'gap-1' : 'gap-1.5'} flex-1`}>
             {week.map((c, di) => (
               <motion.div
                 key={di}
                 whileHover={{ scale: 1.5, zIndex: 50 }}
-                className={`w-full aspect-square rounded-[4px] border transition-all duration-300 ${getHeatColor(c.count)}`}
+                className={`w-full aspect-square rounded-[2px] border transition-all duration-300 ${getHeatColor(c.count)}`}
                 title={`${c.date.toDateString()}: ${c.count} tasks`}
               />
             ))}
@@ -579,35 +574,36 @@ export default function DashboardView() {
         className="grid grid-cols-12 gap-6 relative z-10"
       >
         
-        {/* TOP ROW: Command Strip & Streak Protection */}
+        {/* TOP ROW: Tactical Overview & Streak Protection */}
         <BentoCard className="col-span-12 lg:col-span-9 overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-center py-1">
-             <div className="md:col-span-5">
-                <h2 className="text-2xl font-black text-foreground mb-1 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
-                <div className="flex items-center gap-3">
-                   <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] opacity-60 flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" /> Platform Operational
-                   </p>
-                   <div className="w-[1px] h-3 bg-border/20" />
-                   <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8 py-2">
+             <div className="space-y-4">
+                <div>
+                   <h2 className="text-3xl font-black text-foreground mb-1 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
+                   <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                      <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Platform Operational</p>
+                   </div>
+                </div>
+
+                <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
+                   <p className="text-primary text-[11px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
                 </div>
              </div>
              
-             <div className="md:col-span-7 flex flex-wrap items-center justify-end gap-x-12 gap-y-4">
-                <div className="flex items-baseline gap-3 group">
-                   <p className="text-4xl font-black text-foreground group-hover:text-primary transition-colors tabular-nums">{streak}</p>
-                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 group-hover:translate-x-1 transition-transform">Days Streak</p>
+             <div className="flex flex-wrap items-center gap-10 md:gap-16">
+                <div className="group">
+                   <p className="text-4xl font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-2">{streak}</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Days Streak</p>
                 </div>
-                <div className="w-[1px] h-8 bg-border/10 hidden md:block" />
-                <div className="flex items-baseline gap-3 group">
-                   <p className="text-4xl font-black text-foreground group-hover:text-secondary transition-colors tabular-nums">{totalDone}</p>
-                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 group-hover:translate-x-1 transition-transform">Nodes Mastery</p>
+                <div className="group">
+                   <p className="text-4xl font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-2">{totalDone}</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Nodes Mastery</p>
                 </div>
-                <div className="w-[1px] h-8 bg-border/10 hidden md:block" />
-                <div className="flex items-baseline gap-3">
-                   <p className="text-4xl font-black text-foreground/50 tabular-nums">{progressPct}%</p>
-                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">Effective</p>
+                <div className="group">
+                   <p className="text-4xl font-black text-foreground/50 tabular-nums leading-none mb-2">{progressPct}%</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Effective</p>
                 </div>
              </div>
           </div>
@@ -625,19 +621,18 @@ export default function DashboardView() {
         </div>
 
         <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6 h-full">
-           <BentoCard className="flex-1" title="Life Support" icon={Activity}>
-              <BiometricMonitor log={log} totalHours={totalHours} />
+           <BentoCard title="Mission Consistency" icon={BarChart3}>
+              <Heatmap dailyLogs={state.dailyLogs} compact />
+           </BentoCard>
+
+           <BentoCard title="Focus Clock" icon={Timer}>
+              <TimeMatrix hours={totalHours} />
            </BentoCard>
            
            <BentoCard title="Command Intent" icon={Target}>
               <QuoteCard />
            </BentoCard>
         </aside>
-
-        {/* FOOTER ROW: History & Continuity */}
-        <BentoCard className="col-span-12" title="Mission Continuity" icon={BarChart3} badge="Technical activity logs over the last 140 operational cycles">
-          <Heatmap dailyLogs={state.dailyLogs} />
-        </BentoCard>
 
       </motion.div>
     </div>
