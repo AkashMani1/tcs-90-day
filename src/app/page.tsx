@@ -38,8 +38,10 @@ export default function Home() {
       {/* Main content */}
       <motion.main 
         initial={false}
-        animate={{ marginLeft: collapsed ? '80px' : '260px' }}
-        className="flex-1 min-h-screen relative"
+        animate={{ 
+          marginLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '260px') 
+        }}
+        className="flex-1 min-h-screen relative pb-24 md:pb-0"
       >
         {/* Decorative Background Elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -47,9 +49,9 @@ export default function Home() {
            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neon-cyan/5 blur-[120px] rounded-full" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-8 py-10">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           {/* Header / Breadcrumb Section */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
             <div>
               <div className="flex items-center gap-2 mb-3 text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">
                 <span className="hover:text-neon-indigo transition-colors cursor-pointer">PlacePrep</span>

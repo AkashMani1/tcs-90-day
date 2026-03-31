@@ -191,20 +191,26 @@ export default function NotesVaultView() {
          </div>
       </BentoCard>
 
-      {/* Row 2: Navigation Segmented Control */}
-      <div className="col-span-12 flex flex-col lg:flex-row items-center justify-between gap-8 pb-4">
-         <div className="flex bg-muted/40 backdrop-blur-md rounded-[28px] p-2 w-full lg:w-auto border border-border/10 shadow-lg relative">
+      {/* Row 2: Navigation Segmented Control - Notion Style */}
+      <div className="col-span-12 flex flex-col lg:flex-row items-center justify-between gap-6 pb-6">
+         <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/20 border border-border/5">
             {TABS.map(({ id, label, icon: Icon }) => (
                <button
                   key={id}
                   onClick={() => { setTab(id); setAddingKb(false); setEditKbId(null); }}
-                  className={`relative z-10 px-8 py-4 rounded-[20px] text-[11px] font-black uppercase tracking-[0.3em] transition-all duration-500 flex justify-center items-center gap-3 ${tab === id ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2.5 ${
+                    tab === id 
+                      ? 'text-primary' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
+                  }`}
                >
-                  <Icon className="w-5 h-5" /> {label}
+                  <Icon className="w-4 h-4" /> 
+                  <span>{label}</span>
                   {tab === id && (
                     <motion.div 
                       layoutId="vaultTabIndicator"
-                      className="absolute inset-0 bg-primary/20 border border-primary/30 rounded-[20px] -z-10 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
+                      className="absolute inset-0 bg-primary/10 border-b-2 border-primary rounded-lg -z-0"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
                </button>

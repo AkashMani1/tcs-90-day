@@ -34,7 +34,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
     <motion.aside 
       initial={false}
       animate={{ width: collapsed ? '80px' : '280px' }}
-      className="fixed left-0 top-0 h-screen glass border-r border-border/10 flex flex-col z-50 select-none overflow-hidden"
+      className="fixed left-0 top-0 h-screen glass border-r border-border/10 hidden md:flex flex-col z-50 select-none overflow-hidden"
     >
       {/* Logo Area */}
       <div className={`py-8 flex items-center border-b border-border/5 ${collapsed ? 'justify-center' : 'px-6 justify-between'}`}>
