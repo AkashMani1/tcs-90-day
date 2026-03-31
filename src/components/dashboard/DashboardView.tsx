@@ -587,8 +587,15 @@ export default function DashboardView() {
                    </div>
                 </div>
 
-                <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
-                   <p className="text-primary text-[11px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
+                <div className="flex flex-wrap items-center gap-3">
+                   <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
+                      <p className="text-primary text-[11px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
+                   </div>
+                   <div className="w-[1px] h-4 bg-border/20 mx-1" />
+                   <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/10 rounded-lg border border-border/10 group-hover:border-primary/20 transition-all">
+                      <Timer className="w-3.5 h-3.5 text-primary opacity-60" />
+                      <p className="text-foreground text-[11px] font-black tabular-nums">{totalHours.toFixed(1)}<span className="text-muted-foreground text-[8px] font-bold uppercase ml-1">Hrs Logged</span></p>
+                   </div>
                 </div>
              </div>
              
@@ -621,14 +628,10 @@ export default function DashboardView() {
         </div>
 
         <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6 h-full">
-           <BentoCard title="Mission Consistency" icon={BarChart3}>
+           <BentoCard title="Mission Integrity" icon={BarChart3}>
               <Heatmap dailyLogs={state.dailyLogs} compact />
            </BentoCard>
 
-           <BentoCard title="Focus Clock" icon={Timer}>
-              <TimeMatrix hours={totalHours} />
-           </BentoCard>
-           
            <BentoCard title="Command Intent" icon={Target}>
               <QuoteCard />
            </BentoCard>
