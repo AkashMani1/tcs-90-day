@@ -78,4 +78,5 @@ export interface AppState {
   startDate: string; // ISO string when user started
   userName: string;
   targetRole: string;
+  sidebarCollapsed?: boolean;
 }

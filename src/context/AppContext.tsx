@@ -23,6 +23,7 @@ const INITIAL_STATE: AppState = {
   startDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 2 weeks ago
   userName: 'Student',
   targetRole: 'TCS Digital',
+  sidebarCollapsed: false,
 };
 
 interface AppContextType {
@@ -31,6 +32,7 @@ interface AppContextType {
 
   // Profile
   updateProfile: (name: string, role: string, startDate: string) => void;
+  toggleSidebar: () => void;
 
   // Daily Log
   getTodayLog: () => DailyLog;
@@ -80,8 +82,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [setState]);
 
   // ── Profile ──────────────────────────────────────────────────────────────
-  const updateProfile = useCallback((name: string, role: string, startDate: string) => {
-    mutate((s) => ({ ...s, userName: name, targetRole: role, startDate }));
+  const updateProfile = useCallback((userName: string, targetRole: string, startDate: string) => {
+    mutate((s) => ({ ...s, userName, targetRole, startDate }));
+  }, [mutate]);
+
+  const toggleSidebar = useCallback(() => {
+    mutate((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }));
   }, [mutate]);
 
   // ── Daily Log helpers ─────────────────────────────────────────────────────
@@ -248,6 +254,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     state,
     initialized,
     updateProfile,
+    toggleSidebar,
     getTodayLog,
     toggleHabit,
     updateEnergy,
