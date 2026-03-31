@@ -89,6 +89,18 @@ export interface ProjectRecord {
   readinessScore: number; // 0-100
 }
 
+export interface HabitItem {
+  id: string;
+  label: string;
+  detail: string;
+}
+
+export interface HabitGroup {
+  id: string;
+  title: string;
+  items: HabitItem[];
+}
+
 export interface AppState {
   weeks: WeekPlan[];
   problems: Problem[];
@@ -96,6 +108,7 @@ export interface AppState {
   stars: StarStory[];
   knowledgeBase: KnowledgeItem[];
   dailyLogs: DailyLog[];
+  habitGroups: HabitGroup[];
   startDate: string; // ISO string when user started
   userName: string;
   targetRole: string;

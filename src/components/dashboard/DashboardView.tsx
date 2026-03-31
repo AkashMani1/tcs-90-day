@@ -277,9 +277,14 @@ function StreakGuard() {
 // ── Daily Accountability Console ─────────────────────────────────────────────
 
 function DailyTaskChecklist() {
-  const { getTodayLog, updateDailyLog, toggleHabit } = useApp();
+  const { 
+    state, getTodayLog, updateDailyLog, toggleHabit, 
+    addHabitItem, updateHabitItem, deleteHabitItem, updateHabitGroupTitle 
+  } = useApp();
   const log = getTodayLog();
   const [saved, setSaved] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newItem, setNewItem] = useState<{ groupId: string; label: string; detail: string } | null>(null);
 
   // Sync local state
   const [probs, setProbs] = useState(log.problemsSolved || { easy: 0, medium: 0, hard: 0 });
@@ -314,36 +319,10 @@ function DailyTaskChecklist() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const CHECKBOX_GROUPS = [
-    {
-      title: 'Morning Block (2.5-3h)',
-      items: [
-        { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
-        { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
-        { id: 'm_understood', label: 'Logical Lock', detail: 'Understood Topic Fully' },
-      ]
-    },
-    {
-      title: 'Afternoon Block (2-2.5h)',
-      items: [
-        { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
-        { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
-        { id: 'a_review', label: 'Solution Extraction', detail: 'Reviewed Hard Cases' },
-      ]
-    },
-    {
-      title: 'Evening Review (30-60m)',
-      items: [
-        { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
-        { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
-        { id: 'e_plan', label: 'Next-Day Intent', detail: 'Planned Next Topics' },
-      ]
-    }
-  ];
-
-  const totalTasks = CHECKBOX_GROUPS.reduce((acc, g) => acc + g.items.length, 0);
+  const habitGroups = state.habitGroups || [];
+  const totalTasks = habitGroups.reduce((acc, g) => acc + g.items.length, 0);
   const doneCount = log.completedHabits.length;
-  const pct = Math.round((doneCount / totalTasks) * 100);
+  const pct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
 
   return (
     <div className="space-y-8">
@@ -361,43 +340,102 @@ function DailyTaskChecklist() {
                <span className="text-xs font-black text-primary tabular-nums">{pct}%</span>
             </div>
          </div>
-         <div className="text-right">
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Operational Sync</p>
-            <p className="text-xs font-black text-foreground uppercase tracking-tight">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+         <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsEditing(!isEditing)}
+              className={`p-2 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${
+                isEditing ? 'bg-primary text-white border-primary shadow-lg' : 'bg-muted/10 border-border/10 text-muted-foreground hover:text-primary hover:border-primary/30'
+              }`}
+            >
+              {isEditing ? 'Save Protocol' : 'Configure Protocol'}
+            </button>
+            <div className="text-right">
+               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Operational Sync</p>
+               <p className="text-xs font-black text-foreground uppercase tracking-tight">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+            </div>
          </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {CHECKBOX_GROUPS.map((group, gi) => (
-          <div key={gi} className="space-y-3">
-            <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/70 mb-4 flex items-center gap-2">
-              <div className="w-1 h-1 rounded-full bg-primary" /> {group.title}
-            </h4>
+        {habitGroups.map((group) => (
+          <div key={group.id} className="space-y-4">
+            <div className="flex items-center justify-between mb-2">
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={group.title} 
+                  onChange={(e) => updateHabitGroupTitle(group.id, e.target.value)}
+                  className="bg-muted/10 border border-border/10 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none focus:border-primary/40 w-full mr-2"
+                />
+              ) : (
+                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/70 flex items-center gap-2">
+                  <div className="w-1 h-1 rounded-full bg-primary" /> {group.title}
+                </h4>
+              )}
+            </div>
+            
             <div className="flex flex-col gap-2">
               {group.items.map((item) => {
                 const isChecked = log.completedHabits.includes(item.id);
                 return (
-                  <button
-                    key={item.id}
-                    onClick={() => toggleHabit(item.id)}
-                    className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all group ${
-                      isChecked 
-                        ? 'bg-primary/5 border-primary/20 text-foreground' 
-                        : 'bg-muted/10 border-border/10 hover:border-muted-foreground/30 text-muted-foreground'
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
-                      isChecked ? 'bg-primary border-primary text-white scale-110' : 'border-muted-foreground/20'
-                    }`}>
-                      {isChecked && <CheckSquare className="w-3 h-3" />}
-                    </div>
-                    <div>
-                      <p className="text-[11px] font-black tracking-tight leading-tight mb-0.5">{item.label}</p>
-                      <p className="text-[9px] font-bold opacity-50 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.detail}</p>
-                    </div>
-                  </button>
+                  <div key={item.id} className="relative group">
+                    {isEditing ? (
+                      <div className="p-3 rounded-xl border border-border/10 bg-muted/5 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <input 
+                            type="text" 
+                            value={item.label} 
+                            onChange={(e) => updateHabitItem(group.id, item.id, { label: e.target.value })}
+                            className="bg-transparent text-[11px] font-black tracking-tight w-full focus:outline-none text-foreground"
+                            placeholder="Item Label"
+                          />
+                          <button 
+                            onClick={() => deleteHabitItem(group.id, item.id)}
+                            className="text-rose-500 hover:text-rose-600 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <input 
+                          type="text" 
+                          value={item.detail} 
+                          onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
+                          className="bg-transparent text-[9px] font-bold opacity-50 w-full focus:outline-none"
+                          placeholder="Short description"
+                        />
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => toggleHabit(item.id)}
+                        className={`w-full p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
+                          isChecked 
+                            ? 'bg-primary/5 border-primary/20 text-foreground shadow-sm shadow-primary/5' 
+                            : 'bg-muted/10 border-border/10 hover:border-muted-foreground/30 text-muted-foreground'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                          isChecked ? 'bg-primary border-primary text-white scale-110' : 'border-muted-foreground/20'
+                        }`}>
+                          {isChecked && <CheckCheck className="w-3 h-3" />}
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-black tracking-tight leading-tight mb-0.5">{item.label}</p>
+                          <p className="text-[9px] font-bold opacity-50 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.detail}</p>
+                        </div>
+                      </button>
+                    )}
+                  </div>
                 );
               })}
+              
+              {isEditing && (
+                <button 
+                  onClick={() => addHabitItem(group.id, 'New Objective', 'Brief description')}
+                  className="p-3 rounded-xl border border-dashed border-border/20 text-muted-foreground hover:text-primary hover:border-primary/30 transition-all flex items-center justify-center gap-2 text-[10px] font-bold"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Strategy
+                </button>
+              )}
             </div>
           </div>
         ))}

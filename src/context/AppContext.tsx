@@ -20,7 +20,36 @@ const INITIAL_STATE: AppState = {
   stars: DEFAULT_STARS,
   knowledgeBase: DEFAULT_KNOWLEDGE,
   dailyLogs: [],
-  startDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 2 weeks ago
+  habitGroups: [
+    {
+      id: 'morning',
+      title: 'Morning Block (2.5-3h)',
+      items: [
+        { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
+        { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
+        { id: 'm_understood', label: 'Logical Lock', detail: 'Understood Topic Fully' },
+      ]
+    },
+    {
+      id: 'afternoon',
+      title: 'Afternoon Block (2-2.5h)',
+      items: [
+        { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
+        { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
+        { id: 'a_review', label: 'Solution Extraction', detail: 'Reviewed Hard Cases' },
+      ]
+    },
+    {
+      id: 'evening',
+      title: 'Evening Review (30-60m)',
+      items: [
+        { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
+        { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
+        { id: 'e_plan', label: 'Next-Day Intent', detail: 'Planned Next Topics' },
+      ]
+    }
+  ],
+  startDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   userName: 'Student',
   targetRole: 'TCS Digital',
   sidebarCollapsed: false,
@@ -74,6 +103,12 @@ interface AppContextType {
   addProject: (p: Omit<ProjectRecord, 'id' | 'readinessScore'>) => void;
   updateProject: (id: string, updates: Partial<ProjectRecord>) => void;
   deleteProject: (id: string) => void;
+
+  // Habit Management
+  addHabitItem: (groupId: string, label: string, detail: string) => void;
+  updateHabitItem: (groupId: string, itemId: string, updates: Partial<{ label: string; detail: string }>) => void;
+  deleteHabitItem: (groupId: string, itemId: string) => void;
+  updateHabitGroupTitle: (groupId: string, title: string) => void;
  
   // Theme
   toggleTheme: () => void;
@@ -295,6 +330,43 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, [mutate]);
 
+  // ── Habit Management ────────────────────────────────────────────────────────
+  const addHabitItem = useCallback((groupId: string, label: string, detail: string) => {
+    mutate((s) => ({
+      ...s,
+      habitGroups: (s.habitGroups || []).map((g) =>
+        g.id === groupId ? { ...g, items: [...g.items, { id: generateId(), label, detail }] } : g
+      ),
+    }));
+  }, [mutate]);
+
+  const updateHabitItem = useCallback((groupId: string, itemId: string, updates: Partial<{ label: string; detail: string }>) => {
+    mutate((s) => ({
+      ...s,
+      habitGroups: (s.habitGroups || []).map((g) =>
+        g.id === groupId
+          ? { ...g, items: g.items.map((it) => (it.id === itemId ? { ...it, ...updates } : it)) }
+          : g
+      ),
+    }));
+  }, [mutate]);
+
+  const deleteHabitItem = useCallback((groupId: string, itemId: string) => {
+    mutate((s) => ({
+      ...s,
+      habitGroups: (s.habitGroups || []).map((g) =>
+        g.id === groupId ? { ...g, items: g.items.filter((it) => it.id !== itemId) } : g
+      ),
+    }));
+  }, [mutate]);
+
+  const updateHabitGroupTitle = useCallback((groupId: string, title: string) => {
+    mutate((s) => ({
+      ...s,
+      habitGroups: (s.habitGroups || []).map((g) => (g.id === groupId ? { ...g, title } : g)),
+    }));
+  }, [mutate]);
+
   const value: AppContextType = {
     state,
     initialized,
@@ -325,6 +397,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addProject,
     updateProject,
     deleteProject,
+    addHabitItem,
+    updateHabitItem,
+    deleteHabitItem,
+    updateHabitGroupTitle,
     toggleTheme,
     touchToday,
   };
