@@ -37,7 +37,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
       className="fixed left-0 top-0 h-screen glass border-r border-border/10 flex flex-col z-50 select-none overflow-hidden"
     >
       {/* Logo Area */}
-      <div className="px-6 py-8 flex items-center justify-between border-b border-border/5">
+      <div className={`py-8 flex items-center border-b border-border/5 ${collapsed ? 'justify-center' : 'px-6 justify-between'}`}>
         <div className="flex items-center gap-4 overflow-hidden">
           <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/5 flex-shrink-0 relative group">
             <div className="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -68,7 +68,9 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
           <button
             key={id}
             onClick={() => onTabChange(id)}
-            className={`w-full group relative flex items-center gap-4 px-4 py-3.5 rounded-[18px] transition-all duration-300 text-left ${
+            className={`w-full group relative flex items-center gap-4 rounded-[18px] transition-all duration-300 text-left ${
+              collapsed ? 'justify-center p-3' : 'px-4 py-3.5'
+            } ${
               activeTab === id
                 ? 'bg-primary text-white shadow-[0_10px_25px_rgba(var(--primary-rgb),0.2)]'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/20'
@@ -94,7 +96,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
       </nav>
 
       {/* Bottom Area */}
-      <div className="p-4 border-t border-border/5 space-y-4 bg-background/20 backdrop-blur-xl">
+      <div className={`border-t border-border/5 space-y-4 bg-background/20 backdrop-blur-xl ${collapsed ? 'p-2' : 'p-4'}`}>
         {/* Streak/Trophy Minimal Strip */}
         {!collapsed && (
           <div className="bg-muted/10 rounded-[20px] p-1.5 flex gap-1.5 border border-border/5">
@@ -114,7 +116,9 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
         {/* Student Profile (Interactive) */}
         <button 
           onClick={onSettingsOpen}
-          className={`group flex items-center gap-4 px-4 py-3 rounded-[18px] transition-all duration-300 text-left border border-transparent hover:border-primary/10 hover:bg-primary/5 ${collapsed ? 'justify-center' : ''}`}
+          className={`group flex items-center transition-all duration-300 text-left border border-transparent hover:border-primary/10 hover:bg-primary/5 ${
+            collapsed ? 'justify-center p-2 rounded-xl' : 'gap-4 px-4 py-3 rounded-[18px]'
+          }`}
           title="Edit Tactical Profile"
         >
           <div className="w-9 h-9 rounded-[14px] bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-[11px] shadow-lg shadow-primary/10 border-t border-white/20 group-hover:scale-105 transition-transform">
