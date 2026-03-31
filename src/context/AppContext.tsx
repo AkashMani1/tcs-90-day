@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useCallback } from 'react';
-import { AppState, Problem, MockInterview, WeekTask, StarStory, KnowledgeItem, DailyLog, KnowledgeCategory } from '@/lib/types';
+import { AppState, Problem, MockInterview, WeekTask, StarStory, KnowledgeItem, DailyLog, KnowledgeCategory, ProjectRecord } from '@/lib/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import {
   DEFAULT_WEEKS,
@@ -24,6 +24,7 @@ const INITIAL_STATE: AppState = {
   userName: 'Student',
   targetRole: 'TCS Digital',
   sidebarCollapsed: false,
+  projects: [],
 };
 
 interface AppContextType {
@@ -67,7 +68,12 @@ interface AppContextType {
   updateKnowledgeItem: (id: string, answer: string) => void;
   addKnowledgeItem: (question: string, category: KnowledgeCategory) => void;
   deleteKnowledgeItem: (id: string) => void;
-
+ 
+  // Projects
+  addProject: (p: Omit<ProjectRecord, 'id' | 'readinessScore'>) => void;
+  updateProject: (id: string, updates: Partial<ProjectRecord>) => void;
+  deleteProject: (id: string) => void;
+ 
   // Utility
   touchToday: () => void;
 }
@@ -249,6 +255,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const deleteKnowledgeItem = useCallback((id: string) => {
     mutate((s) => ({ ...s, knowledgeBase: (s.knowledgeBase || []).filter((h) => h.id !== id) }));
   }, [mutate]);
+ 
+  // ── Projects ──────────────────────────────────────────────────────────────
+  const addProject = useCallback((p: Omit<ProjectRecord, 'id' | 'readinessScore'>) => {
+    mutate((s) => ({
+      ...s,
+      projects: [{ ...p, id: generateId(), readinessScore: 0 }, ...(s.projects || [])]
+    }));
+  }, [mutate]);
+ 
+  const updateProject = useCallback((id: string, updates: Partial<ProjectRecord>) => {
+    mutate((s) => ({
+      ...s,
+      projects: (s.projects || []).map((p) => (p.id === id ? { ...p, ...updates } : p))
+    }));
+  }, [mutate]);
+ 
+  const deleteProject = useCallback((id: string) => {
+    mutate((s) => ({
+      ...s,
+      projects: (s.projects || []).filter((p) => p.id !== id)
+    }));
+  }, [mutate]);
 
   const value: AppContextType = {
     state,
@@ -277,6 +305,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     updateKnowledgeItem,
     addKnowledgeItem,
     deleteKnowledgeItem,
+    addProject,
+    updateProject,
+    deleteProject,
     touchToday,
   };
 

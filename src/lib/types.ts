@@ -67,6 +67,27 @@ export interface DailyLog {
   struggles?: string;
   tomorrowPlan?: { morning: string; afternoon: string };
 }
+ 
+export interface ProjectChallenge {
+  id: string;
+  problem: string;
+  solution: string;
+  result: string;
+}
+
+export interface ProjectRecord {
+  id: string;
+  name: string;
+  description: string;
+  role: string;
+  techStack: string[];
+  challenges: ProjectChallenge[];
+  metrics: string[];
+  repoUrl?: string;
+  liveUrl?: string;
+  status: 'Development' | 'Completed' | 'Live';
+  readinessScore: number; // 0-100
+}
 
 export interface AppState {
   weeks: WeekPlan[];
@@ -79,4 +100,5 @@ export interface AppState {
   userName: string;
   targetRole: string;
   sidebarCollapsed?: boolean;
+  projects?: ProjectRecord[];
 }

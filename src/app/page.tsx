@@ -9,7 +9,8 @@ import RoadmapView from '@/components/roadmap/RoadmapView';
 import DSATrackerView from '@/components/dsa/DSATrackerView';
 import MockHubView from '@/components/mocks/MockHubView';
 import NotesVaultView from '@/components/notes/NotesVaultView';
-import { LayoutDashboard, GitMerge, Code2, Video, BookOpen, Target } from 'lucide-react';
+import ProjectLabView from '@/components/projects/ProjectLabView';
+import { LayoutDashboard, GitMerge, Code2, Video, BookOpen, Target, Layers } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 const TAB_LABELS: Record<TabId, { label: string; icon: React.ElementType }> = {
@@ -18,6 +19,7 @@ const TAB_LABELS: Record<TabId, { label: string; icon: React.ElementType }> = {
   dsa: { label: 'The Kill List', icon: Target },
   mocks: { label: 'Mock Hub', icon: Video },
   notes: { label: 'Knowledge Base', icon: BookOpen },
+  projects: { label: 'Project Lab', icon: Layers },
 };
 
 export default function Home() {
@@ -81,6 +83,7 @@ export default function Home() {
               {activeTab === 'dsa' && <DSATrackerView />}
               {activeTab === 'mocks' && <MockHubView />}
               {activeTab === 'notes' && <NotesVaultView />}
+              {activeTab === 'projects' && <ProjectLabView />}
             </motion.div>
           </AnimatePresence>
         </div>
