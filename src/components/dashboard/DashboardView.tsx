@@ -74,24 +74,41 @@ function HeartbeatVisual({ value }: { value: number }) {
   );
 }
 
+function QuoteCard() {
+  const quote = "THE ARCHITECT OF THE SYSTEM BUILDS FROM THE UNCERTAINTY.";
+  return (
+    <div className="flex flex-col gap-3 py-2 px-1">
+      <div className="flex items-center gap-2 mb-1">
+        <Target className="w-3.5 h-3.5 text-primary opacity-50" />
+        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">System Intent</span>
+      </div>
+      <div className="relative">
+        <div className="absolute -left-2 top-0 w-[1px] h-full bg-gradient-to-b from-primary/50 to-transparent" />
+        <p className="text-[11px] font-bold text-foreground leading-[1.6] italic tracking-tight opacity-90">
+          "{quote}"
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function ConfidenceGauge({ value }: { value: number }) {
   return (
-    <div className="space-y-3">
-      <div className="flex justify-between items-end">
-        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Confidence Scale</span>
-        <span className="text-sm font-black text-primary">{value * 10}%</span>
+    <div className="flex flex-col gap-2 mt-4">
+      <div className="flex justify-between items-end px-1">
+        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Confidence Scale (CON)</span>
+        <span className="text-xs font-black text-primary">{value * 10}%</span>
       </div>
-      <div className="h-8 w-full bg-muted/20 rounded-xl p-1.5 flex gap-1.5 border border-border/5">
+      <div className="h-2 w-full bg-muted/20 rounded-full p-0 flex gap-0.5 border border-border/5 overflow-hidden">
         {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0.2, scale: 0.8 }}
+            initial={{ opacity: 0.2 }}
             animate={{ 
               opacity: i < value ? 1 : 0.1,
-              scale: i < value ? 1 : 0.9,
               backgroundColor: i < value ? 'var(--primary)' : 'currentColor'
             }}
-            className={`flex-1 rounded-md transition-all ${i < value ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]' : 'text-muted-foreground'}`}
+            className={`flex-1 transition-all ${i < value ? 'bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]' : 'text-muted-foreground'}`}
           />
         ))}
       </div>
@@ -101,23 +118,19 @@ function ConfidenceGauge({ value }: { value: number }) {
 
 function TimeMatrix({ hours }: { hours: number }) {
   return (
-    <div className="bg-muted/10 rounded-2xl p-5 border border-border/5">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Timer className="w-3.5 h-3.5 text-secondary" />
-          <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Focus Matrix</span>
+    <div className="bg-muted/5 rounded-2xl p-4 border border-border/5 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
+          <Timer className="w-4 h-4 text-secondary" />
         </div>
-        <span className="text-xs font-black tabular-nums">{hours.toFixed(1)}h</span>
+        <div>
+          <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-50 mb-0.5">Focus Clock</p>
+          <p className="text-sm font-black text-foreground tabular-nums">{hours.toFixed(1)}<span className="text-[10px] ml-0.5 opacity-50">h</span></p>
+        </div>
       </div>
-      <div className="grid grid-cols-5 gap-1.5">
-        {[...Array(10)].map((_, i) => (
-          <motion.div 
-            key={i} 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: i * 0.05 }}
-            className={`h-2 rounded-full transition-all ${i < Math.floor(hours) ? 'bg-secondary' : 'bg-muted/30'}`} 
-          />
+      <div className="flex -space-x-1 overflow-hidden opacity-30">
+        {[...Array(4)].map((_, i) => (
+           <div key={i} className="w-4 h-4 rounded-full border border-background bg-secondary/20" />
         ))}
       </div>
     </div>
@@ -126,12 +139,10 @@ function TimeMatrix({ hours }: { hours: number }) {
 
 function BiometricMonitor({ log, totalHours }: { log: any; totalHours: number }) {
   return (
-    <div className="flex flex-col gap-10 h-full py-4">
-      <div className="space-y-10">
-        <HeartbeatVisual value={log.energy} />
-        <ConfidenceGauge value={log.confidence} />
-      </div>
-      <div className="mt-auto pt-6 border-t border-border/10">
+    <div className="flex flex-col gap-6 py-2">
+      <HeartbeatVisual value={log.energy} />
+      <ConfidenceGauge value={log.confidence} />
+      <div className="mt-4">
         <TimeMatrix hours={totalHours} />
       </div>
     </div>
@@ -506,35 +517,6 @@ function DailyTaskChecklist() {
   );
 }
 
-// ── Quote Card ────────────────────────────────────────────────────────────────
-
-function QuoteCard() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const i = setInterval(() => setIdx((p) => (p + 1) % QUOTES.length), 10000);
-    return () => clearInterval(i);
-  }, []);
-  const q = QUOTES[idx];
-  return (
-    <div className="flex flex-col justify-center h-full gap-6 relative overflow-hidden group p-2">
-      <div className="absolute top-0 left-0 w-16 h-16 bg-primary/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
-      <Zap className="w-8 h-8 text-primary relative z-10 mb-2" />
-      <AnimatePresence mode="wait">
-        <motion.div
-           key={idx}
-           initial={{ opacity: 0, x: -10 }}
-           animate={{ opacity: 1, x: 0 }}
-           exit={{ opacity: 0, x: 10 }}
-           transition={{ duration: 0.5 }}
-           className="relative z-10"
-        >
-          <p className="text-xl font-black leading-tight text-foreground tracking-tight">&ldquo;{q.text}&rdquo;</p>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-4">— Oracle Protocol {idx + 1} / {q.author}</p>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-}
 
 // ── Main Dashboard ────────────────────────────────────────────────────────────
 
@@ -551,7 +533,7 @@ export default function DashboardView() {
 
   return (
     <div className="relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary-rgb),0.05),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary-rgb),0.03),transparent_70%)] pointer-events-none" />
       <motion.div 
         variants={containerVariants}
         initial="hidden"
@@ -559,54 +541,64 @@ export default function DashboardView() {
         className="grid grid-cols-12 gap-6 relative z-10"
       >
         
-        {/* ROW 1: Hero & Quick Stats */}
-        <BentoCard className="col-span-12 lg:col-span-8 overflow-hidden relative">
+        {/* TOP ROW: Command Strip & Streak Protection */}
+        <BentoCard className="col-span-12 lg:col-span-9 overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-8 py-2">
-             <div className="md:col-span-3">
-                <h2 className="text-3xl font-black text-foreground mb-3 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
-                <p className="text-muted-foreground text-sm font-medium leading-relaxed opacity-80">
-                  Platform operational. Currently in <span className="text-primary font-black">Week {currentWeek}</span> of the 12-week Placement Cycle. 
-                  System deployment is <span className="text-primary font-black">{progressPct}% effective</span> against regional benchmarks.
-                </p>
-             </div>
-             <div className="md:col-span-2 flex items-center justify-end gap-10 border-l border-border/10 pl-10">
-                <div className="text-center group">
-                   <p className="text-4xl font-black text-foreground mb-1 group-hover:text-primary transition-colors tabular-nums">{streak}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-[10px] decoration-primary/30 decoration-4">Day Streak</p>
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-center py-1">
+             <div className="md:col-span-5">
+                <h2 className="text-2xl font-black text-foreground mb-1 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
+                <div className="flex items-center gap-3">
+                   <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] opacity-60 flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" /> Platform Operational
+                   </p>
+                   <div className="w-[1px] h-3 bg-border/20" />
+                   <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
                 </div>
-                <div className="text-center group">
-                   <p className="text-4xl font-black text-foreground mb-1 group-hover:text-secondary transition-colors tabular-nums">{totalDone}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-[10px] decoration-secondary/30 decoration-4">Nodes Mastered</p>
+             </div>
+             
+             <div className="md:col-span-7 flex flex-wrap items-center justify-end gap-x-12 gap-y-4">
+                <div className="flex items-baseline gap-3 group">
+                   <p className="text-4xl font-black text-foreground group-hover:text-primary transition-colors tabular-nums">{streak}</p>
+                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 group-hover:translate-x-1 transition-transform">Days Streak</p>
+                </div>
+                <div className="w-[1px] h-8 bg-border/10 hidden md:block" />
+                <div className="flex items-baseline gap-3 group">
+                   <p className="text-4xl font-black text-foreground group-hover:text-secondary transition-colors tabular-nums">{totalDone}</p>
+                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 group-hover:translate-x-1 transition-transform">Nodes Mastery</p>
+                </div>
+                <div className="w-[1px] h-8 bg-border/10 hidden md:block" />
+                <div className="flex items-baseline gap-3">
+                   <p className="text-4xl font-black text-foreground/50 tabular-nums">{progressPct}%</p>
+                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">Effective</p>
                 </div>
              </div>
           </div>
         </BentoCard>
 
-        <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-          <StreakGuard />
-          <BentoCard className="flex-1" title="Protocol Focus" icon={Target}>
-             <QuoteCard />
-          </BentoCard>
+        <div className="col-span-12 lg:col-span-3">
+           <StreakGuard />
         </div>
 
-        {/* ROW 2: The Core Checklist */}
-        <BentoCard className="col-span-12 lg:col-span-9" title="Accountability Log" icon={CheckCheck}>
-          <DailyTaskChecklist />
-        </BentoCard>
-
-        {/* ROW 2 RIGHT: Biometric Vitals */}
-        <div className="col-span-12 lg:col-span-3">
-           <BentoCard className="h-full" title="Biometric Monitor" icon={Activity}>
-              <BiometricMonitor log={log} totalHours={totalHours} />
+        {/* MAIN ROW: Workspace & Stats Sidebar */}
+        <div className="col-span-12 lg:col-span-9 flex flex-col gap-6">
+           <BentoCard className="flex-1" title="Accountability Log" icon={CheckCheck}>
+             <DailyTaskChecklist />
            </BentoCard>
         </div>
 
-        {/* ROW 3: Consistency */}
-        <BentoCard className="col-span-12" title="Mission Consistency" icon={BarChart3} badge="Technical activity logs over the last 140 operational cycles">
-          <div className="py-2">
-             <Heatmap dailyLogs={state.dailyLogs} />
-          </div>
+        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6 h-full">
+           <BentoCard className="flex-1" title="Life Support" icon={Activity}>
+              <BiometricMonitor log={log} totalHours={totalHours} />
+           </BentoCard>
+           
+           <BentoCard title="Command Intent" icon={Target}>
+              <QuoteCard />
+           </BentoCard>
+        </aside>
+
+        {/* FOOTER ROW: History & Continuity */}
+        <BentoCard className="col-span-12" title="Mission Continuity" icon={BarChart3} badge="Technical activity logs over the last 140 operational cycles">
+          <Heatmap dailyLogs={state.dailyLogs} />
         </BentoCard>
 
       </motion.div>
