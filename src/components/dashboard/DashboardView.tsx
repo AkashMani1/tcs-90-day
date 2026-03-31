@@ -288,7 +288,7 @@ function StreakGuard() {
 const INITIAL_HABIT_GROUPS = [
   {
     id: 'morning',
-    title: 'Morning Block (2.5-3h)',
+    title: 'Morning Block',
     items: [
       { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
       { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
@@ -297,7 +297,7 @@ const INITIAL_HABIT_GROUPS = [
   },
   {
     id: 'afternoon',
-    title: 'Afternoon Block (2-2.5h)',
+    title: 'Afternoon Block',
     items: [
       { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
       { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
@@ -306,7 +306,7 @@ const INITIAL_HABIT_GROUPS = [
   },
   {
     id: 'evening',
-    title: 'Evening Review (30-60m)',
+    title: 'Evening Review',
     items: [
       { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
       { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
@@ -380,34 +380,34 @@ function DailyTaskChecklist() {
       <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10 px-2">
          <div className="flex items-center gap-8">
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date Status</span>
-              <span className="text-xs font-black text-foreground">{todayStr}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date Status</span>
+              <span className="text-sm font-black text-foreground">{todayStr}</span>
             </div>
             <div className="w-[1px] h-6 bg-border/20" />
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Phase Progress</span>
-              <span className="text-xs font-black text-primary uppercase">Week {currentWeek} / 12</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Phase Progress</span>
+              <span className="text-sm font-black text-primary uppercase">Week {currentWeek} / 12</span>
             </div>
             <div className="w-[1px] h-6 bg-border/20 hidden sm:block" />
             <div className="hidden sm:flex flex-col">
-               <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency Rating</span>
+               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency Rating</span>
                <div className="flex items-center gap-3">
-                  <div className="h-1 w-24 bg-muted/20 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-24 bg-muted/20 rounded-full overflow-hidden">
                      <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
                   </div>
-                  <span className="text-[10px] font-black text-primary tabular-nums">{pct}%</span>
+                  <span className="text-[11px] font-black text-primary tabular-nums">{pct}%</span>
                </div>
             </div>
          </div>
          
          <button 
            onClick={() => setIsEditing(!isEditing)}
-           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
              isEditing ? 'bg-primary text-white' : 'bg-muted/10 text-muted-foreground hover:bg-muted-foreground/20'
            }`}
          >
-           {isEditing ? <CheckSquare className="w-3.5 h-3.5" /> : <Settings className="w-3.5 h-3.5" />}
-           {isEditing ? 'Save Deployment' : 'Configure Protocol'}
+           {isEditing ? <CheckSquare className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
+           {isEditing ? 'SAVE DEPLOYMENT' : 'CONFIGURE PROTOCOL'}
          </button>
       </div>
 
@@ -417,15 +417,15 @@ function DailyTaskChecklist() {
           <div key={group.id} className="space-y-5">
             <div className="flex items-center justify-between border-b border-border/5 pb-2">
               {isEditing ? (
-                <input 
+                  <input 
                   type="text" 
                   value={group.title} 
                   onChange={(e) => updateHabitGroupTitle(group.id, e.target.value)}
-                  className="bg-muted/10 border border-border/10 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none w-full mr-2"
+                  className="bg-muted/10 border border-border/10 rounded-lg px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none w-full mr-2"
                 />
               ) : (
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-primary" /> {group.title}
+                <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" /> {group.title}
                 </h4>
               )}
             </div>
@@ -467,8 +467,8 @@ function DailyTaskChecklist() {
                            {isChecked && <CheckCheck className="w-3 h-3" />}
                          </div>
                          <div>
-                           <p className="text-[11px] font-bold tracking-tight leading-tight">{item.label}</p>
-                           {item.detail && <p className="text-[9px] opacity-40 font-medium tracking-tight mt-0.5">{item.detail}</p>}
+                           <p className="text-sm font-bold tracking-tight leading-tight">{item.label}</p>
+                           {item.detail && <p className="text-[11px] opacity-40 font-medium tracking-tight mt-1">{item.detail}</p>}
                          </div>
                       </button>
                     )}
@@ -476,8 +476,8 @@ function DailyTaskChecklist() {
                 );
               })}
               {isEditing && (
-                <button onClick={() => addHabitItem(group.id, 'New Target', '')} className="p-3 rounded-xl border border-dashed border-border/10 text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest">
-                  <Plus className="w-3 h-3" /> Add Objective
+                <button onClick={() => addHabitItem(group.id, 'New Target', '')} className="p-3.5 rounded-xl border border-dashed border-border/10 text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-2.5 text-[10px] font-black uppercase tracking-widest">
+                  <Plus className="w-4 h-4" /> ADD OBJECTIVE
                 </button>
               )}
             </div>
@@ -489,18 +489,18 @@ function DailyTaskChecklist() {
       <div className="space-y-12 pt-10 border-t border-border/5 px-2 max-w-4xl">
            {/* Problems Solved */}
            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                 <Target className="w-4 h-4 text-primary" />
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Target Neutralization:</h4>
+              <div className="flex items-center gap-4">
+                 <Target className="w-5 h-5 text-primary" />
+                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Target Neutralization:</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
-                   <div key={diff} className="flex flex-col gap-2.5">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">{diff} Problems Solved</span>
-                      <div className="flex items-center gap-4">
-                         <button onClick={() => updateProbs(diff, -1)} className="w-7 h-7 rounded border border-border/5 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-2.5 h-2.5"/></button>
-                         <span className="text-sm font-black text-foreground tabular-nums w-4 text-center">{(log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 })[diff]}</span>
-                         <button onClick={() => updateProbs(diff, 1)} className="w-7 h-7 rounded border border-primary/20 bg-primary/10 flex items-center justify-center text-primary transition-colors"><Plus className="w-2.5 h-2.5"/></button>
+                   <div key={diff} className="flex flex-col gap-3">
+                      <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">{diff} Problems Solved</span>
+                      <div className="flex items-center gap-5">
+                         <button onClick={() => updateProbs(diff, -1)} className="w-8 h-8 rounded border border-border/5 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-3 h-3"/></button>
+                         <span className="text-lg font-black text-foreground tabular-nums w-6 text-center">{(log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 })[diff]}</span>
+                         <button onClick={() => updateProbs(diff, 1)} className="w-8 h-8 rounded border border-primary/20 bg-primary/10 flex items-center justify-center text-primary transition-colors"><Plus className="w-3 h-3"/></button>
                       </div>
                    </div>
                  ))}
@@ -509,14 +509,14 @@ function DailyTaskChecklist() {
 
            {/* Concepts Learned */}
            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                 <PenTool className="w-4 h-4 text-secondary" />
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Extraction Log (Insights):</h4>
+              <div className="flex items-center gap-4">
+                 <PenTool className="w-5 h-5 text-secondary" />
+                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Extraction Log (Insights):</h4>
               </div>
               <div className="space-y-3 pl-4">
                  {[0, 1, 2].map(i => (
-                   <div key={i} className="flex items-center gap-4">
-                      <span className="text-[10px] font-black text-muted-foreground opacity-20">{i+1}.</span>
+                   <div key={i} className="flex items-center gap-5">
+                      <span className="text-[11px] font-black text-muted-foreground opacity-20">{i+1}.</span>
                       <input 
                          type="text" 
                          value={(log.conceptsLearned ?? [])[i] || ''}
@@ -531,28 +531,28 @@ function DailyTaskChecklist() {
 
            {/* Vitals */}
            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                 <Activity className="w-4 h-4 text-rose-500" />
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Biometric Sync:</h4>
+              <div className="flex items-center gap-4">
+                 <Activity className="w-5 h-5 text-rose-500" />
+                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Biometric Sync:</h4>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 pl-4">
-                 <div className="space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Energy (1-10)</p>
-                    <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-2xl font-black text-rose-500 tabular-nums">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 pl-4">
+                 <div className="space-y-3">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Energy (1-10)</p>
+                    <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-3xl font-black text-rose-500 tabular-nums">
                        {log.energy < 10 ? `0${log.energy}` : '10'}
                     </button>
                  </div>
-                 <div className="space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Confidence (1-10)</p>
-                    <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-2xl font-black text-primary tabular-nums">
+                 <div className="space-y-3">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Confidence (1-10)</p>
+                    <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-3xl font-black text-primary tabular-nums">
                        {log.confidence < 10 ? `0${log.confidence}` : '10'}
                     </button>
                  </div>
-                 <div className="space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Hours Logged</p>
-                    <div className="flex items-baseline gap-1">
-                       <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-2xl focus:outline-none w-14" />
-                       <span className="text-[10px] font-black text-muted-foreground opacity-40">HR</span>
+                 <div className="space-y-3">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Hours Logged</p>
+                    <div className="flex items-baseline gap-2">
+                       <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-3xl focus:outline-none w-16" />
+                       <span className="text-[11px] font-black text-muted-foreground opacity-40 uppercase">HR</span>
                     </div>
                  </div>
               </div>
@@ -560,18 +560,18 @@ function DailyTaskChecklist() {
 
            {/* Tomorrow's Plan */}
            <div className="space-y-6 pt-4">
-              <div className="flex items-center gap-3">
-                 <CalendarDays className="w-4 h-4 text-primary" />
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
+              <div className="flex items-center gap-4">
+                 <CalendarDays className="w-5 h-5 text-primary" />
+                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
               </div>
-              <div className="space-y-3 pl-4">
-                 <div className="flex items-center gap-4 group max-w-xl">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-20">- Morning:</span>
-                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-1 text-[11px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
+              <div className="space-y-4 pl-4">
+                 <div className="flex items-center gap-6 group max-w-xl">
+                    <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Morning:</span>
+                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
                  </div>
-                 <div className="flex items-center gap-4 group max-w-xl">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-20">- Afternoon:</span>
-                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-1 text-[11px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
+                 <div className="flex items-center gap-6 group max-w-xl">
+                    <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Afternoon:</span>
+                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
                  </div>
               </div>
            </div>
@@ -579,11 +579,11 @@ function DailyTaskChecklist() {
            <div className="pt-12">
               <button
                 onClick={handleSave}
-                className={`flex items-center gap-4 px-10 py-5 rounded-2xl font-black uppercase tracking-[0.4em] text-[10px] transition-all ${
+                className={`flex items-center gap-5 px-12 py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all ${
                   saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:translate-y-[-2px] active:translate-y-0'
                 }`}
               >
-                {saved ? <ShieldCheck className="w-5 h-5" /> : <Save className="w-5 h-5" />}
+                {saved ? <ShieldCheck className="w-6 h-6" /> : <Save className="w-6 h-6" />}
                 {saved ? 'DATA COMMITTED' : 'COMMIT DAILY LOG'}
               </button>
            </div>

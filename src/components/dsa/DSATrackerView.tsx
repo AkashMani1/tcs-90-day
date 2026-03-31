@@ -216,11 +216,11 @@ export default function DSATrackerView() {
            <div className="flex gap-14 items-center">
               <div className="text-center group">
                  <p className="text-6xl font-black text-foreground mb-4 group-hover:text-primary transition-all tabular-nums tracking-tighter">{stats.done}</p>
-                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Neutralized</p>
+                 <p className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Neutralized</p>
               </div>
               <div className="text-center group">
                  <p className="text-6xl font-black text-foreground mb-4 group-hover:text-amber-500 transition-all tabular-nums tracking-tighter">{stats.prio}</p>
-                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-amber-500/30 decoration-4">High Risk</p>
+                 <p className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-amber-500/30 decoration-4">High Risk</p>
               </div>
            </div>
         </div>
@@ -260,7 +260,7 @@ export default function DSATrackerView() {
 
          <button
             onClick={() => setShowModal(true)}
-            className="w-full md:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-card border border-border/10 hover:border-primary/40 text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all group shadow-xl"
+            className="w-full md:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-card border border-border/10 hover:border-primary/40 text-foreground rounded-[24px] text-xs font-black uppercase tracking-[0.3em] transition-all group shadow-xl"
          >
             <Plus className="w-5 h-5 text-primary group-hover:rotate-90 transition-transform duration-500" /> 
             IDENTIFY NEW TARGET
@@ -276,18 +276,18 @@ export default function DSATrackerView() {
                   <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground opacity-40" />
                   <input
                     value={search} onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Scan secure target repository..."
-                    className="w-full bg-card/60 border border-border/10 rounded-[20px] pl-16 pr-6 py-4 text-md text-foreground focus:outline-none focus:border-primary/40 transition-all font-bold placeholder:opacity-20"
+                    placeholder="Search tactical targets..."
+                    className="w-full bg-card/60 border border-border/10 rounded-[18px] pl-14 pr-6 py-4 text-foreground text-sm font-bold focus:outline-none focus:border-primary/40 placeholder:opacity-30"
                   />
                </div>
                <div className="flex gap-4 w-full xl:w-auto">
                   <select value={filterTopic} onChange={(e) => setFilterTopic(e.target.value)}
-                    className="bg-card/60 border border-border/10 rounded-[18px] px-6 py-4 text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 appearance-none flex-1 min-w-[160px] cursor-pointer">
+                    className="bg-card/60 border border-border/10 rounded-[18px] px-6 py-4 text-muted-foreground text-[11px] font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 appearance-none flex-1 min-w-[160px] cursor-pointer">
                     <option value="All">Sector: Global</option>
                     {uniqueTopics.map((t) => <option key={t}>{t}</option>)}
                   </select>
                   <select value={filterDiff} onChange={(e) => setFilterDiff(e.target.value as Difficulty | 'All')}
-                    className="bg-card/60 border border-border/10 rounded-[18px] px-6 py-4 text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 appearance-none flex-1 min-w-[160px] cursor-pointer">
+                    className="bg-card/60 border border-border/10 rounded-[18px] px-6 py-4 text-muted-foreground text-[11px] font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 appearance-none flex-1 min-w-[160px] cursor-pointer">
                     <option value="All">Tier: Dynamic</option>
                     {['Easy', 'Medium', 'Hard'].map((d) => <option key={d}>{d} Alert</option>)}
                   </select>
@@ -318,7 +318,7 @@ export default function DSATrackerView() {
                           className="flex items-center gap-4 px-4 py-2"
                         >
                            <div className="w-2.5 h-8 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]" />
-                           <span className="text-[13px] font-black text-foreground uppercase tracking-[0.3em]">{topic} <span className="opacity-30 ml-2 font-bold">[{groupProps.length} NODES]</span></span>
+                           <span className="text-sm font-black text-foreground uppercase tracking-[0.3em]">{topic} <span className="opacity-30 ml-2 font-bold">[{groupProps.length} NODES]</span></span>
                         </motion.div>
                         <div className="space-y-4">
                            {groupProps.map((p) => (
@@ -330,7 +330,7 @@ export default function DSATrackerView() {
                                 className="bento-card !p-6 hover:border-primary/30 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-8 group/card relative overflow-hidden"
                               >
                                 {p.status === 'Done' && (
-                                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events_none" />
+                                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
                                 )}
                                 <div className="flex items-start gap-6 flex-1 min-w-0 relative z-10">
                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 border transition-all duration-500 ${
@@ -342,7 +342,7 @@ export default function DSATrackerView() {
                                       <div className="flex items-center gap-4 mb-2 flex-wrap">
                                          <h4 className={`text-xl font-black tracking-tight truncate ${p.status === 'Done' ? 'text-muted-foreground/50' : 'text-foreground'}`}>{p.name}</h4>
                                          {p.isPriority && (
-                                            <span className="bg-rose-500/10 text-rose-500 border border-rose-500/30 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest animate-pulse">Critical Vector</span>
+                                            <span className="bg-rose-500/10 text-rose-500 border border-rose-500/30 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">Critical Vector</span>
                                          )}
                                       </div>
                                       {editingNote === p.id ? (
@@ -353,22 +353,22 @@ export default function DSATrackerView() {
                                            className="w-full bg-muted/50 border border-primary/30 rounded-xl px-4 py-2.5 text-sm font-bold text-foreground focus:outline-none"
                                          />
                                       ) : (
-                                         <p onClick={() => { setEditingNote(p.id); setNoteDraft(p.notes); }} className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-all cursor-pointer truncate max-w-xl italic opacity-60 hover:opacity-100">
+                                         <p onClick={() => { setEditingNote(p.id); setNoteDraft(p.notes); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-all cursor-pointer truncate max-w-xl italic opacity-60 hover:opacity-100">
                                             {p.notes || '+ Deploy Strategic Note'}
                                          </p>
                                       )}
                                    </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-6 lg:gap-10 pb_4 relative z-10">
-                                   <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl border ${DIFF_COLORS[p.difficulty]}`}>
+                                <div className="flex flex-wrap items-center gap-6 lg:gap-10 relative z-10">
+                                   <span className={`text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl border ${DIFF_COLORS[p.difficulty]}`}>
                                       {p.difficulty} TIER
                                    </span>
                                    
                                    <div className="flex items-center">
                                       <select 
                                         value={p.status} onChange={(e) => updateProblem(p.id, { status: e.target.value as ProblemStatus })}
-                                        className={`text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-xl border bg-card/60 backdrop-blur-sm cursor-pointer transition-all shadow-sm ${STATUS_COLORS[p.status]}`}
+                                        className={`text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-xl border bg-card/60 backdrop-blur-sm cursor-pointer transition-all shadow-sm ${STATUS_COLORS[p.status]}`}
                                       >
                                          {(['Todo', 'Done', 'Revisit'] as ProblemStatus[]).map(s => <option key={s} value={s} className="bg-card text-foreground">{s} Status</option>)}
                                       </select>
@@ -403,8 +403,8 @@ export default function DSATrackerView() {
                  return (
                    <div key={item.label} className="space-y-3">
                       <div className="flex justify-between items-center px-1">
-                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">{item.label}</span>
-                         <span className={`text-md font-black ${item.color} tabular-nums`}>{item.count}</span>
+                         <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">{item.label}</span>
+                         <span className={`text-lg font-black ${item.color} tabular-nums`}>{item.count}</span>
                       </div>
                       <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border/5">
                          <motion.div 
@@ -439,7 +439,7 @@ export default function DSATrackerView() {
                     transition={{ delay: i * 0.1 }}
                     className="flex items-center justify-between p-4 rounded-[20px] bg-muted/40 border border-border/10 hover:border-primary/30 transition-all group/item"
                   >
-                     <span className="text-[11px] font-black text-muted-foreground uppercase tracking-wider truncate pr-4 group-hover/item:text-foreground">{t}</span>
+                     <span className="text-[12px] font-black text-muted-foreground uppercase tracking-wider truncate pr-4 group-hover/item:text-foreground">{t}</span>
                      <LayoutGrid className="w-4 h-4 text-primary opacity-20 group-hover/item:opacity-100 transition-all" />
                   </motion.div>
                ))}
