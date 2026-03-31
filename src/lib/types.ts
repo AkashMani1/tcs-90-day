@@ -101,4 +101,5 @@ export interface AppState {
   targetRole: string;
   sidebarCollapsed?: boolean;
   projects?: ProjectRecord[];
+  theme?: 'light' | 'dark';
 }

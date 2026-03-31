@@ -1,6 +1,6 @@
 'use client';
 
-import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, ChevronRight, Flame, Trophy, PanelLeftClose, PanelLeftOpen, Layers } from 'lucide-react';
+import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, ChevronRight, Flame, Trophy, PanelLeftClose, PanelLeftOpen, Layers, Sun, Moon } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcCurrentWeek, getStreakStatus } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,7 +23,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: SidebarProps) {
-  const { state, toggleSidebar } = useApp();
+  const { state, toggleSidebar, toggleTheme } = useApp();
   const collapsed = state.sidebarCollapsed;
   const streak = calcStreak(state.dailyLogs);
   const currentWeek = calcCurrentWeek(state.startDate);
@@ -140,8 +140,17 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
             </motion.div>
           )}
           {!collapsed && (
-            <button onClick={onSettingsOpen} className="p-1.5 rounded-lg text-slate-600 hover:text-slate-200 hover:bg-obsidian-surface-highest/20 transition-all">
+            <button onClick={onSettingsOpen} className="p-1.5 rounded-lg text-slate-600 hover:text-slate-200 hover:bg-muted transition-all">
               <Settings className="w-4 h-4" />
+            </button>
+          )}
+          {!collapsed && (
+            <button 
+              onClick={toggleTheme} 
+              className="p-1.5 rounded-lg text-slate-600 hover:text-primary hover:bg-primary/10 transition-all ml-1"
+              title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-500" />}
             </button>
           )}
         </div>

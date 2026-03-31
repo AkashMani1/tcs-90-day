@@ -4,40 +4,102 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle, 
-  Save, CheckCheck, Activity, Zap, ShieldCheck, AlertTriangle, 
+  Save, CheckCheck, Activity, ShieldCheck, AlertTriangle, 
   Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb, 
-  Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target 
+  Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target,
+  Heart, Zap, Shield, Timer
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcTotalHours, calcCurrentWeek, today, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
 import { QUOTES } from '@/lib/defaultData';
 
-// ── Activity Ring ────────────────────────────────────────────────────────────
+// ── Biometric Monitor components ─────────────────────────────────────────────
 
-function ActivityRing({ value, max, color, label }: { value: number; max: number; color: string; label: string }) {
-  const radius = 36;
-  const circumference = 2 * Math.PI * radius;
-  const progress = Math.min(value / max, 1);
-  const offset = circumference - progress * circumference;
-
+function HeartbeatVisual({ value }: { value: number }) {
+  const pulseScale = 1 + (value / 10) * 0.2;
   return (
-    <div className="flex flex-col items-center gap-2 group cursor-default">
-      <div className="relative w-24 h-24 flex items-center justify-center">
-        <svg className="w-full h-full -rotate-90">
-          <circle cx="48" cy="48" r={radius} fill="transparent" stroke="currentColor" strokeWidth="8" className="text-obsidian-surface-highest/20" />
-          <motion.circle 
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            cx="48" cy="48" r={radius} fill="transparent" stroke={color} strokeWidth="8" strokeDasharray={circumference} strokeLinecap="round"
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-black text-white leading-none">{value}</span>
-          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter decoration-slate-600/30 underline underline-offset-2 decoration-2">{max} max</span>
-        </div>
+    <div className="relative w-full h-16 flex items-center justify-center overflow-hidden bg-muted/10 rounded-2xl border border-border/5 group">
+      <svg className="absolute inset-0 w-full h-full opacity-20 dark:opacity-30">
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-muted-foreground/20" />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+      </svg>
+      
+      <motion.div
+        animate={{ 
+          scale: [1, pulseScale, 1],
+          opacity: [0.4, 0.8, 0.4] 
+        }}
+        transition={{ 
+          duration: Math.max(0.4, 1.5 - (value / 10)), 
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="relative z-10"
+      >
+        <Heart className="w-8 h-8 text-amber-500 fill-amber-500/20" />
+      </motion.div>
+      
+      <div className="absolute bottom-2 right-4 flex items-baseline gap-1">
+        <span className="text-xs font-black text-amber-500">{value}</span>
+        <span className="text-[8px] font-bold text-muted-foreground tracking-widest uppercase">NRG</span>
       </div>
-      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-white transition-colors">{label}</span>
+    </div>
+  );
+}
+
+function ConfidenceGauge({ value }: { value: number }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-end">
+        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Confidence Scale</span>
+        <span className="text-sm font-black text-primary">{value * 10}%</span>
+      </div>
+      <div className="h-6 w-full bg-muted/20 rounded-lg p-1 flex gap-1 border border-border/5">
+        {[...Array(10)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0.2 }}
+            animate={{ 
+              opacity: i < value ? 1 : 0.1,
+              backgroundColor: i < value ? 'var(--neon-indigo)' : 'currentColor'
+            }}
+            className={`flex-1 rounded-sm transition-colors ${i < value ? 'bg-primary neon-glow-indigo' : 'text-muted-foreground'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TimeMatrix({ hours }: { hours: number }) {
+  return (
+    <div className="bg-muted/10 rounded-2xl p-4 border border-border/5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Timer className="w-3 h-3 text-secondary" />
+          <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Focus Matrix</span>
+        </div>
+        <span className="text-xs font-black tabular-nums">{hours.toFixed(1)}h</span>
+      </div>
+      <div className="grid grid-cols-5 gap-1">
+        {[...Array(10)].map((_, i) => (
+          <div key={i} className={`h-1.5 rounded-full transition-all ${i < Math.floor(hours) ? 'bg-secondary' : 'bg-muted/30'}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BiometricMonitor({ log, totalHours }: { log: any; totalHours: number }) {
+  return (
+    <div className="flex flex-col gap-6 h-full py-2">
+      <HeartbeatVisual value={log.energy} />
+      <ConfidenceGauge value={log.confidence} />
+      <div className="mt-auto">
+        <TimeMatrix hours={totalHours} />
+      </div>
     </div>
   );
 }
@@ -421,20 +483,10 @@ export default function DashboardView() {
         <DailyTaskChecklist />
       </BentoCard>
 
-      {/* ROW 2 RIGHT: Focus Metrics */}
+      {/* ROW 2 RIGHT: Biometric Vitals */}
       <div className="col-span-12 lg:col-span-3 flex flex-col gap-6">
-         <BentoCard className="flex-1" title="Vitals" icon={Activity}>
-            <div className="flex flex-col gap-8 items-center justify-center h-full py-4">
-               <div className="grid grid-cols-2 gap-8">
-                  <ActivityRing value={log.energy} max={10} color="#f59e0b" label="Energy" />
-                  <ActivityRing value={log.confidence} max={10} color="#6366f1" label="Confidence" />
-               </div>
-               <div className="w-full h-px bg-obsidian-surface-highest/20" />
-               <div className="text-center">
-                  <span className="text-3xl font-black text-white">{totalHours.toFixed(1)}</span>
-                  <span className="text-neon-cyan font-bold ml-1 text-sm italic">H Logged</span>
-               </div>
-            </div>
+         <BentoCard className="flex-1" title="Vitals Monitor" icon={Activity}>
+            <BiometricMonitor log={log} totalHours={totalHours} />
          </BentoCard>
       </div>
 

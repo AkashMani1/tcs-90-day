@@ -25,6 +25,7 @@ const INITIAL_STATE: AppState = {
   targetRole: 'TCS Digital',
   sidebarCollapsed: false,
   projects: [],
+  theme: 'dark',
 };
 
 interface AppContextType {
@@ -74,6 +75,9 @@ interface AppContextType {
   updateProject: (id: string, updates: Partial<ProjectRecord>) => void;
   deleteProject: (id: string) => void;
  
+  // Theme
+  toggleTheme: () => void;
+ 
   // Utility
   touchToday: () => void;
 }
@@ -86,6 +90,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const mutate = useCallback((updater: (s: AppState) => AppState) => {
     setState((prev: AppState) => updater(prev));
   }, [setState]);
+ 
+  // ── Theme Sync ────────────────────────────────────────────────────────────
+  React.useEffect(() => {
+    if (state.theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [state.theme]);
+ 
+  const toggleTheme = useCallback(() => {
+    mutate((s) => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' }));
+  }, [mutate]);
 
   // ── Profile ──────────────────────────────────────────────────────────────
   const updateProfile = useCallback((userName: string, targetRole: string, startDate: string) => {
@@ -308,6 +325,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addProject,
     updateProject,
     deleteProject,
+    toggleTheme,
     touchToday,
   };
 

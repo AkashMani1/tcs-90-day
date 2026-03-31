@@ -112,16 +112,16 @@ function WeekCard({ week, isExpanded, onToggle }: {
                       onChange={(e) => setFocusDraft(e.target.value)}
                       onBlur={() => { updateWeekFocus(week.week, focusDraft); setEditFocus(false); }}
                       onKeyDown={(e) => { if (e.key === 'Enter') { updateWeekFocus(week.week, focusDraft); setEditFocus(false); } }}
-                      className="flex-1 bg-obsidian-surface-highest/20 border border-obsidian-surface-highest/30 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-neon-indigo"
+                      className="flex-1 bg-muted/30 border border-border/20 rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary"
                     />
                   </div>
                 ) : (
                   <button
                     onClick={() => { setFocusDraft(week.focus); setEditFocus(true); }}
-                    className="group bg-obsidian-surface-high/30 hover:bg-obsidian-surface-highest/20 transition-all p-4 rounded-xl border border-obsidian-surface-highest/10 flex items-center justify-between text-left"
+                    className="group bg-muted/30 hover:bg-muted/50 transition-all p-4 rounded-xl border border-border/20 flex items-center justify-between text-left"
                   >
-                    <span className="text-sm font-bold text-slate-200">{week.focus}</span>
-                    <Edit3 className="w-4 h-4 text-slate-600 group-hover:text-neon-indigo opacity-0 group-hover:opacity-100 transition-all" />
+                    <span className="text-sm font-bold text-foreground">{week.focus}</span>
+                    <Edit3 className="w-4 h-4 text-muted-foreground group-hover:text-primary opacity-0 group-hover:opacity-100 transition-all" />
                   </button>
                 )}
               </div>
@@ -208,8 +208,8 @@ export default function RoadmapView() {
               <div className="w-12 h-12 bg-neon-purple/20 rounded-2xl flex items-center justify-center mb-6 neon-glow-purple border border-neon-purple/30">
                  <GitMerge className="w-6 h-6 text-neon-purple-tint" />
               </div>
-              <h2 className="text-3xl font-black text-white mb-2 tracking-tight">PROGRESSROADMAP</h2>
-              <p className="text-slate-500 text-sm font-medium">Your 12-week strategic journey from <span className="text-neon-cyan font-bold">Ninja Base</span> to <span className="text-neon-purple font-bold">Prime Mastery</span>.</p>
+              <h2 className="text-3xl font-black text-foreground mb-2 tracking-tight">PROGRESS ROADMAP</h2>
+              <p className="text-muted-foreground text-sm font-medium">Your 12-week strategic journey from <span className="text-secondary font-bold">Ninja Base</span> to <span className="text-primary font-bold">Prime Mastery</span>.</p>
            </div>
            
            <div className="flex gap-12 items-center">

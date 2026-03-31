@@ -23,13 +23,13 @@ export function BentoCard({ children, className = '', title = '', icon: Icon, ba
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             {Icon && (
-              <div className="w-10 h-10 bg-obsidian-surface-highest/30 rounded-xl flex items-center justify-center border border-obsidian-surface-highest/20">
-                <Icon className="w-5 h-5 text-neon-indigo-tint" />
+              <div className="w-10 h-10 bg-muted/50 rounded-xl flex items-center justify-center border border-border/20">
+                <Icon className="w-5 h-5 text-primary" />
               </div>
             )}
             <div>
-              <h3 className="text-slate-200 font-black text-sm uppercase tracking-widest leading-none">{title}</h3>
-              {badge && <p className="text-slate-600 text-[10px] font-bold mt-1 uppercase tracking-tighter">{badge}</p>}
+              <h3 className="text-foreground font-black text-sm uppercase tracking-widest leading-none">{title}</h3>
+              {badge && <p className="text-muted-foreground text-[10px] font-bold mt-1 uppercase tracking-tighter">{badge}</p>}
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@ export function ActivityRing({ value, max, color, label, size = 'md' }: Activity
         <svg className="w-full h-full -rotate-90">
           <circle 
             cx="50%" cy="50%" r={r} fill="transparent" stroke="currentColor" 
-            strokeWidth={sw} className="text-obsidian-surface-highest/20" 
+            strokeWidth={sw} className="text-muted/20" 
           />
           <motion.circle 
             initial={{ strokeDashoffset: circumference }}
@@ -78,11 +78,11 @@ export function ActivityRing({ value, max, color, label, size = 'md' }: Activity
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`${text} font-black text-white leading-none`}>{value}</span>
-          <span className={`${labelSize} font-bold text-slate-500 uppercase tracking-tighter decoration-slate-600/30 underline underline-offset-2 decoration-2`}>{max} max</span>
+          <span className={`${text} font-black text-foreground leading-none`}>{value}</span>
+          <span className={`${labelSize} font-bold text-muted-foreground uppercase tracking-tighter decoration-muted-foreground/30 underline underline-offset-2 decoration-2`}>{max} max</span>
         </div>
       </div>
-      <span className={`${labelSize} font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-white transition-colors`}>{label}</span>
+      <span className={`${labelSize} font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors`}>{label}</span>
     </div>
   );
 }
