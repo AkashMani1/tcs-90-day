@@ -39,7 +39,7 @@ export default function Home() {
       <motion.main 
         initial={false}
         animate={{ 
-          marginLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '260px') 
+          marginLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '280px') 
         }}
         className="flex-1 min-h-screen relative pb-24 md:pb-0"
       >

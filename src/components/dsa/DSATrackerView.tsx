@@ -234,23 +234,23 @@ export default function DSATrackerView() {
 
       {/* Category Segmented Control - Notion Style */}
       <div className="col-span-12 flex flex-col md:flex-row items-center justify-between gap-6 pb-6">
-         <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/20 border border-border/5">
+         <div className="flex items-center gap-8 border-b border-border/5 w-full md:w-auto">
             {['DSA', 'Aptitude'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
-                className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2.5 ${
+                className={`relative pb-4 px-2 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-200 flex items-center gap-2.5 ${
                   activeTab === tab 
                     ? 'text-primary' 
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {tab === 'DSA' ? <Zap className="w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
-                <span>{tab} Console</span>
+                <span>{tab}</span>
                 {activeTab === tab && (
                   <motion.div 
                     layoutId="activeTabIndicator"
-                    className="absolute inset-0 bg-primary/10 border-b-2 border-primary rounded-lg -z-0"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}

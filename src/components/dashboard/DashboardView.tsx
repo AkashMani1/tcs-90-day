@@ -10,7 +10,7 @@ import {
   Heart, Zap, Shield, Timer, Settings
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { calcStreak, calcTotalHours, calcCurrentWeek, today, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
+import { calcStreak, calcTotalHours, calcCurrentWeek, today, toDateStr, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
@@ -115,28 +115,41 @@ function BentoCard({ children, className = '', title = '', icon: Icon, badge = '
 
 // ── Heatmap ───────────────────────────────────────────────────────────────────
 
-function getHeatColor(count: number) {
-  if (count === 0) return 'bg-muted/10 border-border/5';
-  if (count === 1) return 'bg-primary/20 border-primary/20 text-primary';
-  if (count === 2) return 'bg-primary/40 border-primary/30';
-  if (count === 3) return 'bg-primary/60 border-primary/40';
-  return 'bg-primary border-primary/50 shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]';
+function getHeatColor(count: number, isToday: boolean = false) {
+  if (count === 0) return `bg-white/[0.12] dark:bg-white/[0.08] border-white/[0.05] dark:border-white/[0.02] ${isToday ? 'border-primary/40 ring-1 ring-primary/20' : ''}`;
+  if (count === 1) return `bg-primary/20 border-primary/10 text-primary ${isToday ? 'ring-2 ring-primary/40' : ''}`;
+  if (count === 2) return `bg-primary/40 border-primary/20 ${isToday ? 'ring-2 ring-primary/50' : ''}`;
+  if (count === 3) return `bg-primary/60 border-primary/30 ${isToday ? 'ring-2 ring-primary/60' : ''}`;
+  return `bg-primary border-primary/50 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] ${isToday ? 'ring-2 ring-white/20' : ''}`;
 }
 
 function Heatmap({ dailyLogs, compact = false }: { dailyLogs: { date: string; completedHabits: string[] }[]; compact?: boolean }) {
   const DAYS = compact ? 70 : 140; 
   const ref = new Date();
-  const logMap = new Map(dailyLogs.map((l) => [l.date, l.completedHabits.length]));
+  const todayStr = today();
+  const logMap = new Map(dailyLogs.map((l) => [l.date, l.completedHabits?.length || 0]));
+  const todayCount = logMap.get(todayStr) || 0;
 
-  const cells: { date: Date; count: number }[] = [];
+  const cells: { date: Date; count: number; isToday: boolean; dateStr: string; weekIndex: number; monthName: string; isStartOfMonth: boolean; dayNumber: number }[] = [];
+  let currentMonth = -1;
+  
   for (let i = DAYS - 1; i >= 0; i--) {
     const d = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() - i);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const key = `${year}-${month}-${day}`;
+    const key = toDateStr(d);
     const real = logMap.get(key);
-    cells.push({ date: d, count: real !== undefined ? real : 0 });
+    const isStartOfMonth = d.getMonth() !== currentMonth;
+    if (isStartOfMonth) currentMonth = d.getMonth();
+    
+    cells.push({ 
+      date: d, 
+      count: real !== undefined ? real : 0, 
+      isToday: key === todayStr,
+      dateStr: key,
+      weekIndex: Math.floor((DAYS - 1 - i) / 7),
+      monthName: d.toLocaleString('default', { month: 'short' }),
+      isStartOfMonth,
+      dayNumber: DAYS - i // Relative day number from start of view
+    });
   }
 
   const weeks: typeof cells[] = [];
@@ -146,21 +159,84 @@ function Heatmap({ dailyLogs, compact = false }: { dailyLogs: { date: string; co
     if (col.length === 7) { weeks.push(col); col = []; }
   });
 
+  const totalActiveDays = dailyLogs.filter(l => l.completedHabits?.length > 0).length;
+  const maxStreak = Array.from(logMap.values()).reduce((acc, curr) => curr > 0 ? { ...acc, curr: acc.curr + 1, max: Math.max(acc.max, acc.curr + 1) } : { ...acc, curr: 0 }, { curr: 0, max: 0 }).max;
+
   return (
-    <div className="w-full flex">
-      <div className={`flex flex-1 justify-between ${compact ? 'gap-1' : 'gap-1.5'} w-full overflow-hidden`}>
-        {weeks.map((week, wi) => (
-          <div key={wi} className={`flex flex-col ${compact ? 'gap-1' : 'gap-1.5'} flex-1`}>
-            {week.map((c, di) => (
-              <motion.div
-                key={di}
-                whileHover={{ scale: 1.5, zIndex: 50 }}
-                className={`w-full aspect-square rounded-[2px] border transition-all duration-300 ${getHeatColor(c.count)}`}
-                title={`${c.date.toDateString()}: ${c.count} tasks`}
-              />
-            ))}
-          </div>
-        ))}
+    <div className="w-full space-y-4">
+      <div className="flex items-start justify-between">
+         <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] font-black tracking-[0.1em] text-muted-foreground uppercase opacity-60">Deployment Velocity</span>
+            <div className="flex items-baseline gap-2">
+               <span className="text-2xl font-black text-primary tabular-nums leading-none">{todayCount}</span>
+               <span className="text-[11px] font-bold text-foreground/40 uppercase tracking-tighter">Neutralized</span>
+            </div>
+         </div>
+         <div className="flex flex-col items-end gap-1.5">
+            <div className="flex gap-4 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
+               <span>Active Days: <b className="text-foreground">{totalActiveDays}</b></span>
+               <span>Max Streak: <b className="text-foreground">{maxStreak}</b></span>
+            </div>
+            <div className="flex gap-0.5 pb-1">
+               {[0, 1, 2, 3, 4].map(v => (
+                  <div key={v} className={`w-1.5 h-1.5 rounded-[0.5px] ${getHeatColor(v)}`} />
+               ))}
+            </div>
+         </div>
+      </div>
+      <div className="relative">
+        <div className={`flex flex-1 justify-between ${compact ? 'gap-1' : 'gap-1.5'} w-full`}>
+          {weeks.map((week, wi) => (
+            <div key={wi} className={`flex flex-col ${compact ? 'gap-1' : 'gap-1.5'} flex-1`}>
+              {week.map((c, di) => (
+                <motion.div
+                  key={di}
+                  whileHover={{ scale: 1.5, zIndex: 50, transition: { duration: 0.1 } }}
+                  className={`w-full aspect-square rounded-[1.5px] border transition-all duration-300 relative group/cell ${getHeatColor(c.count, c.isToday)}`}
+                >
+                  {c.isToday && (
+                    <motion.div 
+                      animate={{ opacity: [0.4, 0.8, 0.4] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-x-0 -bottom-1 h-0.5 bg-primary/40 rounded-full blur-[1px]" 
+                    />
+                  )}
+                  <div className={`bg-popover text-popover-foreground px-3 py-1.5 rounded-[2px] text-[10px] absolute bottom-full mb-3 opacity-0 group-hover/cell:opacity-100 pointer-events-none whitespace-nowrap z-[100] border border-border/20 shadow-2xl transition-all duration-200 transform translate-y-1 group-hover/cell:translate-y-0
+                    ${wi < 2 ? 'left-0' : wi > weeks.length - 3 ? 'right-0' : 'left-1/2 -translate-x-1/2'}
+                  `}>
+                     <span className="font-black text-primary tabular-nums tracking-tight">{c.count}</span>
+                     <span className="mx-1.5 opacity-40">|</span>
+                     <span className="font-bold uppercase tracking-widest text-[9px]">Month {Math.floor((c.dayNumber - 1) / 30) + 1} — Day {c.dayNumber % 30 || 30}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ))}
+        </div>
+        
+        {/* Month Labels */}
+        <div className="flex justify-between mt-2 px-1">
+           {(() => {
+              let monthCounter = 0;
+              let lastMonth = -1;
+              return weeks.map((week, wi) => {
+                 const firstDay = week[0];
+                 const currentMonth = firstDay.date.getMonth();
+                 const isNewMonth = currentMonth !== lastMonth;
+                 if (isNewMonth) {
+                    lastMonth = currentMonth;
+                    monthCounter++;
+                 }
+                 const isStart = firstDay.date.getDate() <= 7 && isNewMonth;
+                 
+                 return (
+                    <div key={wi} className="flex-1 text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tighter">
+                       {isStart ? `${monthCounter}${monthCounter === 1 ? 'st' : monthCounter === 2 ? 'nd' : monthCounter === 3 ? 'rd' : 'th'}` : ''}
+                    </div>
+                 );
+              });
+           })()}
+        </div>
       </div>
     </div>
   );
@@ -193,7 +269,7 @@ function StreakGuard() {
           {status === 'Protected' ? <ShieldCheck className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-0.5">Mission Integrity</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70 mb-0.5">Persistence Shield</p>
           <p className="text-md font-black tracking-tight">{status === 'Protected' ? 'STREAK SECURED' : 'STREAK AT RISK'}</p>
         </div>
       </div>
@@ -592,7 +668,7 @@ export default function DashboardView() {
         </div>
 
         <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6 h-full">
-           <BentoCard title="Mission Integrity" icon={BarChart3}>
+           <BentoCard title="Deployment Log" icon={BarChart3}>
               <Heatmap dailyLogs={state.dailyLogs} compact />
            </BentoCard>
 
