@@ -68,20 +68,14 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
           <button
             key={id}
             onClick={() => onTabChange(id)}
-            className={`w-full group relative flex items-center gap-4 px-4 py-4 rounded-[20px] transition-all duration-500 text-left ${
+            className={`w-full group relative flex items-center gap-4 px-4 py-3.5 rounded-[18px] transition-all duration-300 text-left ${
               activeTab === id
-                ? 'bg-primary text-white shadow-[0_10px_25px_rgba(var(--primary-rgb),0.3)]'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                ? 'bg-primary text-white shadow-[0_10px_25px_rgba(var(--primary-rgb),0.2)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/20'
             }`}
           >
-            <div className={`relative transition-transform duration-500 ${activeTab === id ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-6'}`}>
+            <div className={`relative transition-transform duration-300 ${activeTab === id ? 'scale-110' : 'group-hover:scale-110'}`}>
                <Icon className={`w-5 h-5 flex-shrink-0 ${activeTab === id ? 'text-white' : 'group-hover:text-primary'}`} />
-               {activeTab === id && (
-                 <motion.div 
-                   layoutId="nav-pulse"
-                   className="absolute -inset-1.5 bg-white/20 rounded-lg blur opacity-50"
-                 />
-               )}
             </div>
             {!collapsed && (
               <motion.span 
@@ -100,18 +94,18 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
       </nav>
 
       {/* Bottom Area */}
-      <div className="p-4 border-t border-border/5 space-y-5 bg-background/20 backdrop-blur-xl">
+      <div className="p-4 border-t border-border/5 space-y-4 bg-background/20 backdrop-blur-xl">
         {/* Streak/Trophy Minimal Strip */}
         {!collapsed && (
-          <div className="bg-muted/20 rounded-[22px] p-2 flex gap-2 border border-border/5">
-             <div className="flex-1 bg-card/40 rounded-[18px] py-2.5 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
-                <div className={`absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity`} />
-                <Flame className={`w-4 h-4 relative z-10 ${streak > 0 ? 'text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]' : 'text-muted-foreground opacity-40'}`} />
+          <div className="bg-muted/10 rounded-[20px] p-1.5 flex gap-1.5 border border-border/5">
+             <div className="flex-1 bg-card/40 rounded-[16px] py-2 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Flame className={`w-4 h-4 relative z-10 ${streak > 0 ? 'text-orange-500' : 'text-muted-foreground opacity-40'}`} />
                 <span className="text-[10px] font-black text-foreground relative z-10 tabular-nums">{streak}d</span>
              </div>
-             <div className="flex-1 bg-card/40 rounded-[18px] py-2.5 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
-                <div className={`absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity`} />
-                <Trophy className="w-4 h-4 text-primary relative z-10 drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" />
+             <div className="flex-1 bg-card/40 rounded-[16px] py-2 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Trophy className="w-4 h-4 text-primary relative z-10" />
                 <span className="text-[10px] font-black text-foreground relative z-10 tabular-nums">{totalDone}</span>
              </div>
           </div>
@@ -120,10 +114,10 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
         {/* Student Profile (Interactive) */}
         <button 
           onClick={onSettingsOpen}
-          className={`group flex items-center gap-3 p-3 rounded-2xl transition-all duration-300 text-left border border-transparent hover:border-primary/20 hover:bg-primary/5 ${collapsed ? 'justify-center' : ''}`}
+          className={`group flex items-center gap-4 px-4 py-3 rounded-[18px] transition-all duration-300 text-left border border-transparent hover:border-primary/10 hover:bg-primary/5 ${collapsed ? 'justify-center' : ''}`}
           title="Edit Tactical Profile"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-xs shadow-lg shadow-primary/10 border-t border-white/20 group-hover:scale-110 transition-transform">
+          <div className="w-9 h-9 rounded-[14px] bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-[11px] shadow-lg shadow-primary/10 border-t border-white/20 group-hover:scale-105 transition-transform">
             {(state.userName || 'S').charAt(0).toUpperCase()}
           </div>
           {!collapsed && (
@@ -138,30 +132,39 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
         </button>
 
         {/* Theme Toggle & Collapse Toggle */}
-        <div className="flex gap-2">
-          {!collapsed && (
-            <button 
-              onClick={toggleTheme} 
-              className="px-4 py-3 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-border/10"
-              title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-            >
-              {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
-            </button>
-          )}
-          <button 
-            onClick={toggleSidebar}
-            className="flex-1 flex items-center justify-center py-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all border border-transparent hover:border-border/10 font-black text-[9px] uppercase tracking-[0.3em]"
-          >
-            {collapsed ? <div className="flex flex-col gap-4 items-center">
+        <div className={`flex ${collapsed ? 'flex-col items-center gap-4' : 'gap-2'}`}>
+          {!collapsed ? (
+            <>
               <button 
-                onClick={(e) => { e.stopPropagation(); toggleTheme(); }} 
-                className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                onClick={toggleTheme} 
+                className="px-4 py-3 rounded-[14px] text-muted-foreground bg-muted/5 hover:text-primary hover:bg-primary/10 transition-all border border-border/5 hover:border-primary/20"
+                title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
               >
-                {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
+                {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]" /> : <Moon className="w-4 h-4 text-primary" />}
               </button>
-              <PanelLeftOpen className="w-5 h-5 mt-2" />
-            </div> : <div className="flex items-center gap-2"><PanelLeftClose className="w-3.5 h-3.5" /> SECURE</div>}
-          </button>
+              <button 
+                onClick={toggleSidebar}
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[14px] text-muted-foreground bg-muted/5 hover:text-foreground hover:bg-muted/20 transition-all border border-border/5 hover:border-border/10 font-black text-[9px] uppercase tracking-[0.3em]"
+              >
+                <PanelLeftClose className="w-3.5 h-3.5" /> SECURE
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-4 py-2">
+               <button 
+                 onClick={toggleTheme} 
+                 className="p-3 rounded-2xl bg-muted/5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all border border-border/5"
+               >
+                 {state.theme === 'dark' ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-primary" />}
+               </button>
+               <button 
+                 onClick={toggleSidebar}
+                 className="p-3 rounded-2xl bg-muted/5 text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-all border border-border/5"
+               >
+                 <PanelLeftOpen className="w-5 h-5" />
+               </button>
+            </div>
+          )}
         </div>
       </div>
     </motion.aside>
