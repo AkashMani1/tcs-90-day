@@ -2,7 +2,7 @@
 
 import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, ChevronRight, Flame, Trophy } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { calcStreak, calcCurrentWeek } from '@/lib/utils';
+import { calcStreak, calcCurrentWeek, getStreakStatus } from '@/lib/utils';
 
 export type TabId = 'dashboard' | 'roadmap' | 'dsa' | 'mocks' | 'notes';
 
@@ -48,10 +48,26 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
 
       {/* Stats strip */}
       <div className="px-3 py-2.5 border-b border-slate-800 flex gap-2">
-        <div className="flex-1 bg-slate-800/60 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
-          <Flame className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-          <span className="text-amber-400 text-xs font-bold">{streak}d</span>
+        <div className="flex-1 bg-slate-800/60 rounded-lg px-3 py-1.5 flex items-center gap-1.5 group relative cursor-default">
+          <div className="relative">
+            <Flame className={`w-3.5 h-3.5 flex-shrink-0 ${streak === 0 ? 'text-slate-600' : 'text-amber-400'}`} />
+            {getStreakStatus(state.dailyLogs) === 'At Risk' && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-orange-500 rounded-full animate-ping" />
+            )}
+          </div>
+          <span className={`${streak === 0 ? 'text-slate-600' : 'text-amber-400'} text-xs font-bold`}>{streak}d</span>
           <span className="text-slate-600 text-xs">streak</span>
+          
+          {/* Status Tooltip-like tooltip */}
+          <div className="absolute left-1/2 -top-8 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap bg-slate-900 border border-slate-700 text-[10px] px-2 py-1 rounded shadow-xl z-50">
+            {getStreakStatus(state.dailyLogs) === 'Protected' ? (
+              <span className="text-emerald-400 font-bold">Protected ✅</span>
+            ) : getStreakStatus(state.dailyLogs) === 'At Risk' ? (
+              <span className="text-orange-400 font-bold">At Risk ⏳</span>
+            ) : (
+              <span className="text-slate-500">No active streak</span>
+            )}
+          </div>
         </div>
         <div className="flex-1 bg-slate-800/60 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
           <Trophy className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />

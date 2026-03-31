@@ -6,6 +6,7 @@ import { AppProvider } from '@/context/AppContext';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('http://localhost:3000'), // Adjust to your production URL for deployment
   title: 'PlacePrep — Crack TCS Ninja, Digital & Prime in 3 Months',
   description:
     'PlacePrep is your all-in-one placement preparation command center for TCS Ninja, Digital, and Prime roles. Track DSA problems, mock interviews, STAR stories, and your 12-week roadmap — all in one place.',

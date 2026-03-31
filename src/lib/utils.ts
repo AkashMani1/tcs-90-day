@@ -72,3 +72,25 @@ export function generateId(): string {
 export function pluralize(n: number, singular: string, plural = singular + 's'): string {
   return n === 1 ? `${n} ${singular}` : `${n} ${plural}`;
 }
+
+export function getHoursUntilMidnight(): string {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const diffMs = midnight.getTime() - now.getTime();
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  return `${hours}h ${minutes}m`;
+}
+
+export type StreakStatus = 'Protected' | 'At Risk' | 'None';
+
+export function getStreakStatus(dailyLogs: { date: string; completedHabits: string[]; hours?: number }[]): StreakStatus {
+  const streak = calcStreak(dailyLogs);
+  if (streak === 0) return 'None';
+
+  const t = today();
+  const todayLog = dailyLogs.find((l) => l.date === t);
+  const isActiveToday = todayLog && ((todayLog.completedHabits && todayLog.completedHabits.length > 0) || (todayLog.hours && todayLog.hours > 0));
+
+  return isActiveToday ? 'Protected' : 'At Risk';
+}

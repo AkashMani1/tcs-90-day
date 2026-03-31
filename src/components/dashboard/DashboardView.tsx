@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle, Save, CheckCheck, Activity, Zap } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { calcStreak, calcTotalHours, calcCurrentWeek, today } from '@/lib/utils';
+import { calcStreak, calcTotalHours, calcCurrentWeek, today, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
+import { ShieldCheck, AlertTriangle } from 'lucide-react';
 import { HABIT_TEMPLATES, QUOTES } from '@/lib/defaultData';
 
 // ── Heatmap ───────────────────────────────────────────────────────────────────
@@ -94,6 +96,61 @@ function Heatmap({ dailyLogs }: { dailyLogs: { date: string; completedHabits: st
   );
 }
 
+// ── Streak Guard ─────────────────────────────────────────────────────────────
+function StreakGuard() {
+  const { state } = useApp();
+  const status = getStreakStatus(state.dailyLogs);
+  const [timeLeft, setTimeLeft] = useState(getHoursUntilMidnight());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(getHoursUntilMidnight());
+    }, 60000); // Update every minute
+    return () => clearInterval(timer);
+  }, []);
+
+  if (status === 'None') return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`mb-4 p-3 rounded-xl border flex items-center justify-between transition-all ${
+        status === 'Protected'
+          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+          : 'bg-orange-500/10 border-orange-500/20 text-orange-400'
+      }`}
+    >
+      <div className="flex items-center gap-2.5">
+        <div className={`p-1.5 rounded-lg ${status === 'Protected' ? 'bg-emerald-500/20' : 'bg-orange-500/20'}`}>
+          {status === 'Protected' ? (
+            <ShieldCheck className="w-4 h-4" />
+          ) : (
+            <AlertTriangle className="w-4 h-4 animate-pulse" />
+          )}
+        </div>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider">
+            Streak {status}
+          </p>
+          <p className="text-[10px] opacity-80">
+            {status === 'Protected'
+              ? 'Great job! Your streak is secured for today.'
+              : 'Complete a task to keep your momentum alive!'}
+          </p>
+        </div>
+      </div>
+      
+      {status === 'At Risk' && (
+        <div className="text-right">
+          <p className="text-[10px] font-bold uppercase opacity-60">Resets in</p>
+          <p className="text-sm font-black tabular-nums">{timeLeft}</p>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 // ── Today's Habits ────────────────────────────────────────────────────────────
 function TodayHabits() {
   const { getTodayLog, toggleHabit, touchToday, initialized } = useApp();
@@ -109,7 +166,9 @@ function TodayHabits() {
   const pct = Math.round((done / HABIT_TEMPLATES.length) * 100);
 
   return (
-    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 lg:col-span-2">
+    <motion.div layout className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 lg:col-span-2">
+      <StreakGuard />
+      
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-indigo-500/10 rounded-xl flex items-center justify-center">
@@ -157,7 +216,7 @@ function TodayHabits() {
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -190,7 +249,7 @@ function DailyMetricsWidget() {
   };
 
   return (
-    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 flex flex-col">
+    <motion.div layout className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 flex flex-col">
       <div className="flex items-center gap-2.5 mb-5">
         <div className="w-8 h-8 bg-amber-500/10 rounded-xl flex items-center justify-center">
           <Activity className="w-4 h-4 text-amber-400" />
@@ -245,7 +304,7 @@ function DailyMetricsWidget() {
       >
         {saved ? <><CheckCircle2 className="w-4 h-4" /> Saved!</> : <><Save className="w-4 h-4" /> Save Log</>}
       </button>
-    </div>
+    </motion.div>
   );
 }
 
