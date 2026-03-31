@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>" />
       </head>
-      <body className={`${inter.variable} font-sans bg-slate-900 text-slate-50 antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <AppProvider>
           {children}
         </AppProvider>

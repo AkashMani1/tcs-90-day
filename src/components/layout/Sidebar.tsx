@@ -33,14 +33,15 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
   return (
     <motion.aside 
       initial={false}
-      animate={{ width: collapsed ? '80px' : '260px' }}
-      className="fixed left-0 top-0 h-screen bg-obsidian-surface border-r border-obsidian-surface-highest/20 flex flex-col z-40 select-none overflow-hidden"
+      animate={{ width: collapsed ? '80px' : '280px' }}
+      className="fixed left-0 top-0 h-screen glass border-r border-border/10 flex flex-col z-50 select-none overflow-hidden"
     >
       {/* Logo Area */}
-      <div className="px-5 py-6 flex items-center justify-between border-b border-obsidian-surface-highest/10">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 bg-gradient-to-br from-neon-indigo/20 to-neon-cyan/20 border border-neon-indigo/30 rounded-xl flex items-center justify-center shadow-lg shadow-neon-indigo/5 flex-shrink-0 neon-glow-indigo">
-            <Target className="w-5 h-5 text-neon-indigo-tint" />
+      <div className="px-6 py-8 flex items-center justify-between border-b border-border/5">
+        <div className="flex items-center gap-4 overflow-hidden">
+          <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/5 flex-shrink-0 relative group">
+            <div className="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Target className="w-6 h-6 text-primary relative z-10" />
           </div>
           {!collapsed && (
             <motion.div 
@@ -49,118 +50,110 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
               className="whitespace-nowrap"
             >
               <div className="flex items-baseline gap-1">
-                <span className="text-slate-100 font-black text-lg tracking-tight">Place</span>
-                <span className="text-neon-indigo font-black text-lg tracking-tight">Prep</span>
+                <span className="text-foreground font-black text-xl tracking-tighter">PLACE</span>
+                <span className="text-primary font-black text-xl tracking-tighter">PREP</span>
               </div>
-              <p className="text-slate-600 text-[10px] font-bold uppercase tracking-wider -mt-0.5">Placement Pro</p>
+              <p className="text-muted-foreground text-[9px] font-black uppercase tracking-[0.3em] -mt-1 opacity-60">Architect v1.0</p>
             </motion.div>
           )}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-4 py-10 space-y-2 overflow-y-auto custom-scrollbar">
         {!collapsed && (
-          <p className="text-slate-700 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 px-3">Terminal</p>
+          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.4em] mb-6 px-4 opacity-40">Tactical Control</p>
         )}
         {NAV_ITEMS.map(({ id, icon: Icon, label, badge }) => (
           <button
             key={id}
             onClick={() => onTabChange(id)}
-            className={`w-full group relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 text-left ${
+            className={`w-full group relative flex items-center gap-4 px-4 py-4 rounded-[20px] transition-all duration-500 text-left ${
               activeTab === id
-                ? 'bg-neon-indigo/10 text-white shadow-xl shadow-neon-indigo/5 border border-neon-indigo/20'
-                : 'text-slate-500 hover:text-slate-200 hover:bg-obsidian-surface-high/40 border border-transparent'
+                ? 'bg-primary text-white shadow-[0_10px_25px_rgba(var(--primary-rgb),0.3)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
             }`}
           >
-            {activeTab === id && (
-              <motion.div 
-                layoutId="active-tab"
-                className="absolute left-0 w-1 h-5 bg-neon-indigo rounded-full"
-              />
-            )}
-            <motion.div
-               animate={activeTab === id ? {
-                  opacity: [1, 0.8, 1, 0.9, 1],
-                  filter: [
-                    'drop-shadow(0 0 2px rgba(99,102,241,0.5))',
-                    'drop-shadow(0 0 5px rgba(99,102,241,0.8))',
-                    'drop-shadow(0 0 2px rgba(99,102,241,0.5))'
-                  ]
-               } : {}}
-               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            >
-               <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-300 ${activeTab === id ? 'text-neon-indigo scale-110' : 'text-slate-600 group-hover:text-slate-300'}`} />
-            </motion.div>
+            <div className={`relative transition-transform duration-500 ${activeTab === id ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-6'}`}>
+               <Icon className={`w-5 h-5 flex-shrink-0 ${activeTab === id ? 'text-white' : 'group-hover:text-primary'}`} />
+               {activeTab === id && (
+                 <motion.div 
+                   layoutId="nav-pulse"
+                   className="absolute -inset-1.5 bg-white/20 rounded-lg blur opacity-50"
+                 />
+               )}
+            </div>
             {!collapsed && (
               <motion.span 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex-1 text-sm font-semibold whitespace-nowrap"
+                className="flex-1 text-sm font-bold tracking-tight whitespace-nowrap"
               >
                 {label}
               </motion.span>
             )}
             {!collapsed && badge && (
-              <span className="text-[10px] bg-neon-indigo/20 text-neon-indigo-tint px-1.5 py-0.5 rounded-md font-bold">{badge}</span>
+              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${activeTab === id ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>{badge}</span>
             )}
           </button>
         ))}
       </nav>
 
       {/* Bottom Area */}
-      <div className="p-3 border-t border-obsidian-surface-highest/10 space-y-4 bg-obsidian-surface/60 backdrop-blur-md">
+      <div className="p-4 border-t border-border/5 space-y-5 bg-background/20 backdrop-blur-xl">
         {/* Streak/Trophy Minimal Strip */}
-        <div className={`flex gap-2 ${collapsed ? 'flex-col items-center' : ''}`}>
-           <div className="flex-1 bg-obsidian-surface-high/40 rounded-xl p-2.5 flex items-center justify-center gap-2 border border-obsidian-surface-highest/10 group relative">
-              <Flame className={`w-4 h-4 ${streak > 0 ? 'text-amber-400' : 'text-slate-600'}`} />
-              {!collapsed && <span className="text-xs font-bold text-slate-200">{streak}d</span>}
-           </div>
-           {!collapsed && (
-             <div className="flex-1 bg-obsidian-surface-high/40 rounded-xl p-2.5 flex items-center justify-center gap-2 border border-obsidian-surface-highest/10">
-                <Trophy className="w-4 h-4 text-neon-cyan" />
-                <span className="text-xs font-bold text-slate-200">{totalDone}</span>
+        {!collapsed && (
+          <div className="bg-muted/20 rounded-[22px] p-2 flex gap-2 border border-border/5">
+             <div className="flex-1 bg-card/40 rounded-[18px] py-2.5 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
+                <div className={`absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity`} />
+                <Flame className={`w-4 h-4 relative z-10 ${streak > 0 ? 'text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]' : 'text-muted-foreground opacity-40'}`} />
+                <span className="text-[10px] font-black text-foreground relative z-10 tabular-nums">{streak}d</span>
              </div>
-           )}
-        </div>
+             <div className="flex-1 bg-card/40 rounded-[18px] py-2.5 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
+                <div className={`absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity`} />
+                <Trophy className="w-4 h-4 text-primary relative z-10 drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" />
+                <span className="text-[10px] font-black text-foreground relative z-10 tabular-nums">{totalDone}</span>
+             </div>
+          </div>
+        )}
 
         {/* User Card */}
-        <div className={`flex items-center gap-3 p-1.5 ${collapsed ? 'justify-center' : ''}`}>
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-neon-indigo to-neon-purple flex items-center justify-center flex-shrink-0 text-white font-black text-sm shadow-lg shadow-neon-indigo/20">
+        <div className={`flex items-center gap-4 px-2 py-1 ${collapsed ? 'justify-center' : ''}`}>
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: -5 }}
+            className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-sm shadow-xl shadow-primary/10 border-t border-white/20"
+          >
             {(state.userName || 'S').charAt(0).toUpperCase()}
-          </div>
+          </motion.div>
           {!collapsed && (
             <motion.div 
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
                className="flex-1 min-w-0"
             >
-              <p className="text-slate-100 text-sm font-bold truncate leading-tight">{state.userName || 'Student'}</p>
-              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider truncate">{state.targetRole}</p>
+              <p className="text-foreground text-sm font-black truncate leading-none mb-1">{state.userName || 'Student'}</p>
+              <p className="text-muted-foreground text-[9px] font-black uppercase tracking-widest truncate opacity-60">{state.targetRole}</p>
             </motion.div>
           )}
           {!collapsed && (
-            <button onClick={onSettingsOpen} className="p-1.5 rounded-lg text-slate-600 hover:text-slate-200 hover:bg-muted transition-all">
-              <Settings className="w-4 h-4" />
-            </button>
-          )}
-          {!collapsed && (
-            <button 
-              onClick={toggleTheme} 
-              className="p-1.5 rounded-lg text-slate-600 hover:text-primary hover:bg-primary/10 transition-all ml-1"
-              title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-            >
-              {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-500" />}
-            </button>
+             <div className="flex flex-col gap-1">
+                <button 
+                  onClick={toggleTheme} 
+                  className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                  title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+                >
+                  {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
+                </button>
+             </div>
           )}
         </div>
 
         {/* Collapse Toggle */}
         <button 
           onClick={toggleSidebar}
-          className="w-full flex items-center justify-center p-2 rounded-xl text-slate-600 hover:text-neon-cyan hover:bg-neon-cyan/10 transition-all border border-transparent hover:border-neon-cyan/20"
+          className="w-full flex items-center justify-center py-4 rounded-[20px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all border border-transparent hover:border-border/10 font-black text-[10px] uppercase tracking-[0.3em]"
         >
-          {collapsed ? <PanelLeftOpen className="w-5 h-5" /> : <div className="flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest"><PanelLeftClose className="w-4 h-4" /> Collapse</div>}
+          {collapsed ? <PanelLeftOpen className="w-5 h-5" /> : <div className="flex items-center gap-3"><PanelLeftClose className="w-4 h-4" /> SECURE CONSOLE</div>}
         </button>
       </div>
     </motion.aside>
