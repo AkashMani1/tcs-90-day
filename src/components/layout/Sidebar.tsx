@@ -117,44 +117,32 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
           </div>
         )}
 
-        {/* User Card */}
-        <div className={`flex items-center gap-4 px-2 py-1 ${collapsed ? 'justify-center' : ''}`}>
-          <motion.div 
-            whileHover={{ scale: 1.1, rotate: -5 }}
-            className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-sm shadow-xl shadow-primary/10 border-t border-white/20"
-          >
-            {(state.userName || 'S').charAt(0).toUpperCase()}
-          </motion.div>
+        {/* Theme Toggle & Collapse Toggle */}
+        <div className="flex gap-2">
           {!collapsed && (
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               className="flex-1 min-w-0"
+            <button 
+              onClick={toggleTheme} 
+              className="px-4 py-4 rounded-[20px] text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-border/10"
+              title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             >
-              <p className="text-foreground text-sm font-black truncate leading-none mb-1">{state.userName || 'Student'}</p>
-              <p className="text-muted-foreground text-[9px] font-black uppercase tracking-widest truncate opacity-60">{state.targetRole}</p>
-            </motion.div>
+              {state.theme === 'dark' ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-primary" />}
+            </button>
           )}
-          {!collapsed && (
-             <div className="flex flex-col gap-1">
-                <button 
-                  onClick={toggleTheme} 
-                  className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
-                  title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-                >
-                  {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
-                </button>
-             </div>
-          )}
+          <button 
+            onClick={toggleSidebar}
+            className="flex-1 flex items-center justify-center py-4 rounded-[20px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all border border-transparent hover:border-border/10 font-black text-[10px] uppercase tracking-[0.3em]"
+          >
+            {collapsed ? <div className="flex flex-col gap-4 items-center">
+              <button 
+                onClick={(e) => { e.stopPropagation(); toggleTheme(); }} 
+                className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+              >
+                {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
+              </button>
+              <PanelLeftOpen className="w-5 h-5" />
+            </div> : <div className="flex items-center gap-3"><PanelLeftClose className="w-4 h-4" /> SECURE CONSOLE</div>}
+          </button>
         </div>
-
-        {/* Collapse Toggle */}
-        <button 
-          onClick={toggleSidebar}
-          className="w-full flex items-center justify-center py-4 rounded-[20px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all border border-transparent hover:border-border/10 font-black text-[10px] uppercase tracking-[0.3em]"
-        >
-          {collapsed ? <PanelLeftOpen className="w-5 h-5" /> : <div className="flex items-center gap-3"><PanelLeftClose className="w-4 h-4" /> SECURE CONSOLE</div>}
-        </button>
       </div>
     </motion.aside>
   );
