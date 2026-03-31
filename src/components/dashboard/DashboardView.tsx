@@ -1,8 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle, Save, CheckCheck, Activity, Zap, ShieldCheck, AlertTriangle, Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb, Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle, 
+  Save, CheckCheck, Activity, Zap, ShieldCheck, AlertTriangle, 
+  Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb, 
+  Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target 
+} from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcTotalHours, calcCurrentWeek, today, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
 import { QUOTES } from '@/lib/defaultData';
@@ -151,129 +156,201 @@ function StreakGuard() {
   );
 }
 
-// ── Daily Task Checklist ────────────────────────────────────────────────────────────
+// ── Daily Accountability Console ─────────────────────────────────────────────
 
 function DailyTaskChecklist() {
-  const { getTodayLog, updateDailyLog, toggleHabit, initialized } = useApp();
+  const { getTodayLog, updateDailyLog, toggleHabit } = useApp();
   const log = getTodayLog();
   const [saved, setSaved] = useState(false);
 
+  // Sync local state
   const [probs, setProbs] = useState(log.problemsSolved || { easy: 0, medium: 0, hard: 0 });
   const [concepts, setConcepts] = useState(log.conceptsLearned || ['', '', '']);
   const [struggles, setStruggles] = useState(log.struggles || '');
-  const [tomorrow, setTomorrow] = useState(log.tomorrowPlan || { morning: '', afternoon: '' });
-  const [hrs, setHrs] = useState(log.hours);
+  const [hrs, setHrs] = useState(log.hours || 0);
+  const [energy, setEnergy] = useState(log.energy || 5);
+  const [confidence, setConfidence] = useState(log.confidence || 5);
+
+  useEffect(() => {
+    setProbs(log.problemsSolved || { easy: 0, medium: 0, hard: 0 });
+    setConcepts(log.conceptsLearned || ['', '', '']);
+    setStruggles(log.struggles || '');
+    setHrs(log.hours || 0);
+    setEnergy(log.energy || 5);
+    setConfidence(log.confidence || 5);
+  }, [log.date]);
 
   const handleSave = () => {
-    updateDailyLog({ problemsSolved: probs, conceptsLearned: concepts, struggles, tomorrowPlan: tomorrow, hours: hrs });
+    updateDailyLog({ 
+      problemsSolved: probs, 
+      conceptsLearned: concepts, 
+      struggles, 
+      hours: hrs,
+      energy,
+      confidence
+    });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
   const CHECKBOX_SYSTEM = [
-     { id: 'm_theory', label: 'Theory & Concepts', block: 'Morning' },
-     { id: 'a_solve', label: 'DSA Practice (3-4)', block: 'Afternoon' },
-     { id: 'e_review', label: 'Review & Plan', block: 'Evening' }
+     { id: 'm_theory', label: 'Theory Deep-Dive', block: 'Morning', icon: BookOpen },
+     { id: 'a_solve', label: 'Kill List Targets', block: 'Afternoon', icon: Target },
+     { id: 'e_review', label: 'Nightly Extraction', block: 'Evening', icon: ShieldCheck },
+     { id: 'aptitude', label: 'Aptitude Lab', block: 'Core', icon: Activity },
+     { id: 'revise', label: 'System Recovery', block: 'Night', icon: Zap }
   ];
 
   const doneCount = log.completedHabits.length;
-  const pct = Math.round((doneCount / 9) * 100);
+  const pct = Math.round((doneCount / CHECKBOX_SYSTEM.length) * 100);
 
   return (
-    <div className="space-y-8">
-      {/* Quick Checkboxes */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div className="space-y-10">
+      <div className="flex items-center justify-between px-2">
+         <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Mission Persistence</p>
+            <div className="flex items-center gap-3">
+               <div className="h-2 w-48 bg-obsidian-surface-highest/20 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }} 
+                    className="h-full bg-neon-indigo shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
+                  />
+               </div>
+               <span className="text-xs font-black text-neon-indigo tabular-nums">{pct}%</span>
+            </div>
+         </div>
+         <div className="text-right">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Active Window</p>
+            <p className="text-xs font-black text-white uppercase">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         {CHECKBOX_SYSTEM.map((t) => {
           const isChecked = log.completedHabits.includes(t.id);
+          const Icon = t.icon;
           return (
-            <button
+            <motion.button
               key={t.id}
+              whileTap={{ scale: 0.95 }}
               onClick={() => toggleHabit(t.id)}
-              className={`p-4 rounded-2xl border text-left flex flex-col gap-3 transition-all ${
-                isChecked ? 'bg-neon-indigo/10 border-neon-indigo/30' : 'bg-obsidian-surface-highest/5 border-obsidian-surface-highest/10 hover:border-slate-600'
+              className={`p-5 rounded-3xl border text-left flex flex-col gap-4 transition-all relative overflow-hidden group ${
+                isChecked ? 'bg-neon-indigo/10 border-neon-indigo/30' : 'bg-obsidian-surface-high/20 border-obsidian-surface-highest/10 hover:border-slate-600'
               }`}
             >
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{t.block}</span>
-                {isChecked ? <CheckCircle2 className="w-4 h-4 text-neon-indigo" /> : <Circle className="w-4 h-4 text-slate-700" />}
+              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                 isChecked ? 'bg-neon-indigo/20 text-neon-indigo-tint neon-glow-indigo' : 'bg-obsidian-surface-highest/20 text-slate-600'
+              }`}>
+                 <Icon className="w-5 h-5" />
               </div>
-              <span className={`text-sm font-bold ${isChecked ? 'text-slate-100' : 'text-slate-400'}`}>{t.label}</span>
-            </button>
+              <div>
+                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 block mb-1">{t.block}</span>
+                 <span className={`text-[13px] font-black leading-tight ${isChecked ? 'text-slate-100' : 'text-slate-400'}`}>{t.label}</span>
+              </div>
+            </motion.button>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left: Input Grid */}
-        <div className="space-y-6">
-           <div className="bg-obsidian-surface/30 rounded-2xl p-5 border border-obsidian-surface-highest/10">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                <Target className="w-3 h-3" /> Problems Solved
-              </h4>
-              <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="space-y-8">
+           <div className="bg-obsidian-surface-high/20 rounded-[32px] p-8 border border-obsidian-surface-highest/10">
+              <div className="flex items-center justify-between mb-8">
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 flex items-center gap-3">
+                   <Target className="w-4 h-4 text-neon-purple" /> Target Neutralization
+                 </h4>
+                 <div className="text-[10px] font-black text-neon-purple uppercase bg-neon-purple/10 px-3 py-1 rounded-full border border-neon-purple/20">DSA Core</div>
+              </div>
+              <div className="grid grid-cols-3 gap-6">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
-                   <div key={diff} className="flex flex-col items-center bg-obsidian-surface-high/30 rounded-xl p-3 border border-obsidian-surface-highest/10">
-                      <span className="text-[9px] font-black uppercase tracking-tighter text-slate-400 mb-2">{diff}</span>
-                      <div className="flex items-center gap-3">
-                        <button onClick={() => setProbs(p => ({...p, [diff]: Math.max(0, p[diff] - 1)}))} className="text-slate-500 hover:text-white"><Minus className="w-3 h-3"/></button>
-                        <span className="text-xl font-black text-white w-6 text-center">{probs[diff]}</span>
-                        <button onClick={() => setProbs(p => ({...p, [diff]: p[diff] + 1}))} className="text-slate-500 hover:text-white"><Plus className="w-3 h-3"/></button>
+                   <div key={diff} className="flex flex-col items-center bg-obsidian-surface-high/30 rounded-2xl p-4 border border-obsidian-surface-highest/5 group hover:border-neon-indigo/20 transition-all">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-4 group-hover:text-slate-400 transition-colors">{diff}</span>
+                      <div className="flex items-center justify-between w-full px-2">
+                        <button onClick={() => setProbs(p => {
+                          const prev = p || { easy: 0, medium: 0, hard: 0 };
+                          return { ...prev, [diff]: Math.max(0, prev[diff] - 1) };
+                        })} className="w-6 h-6 rounded-lg bg-obsidian-surface-highest/20 flex items-center justify-center text-slate-500 hover:text-white transition-all"><Minus className="w-3 h-3"/></button>
+                        <span className="text-2xl font-black text-white tabular-nums">{(probs?.[diff] || 0)}</span>
+                        <button onClick={() => setProbs(p => {
+                          const prev = p || { easy: 0, medium: 0, hard: 0 };
+                          return { ...prev, [diff]: prev[diff] + 1 };
+                        })} className="w-6 h-6 rounded-lg bg-obsidian-surface-highest/20 flex items-center justify-center text-slate-500 hover:text-white transition-all"><Plus className="w-3 h-3"/></button>
                       </div>
                    </div>
                  ))}
               </div>
            </div>
 
-           <div className="bg-obsidian-surface/30 rounded-2xl p-5 border border-obsidian-surface-highest/10">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                <Lightbulb className="w-3 h-3" /> Key Concepts
-              </h4>
-              <div className="space-y-2">
-                {[0, 1, 2].map(i => (
-                  <input 
-                    key={i} type="text" value={concepts[i]}
-                    onChange={(e) => { const n = [...concepts]; n[i] = e.target.value; setConcepts(n); }}
-                    placeholder={`Concept ${i+1}...`}
-                    className="w-full bg-obsidian-surface-high/20 border border-obsidian-surface-highest/10 rounded-xl px-4 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-neon-indigo/50 transition-all font-medium"
-                  />
-                ))}
+           <div className="grid grid-cols-2 gap-4">
+              <div className="bg-obsidian-surface-high/20 rounded-[32px] p-6 border border-obsidian-surface-highest/10 flex flex-col justify-between">
+                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-4">Focus Hours</span>
+                 <div className="flex items-end justify-between">
+                    <Clock className="w-5 h-5 text-neon-cyan mb-1.5" />
+                    <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-20 bg-transparent text-right font-black text-neon-cyan text-4xl focus:outline-none tabular-nums" />
+                 </div>
+              </div>
+              <div className="bg-obsidian-surface-high/20 rounded-[32px] p-6 border border-obsidian-surface-highest/10 flex flex-col justify-between">
+                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-4">Vibe Check</span>
+                 <div className="flex gap-4 items-center justify-end">
+                    <div className="flex flex-col items-center">
+                       <span className="text-[9px] font-bold text-slate-600 mb-1">NRG</span>
+                       <button onClick={() => setEnergy(e => Math.min(10, e + 1))} className={`w-8 h-8 rounded-lg font-black text-xs ${energy > 7 ? 'bg-orange-500/20 text-orange-400' : 'bg-slate-800 text-slate-500'}`}>{energy}</button>
+                    </div>
+                    <div className="flex flex-col items-center">
+                       <span className="text-[9px] font-bold text-slate-600 mb-1">CON</span>
+                       <button onClick={() => setConfidence(c => Math.min(10, c + 1))} className={`w-8 h-8 rounded-lg font-black text-xs ${confidence > 7 ? 'bg-neon-indigo/20 text-neon-indigo-tint' : 'bg-slate-800 text-slate-500'}`}>{confidence}</button>
+                    </div>
+                 </div>
               </div>
            </div>
         </div>
 
-        {/* Right: Planning & Save */}
         <div className="space-y-6">
-           <div className="bg-obsidian-surface/30 rounded-2xl p-5 border border-obsidian-surface-highest/10">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                <CalendarDays className="w-3 h-3" /> Planning
+           <div className="bg-obsidian-surface-high/20 rounded-[32px] p-8 border border-obsidian-surface-highest/10 h-full flex flex-col">
+              <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 flex items-center gap-3">
+                <PenTool className="w-4 h-4 text-neon-cyan" /> Intelligence Report
               </h4>
-              <div className="space-y-4">
+              <div className="space-y-4 flex-1">
                  <div>
-                   <label className="text-[9px] font-black uppercase tracking-tight text-slate-600 block mb-1.5 ml-1">Tomorrow Morning</label>
-                   <input type="text" value={tomorrow.morning} onChange={(e) => setTomorrow(p => ({...p, morning: e.target.value}))} className="w-full bg-obsidian-surface-high/20 border border-obsidian-surface-highest/10 rounded-xl px-4 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-neon-cyan/50 transition-all" />
+                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-600 block mb-2 ml-1">Key Technical Insights</label>
+                    <div className="space-y-2">
+                       {(concepts || []).map((c, i) => (
+                          <input 
+                            key={i} type="text" value={c}
+                            onChange={(e) => {
+                               const n = [...(concepts || ['', '', ''])];
+                               n[i] = e.target.value;
+                               setConcepts(n);
+                            }}
+                            placeholder={`Insight ${i+1}...`}
+                            className="w-full bg-obsidian-surface-high/30 border border-obsidian-surface-highest/5 rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-neon-indigo/30 transition-all font-medium"
+                          />
+                       ))}
+                    </div>
                  </div>
-                 <div>
-                   <label className="text-[9px] font-black uppercase tracking-tight text-slate-600 block mb-1.5 ml-1">Tomorrow Afternoon</label>
-                   <input type="text" value={tomorrow.afternoon} onChange={(e) => setTomorrow(p => ({...p, afternoon: e.target.value}))} className="w-full bg-obsidian-surface-high/20 border border-obsidian-surface-highest/10 rounded-xl px-4 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-neon-cyan/50 transition-all" />
+                 <div className="flex-1">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-600 block mb-2 ml-1">Daily Reflection / Blockers</label>
+                    <textarea 
+                       value={struggles} onChange={(e) => setStruggles(e.target.value)} 
+                       className="w-full h-24 bg-obsidian-surface-high/30 border border-obsidian-surface-highest/5 rounded-2xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-neon-indigo/30 transition-all resize-none font-medium"
+                       placeholder="What system failures did we encounter today?"
+                    />
                  </div>
               </div>
-           </div>
 
-           <div className="flex items-center gap-4">
-              <div className="flex-1 bg-obsidian-surface/30 rounded-2xl p-5 border border-obsidian-surface-highest/10 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Study Hours</span>
-                <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-16 bg-transparent text-right font-black text-neon-cyan text-xl focus:outline-none" />
+              <div className="pt-6">
+                 <button
+                   onClick={handleSave}
+                   className={`w-full h-[74px] rounded-[24px] font-black uppercase tracking-[0.3em] text-[11px] transition-all flex items-center justify-center gap-4 ${
+                     saved ? 'bg-neon-cyan/20 text-neon-cyan-tint border border-neon-cyan/40 neon-glow-cyan' : 'bg-neon-indigo text-white shadow-2xl shadow-neon-indigo/40 hover:scale-[1.02] active:scale-95'
+                   }`}
+                 >
+                   {saved ? <><CheckCircle2 className="w-4 h-4" /> Logged</> : <><Save className="w-4 h-4" /> Save Record</>}
+                 </button>
               </div>
-              <button
-                onClick={handleSave}
-                className={`flex-[1.5] h-[74px] rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 ${
-                  saved ? 'bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/30 neon-glow-cyan' : 'bg-neon-indigo text-white shadow-xl shadow-neon-indigo/20 hover:scale-105 active:scale-95'
-                }`}
-              >
-                {saved ? <><CheckCircle2 className="w-4 h-4" /> Logged</> : <><Save className="w-4 h-4" /> Save Record</>}
-              </button>
            </div>
-           </div>
+        </div>
       </div>
     </div>
   );
@@ -375,4 +452,3 @@ export default function DashboardView() {
     </div>
   );
 }
-

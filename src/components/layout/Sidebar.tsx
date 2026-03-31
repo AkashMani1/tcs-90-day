@@ -68,8 +68,8 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
             onClick={() => onTabChange(id)}
             className={`w-full group relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 text-left ${
               activeTab === id
-                ? 'bg-neon-indigo/10 text-white shadow-xl shadow-neon-indigo/5'
-                : 'text-slate-500 hover:text-slate-200 hover:bg-obsidian-surface-high/40'
+                ? 'bg-neon-indigo/10 text-white shadow-xl shadow-neon-indigo/5 border border-neon-indigo/20'
+                : 'text-slate-500 hover:text-slate-200 hover:bg-obsidian-surface-high/40 border border-transparent'
             }`}
           >
             {activeTab === id && (
@@ -78,7 +78,19 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
                 className="absolute left-0 w-1 h-5 bg-neon-indigo rounded-full"
               />
             )}
-            <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-300 ${activeTab === id ? 'text-neon-indigo scale-110' : 'text-slate-600 group-hover:text-slate-300'}`} />
+            <motion.div
+               animate={activeTab === id ? {
+                  opacity: [1, 0.8, 1, 0.9, 1],
+                  filter: [
+                    'drop-shadow(0 0 2px rgba(99,102,241,0.5))',
+                    'drop-shadow(0 0 5px rgba(99,102,241,0.8))',
+                    'drop-shadow(0 0 2px rgba(99,102,241,0.5))'
+                  ]
+               } : {}}
+               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+               <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-300 ${activeTab === id ? 'text-neon-indigo scale-110' : 'text-slate-600 group-hover:text-slate-300'}`} />
+            </motion.div>
             {!collapsed && (
               <motion.span 
                 initial={{ opacity: 0 }}
