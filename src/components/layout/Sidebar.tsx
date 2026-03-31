@@ -48,8 +48,8 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
               className="whitespace-nowrap"
             >
               <div className="flex items-baseline gap-1">
-                <span className="text-slate-100 font-black text-lg tracking-tight">Study</span>
-                <span className="text-neon-indigo font-black text-lg tracking-tight">OS</span>
+                <span className="text-slate-100 font-black text-lg tracking-tight">Place</span>
+                <span className="text-neon-indigo font-black text-lg tracking-tight">Prep</span>
               </div>
               <p className="text-slate-600 text-[10px] font-bold uppercase tracking-wider -mt-0.5">Placement Pro</p>
             </motion.div>

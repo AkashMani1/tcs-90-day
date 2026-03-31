@@ -88,7 +88,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="relative z-10 border-t border-obsidian-surface-highest/10 mt-20 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-600 text-[11px] font-bold uppercase tracking-widest">
-            StudyOS / PlacePrep © 2026
+            PlacePrep NINJA © 2026
           </p>
           <div className="flex items-center gap-6">
              <span className="text-slate-700 text-[10px] font-bold uppercase tracking-widest">Encrypted Local Storage</span>

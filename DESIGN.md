@@ -1,4 +1,4 @@
-# Design System: High-Tech Obsidian (StudyOS Refactor)
+# Design System: High-Tech Obsidian (PlacePrep Refactor)
 
 ## 1. Vision: "The Digital Alchemist"
 A core blend of high-end IDE precision and luxury editorial aesthetics. Atmospheric, dimensional, and sophisticated.
