@@ -183,7 +183,12 @@ function Heatmap({ dailyLogs }: { dailyLogs: { date: string; completedHabits: st
   const cells: { date: Date; count: number }[] = [];
   for (let i = DAYS - 1; i >= 0; i--) {
     const d = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() - i);
-    const key = d.toISOString().split('T')[0];
+    // CRITICAL: Use the same local date string format as the app handles
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const key = `${year}-${month}-${day}`;
+    
     const real = logMap.get(key);
     cells.push({ date: d, count: real !== undefined ? real : 0 });
   }
@@ -270,6 +275,7 @@ function DailyTaskChecklist() {
   const [hrs, setHrs] = useState(log.hours || 0);
   const [energy, setEnergy] = useState(log.energy || 5);
   const [confidence, setConfidence] = useState(log.confidence || 5);
+  const [tmrw, setTmrw] = useState(log.tomorrowPlan || { morning: '', afternoon: '' });
 
   useEffect(() => {
     setProbs(log.problemsSolved || { easy: 0, medium: 0, hard: 0 });
@@ -278,6 +284,7 @@ function DailyTaskChecklist() {
     setHrs(log.hours || 0);
     setEnergy(log.energy || 5);
     setConfidence(log.confidence || 5);
+    setTmrw(log.tomorrowPlan || { morning: '', afternoon: '' });
   }, [log.date]);
 
   const handleSave = () => {
@@ -287,28 +294,49 @@ function DailyTaskChecklist() {
       struggles, 
       hours: hrs,
       energy,
-      confidence
+      confidence,
+      tomorrowPlan: tmrw
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const CHECKBOX_SYSTEM = [
-     { id: 'm_theory', label: 'Theory Deep-Dive', block: 'Morning', icon: BookOpen },
-     { id: 'a_solve', label: 'Kill List Targets', block: 'Afternoon', icon: Target },
-     { id: 'e_review', label: 'Nightly Extraction', block: 'Evening', icon: ShieldCheck },
-     { id: 'aptitude', label: 'Aptitude Lab', block: 'Core', icon: Activity },
-     { id: 'revise', label: 'System Recovery', block: 'Night', icon: Zap }
+  const CHECKBOX_GROUPS = [
+    {
+      title: 'Morning Block (2.5-3h)',
+      items: [
+        { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
+        { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
+        { id: 'm_understood', label: 'Logical Lock', detail: 'Understood Topic Fully' },
+      ]
+    },
+    {
+      title: 'Afternoon Block (2-2.5h)',
+      items: [
+        { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
+        { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
+        { id: 'a_review', label: 'Solution Extraction', detail: 'Reviewed Hard Cases' },
+      ]
+    },
+    {
+      title: 'Evening Review (30-60m)',
+      items: [
+        { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
+        { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
+        { id: 'e_plan', label: 'Next-Day Intent', detail: 'Planned Next Topics' },
+      ]
+    }
   ];
 
+  const totalTasks = CHECKBOX_GROUPS.reduce((acc, g) => acc + g.items.length, 0);
   const doneCount = log.completedHabits.length;
-  const pct = Math.round((doneCount / CHECKBOX_SYSTEM.length) * 100);
+  const pct = Math.round((doneCount / totalTasks) * 100);
 
   return (
     <div className="space-y-12">
       <div className="flex items-center justify-between px-2">
          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Mission Persistence</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Mission Efficiency</p>
             <div className="flex items-center gap-4">
                <div className="h-2.5 w-64 bg-muted/20 rounded-full overflow-hidden">
                   <motion.div 
@@ -321,68 +349,63 @@ function DailyTaskChecklist() {
             </div>
          </div>
          <div className="text-right">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Active Window</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Operation Window</p>
             <p className="text-sm font-black text-foreground uppercase tracking-tight">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
          </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
-        {CHECKBOX_SYSTEM.map((t) => {
-          const isChecked = log.completedHabits.includes(t.id);
-          const Icon = t.icon;
-          return (
-            <motion.button
-              key={t.id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => toggleHabit(t.id)}
-              className={`p-6 rounded-[32px] border text-left flex flex-col gap-5 transition-all relative overflow-hidden group ${
-                isChecked ? 'bg-primary/10 border-primary/30' : 'bg-muted/10 border-border/10 hover:border-muted-foreground/30'
-              }`}
-            >
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-                 isChecked ? 'bg-primary/20 text-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]' : 'bg-muted/30 text-muted-foreground'
-              }`}>
-                 <Icon className="w-6 h-6" />
-              </div>
-              <div>
-                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1.5">{t.block}</span>
-                 <span className={`text-[15px] font-black leading-tight tracking-tight ${isChecked ? 'text-foreground' : 'text-muted-foreground'}`}>{t.label}</span>
-              </div>
-              {isChecked && (
-                <motion.div 
-                  layoutId={t.id}
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
-                />
-              )}
-            </motion.button>
-          );
-        })}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {CHECKBOX_GROUPS.map((group, gi) => (
+          <div key={gi} className="space-y-4">
+            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary/70 mb-6 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary" /> {group.title}
+            </h4>
+            <div className="flex flex-col gap-3">
+              {group.items.map((item) => {
+                const isChecked = log.completedHabits.includes(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => toggleHabit(item.id)}
+                    className={`p-4 rounded-2xl border text-left flex items-center gap-4 transition-all group ${
+                      isChecked 
+                        ? 'bg-primary/5 border-primary/20 text-foreground' 
+                        : 'bg-muted/10 border-border/10 hover:border-muted-foreground/30 text-muted-foreground'
+                    }`}
+                  >
+                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
+                      isChecked ? 'bg-primary border-primary text-white scale-110' : 'border-muted-foreground/20'
+                    }`}>
+                      {isChecked && <CheckSquare className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <p className="text-xs font-black tracking-tight leading-tight mb-0.5">{item.label}</p>
+                      <p className="text-[10px] font-bold opacity-60 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.detail}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-7 space-y-10">
-           <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              <div className="flex items-center justify-between mb-10 relative z-10">
+        <div className="lg:col-span-7 space-y-8">
+           <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10">
+              <div className="flex items-center justify-between mb-8">
                  <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
                    <Target className="w-4 h-4 text-primary" /> Target Neutralization
                  </h4>
-                 <div className="text-[10px] font-black text-primary uppercase bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20">DSA Core Protocol</div>
               </div>
-              <div className="grid grid-cols-3 gap-8 relative z-10">
+              <div className="grid grid-cols-3 gap-6">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
-                   <div key={diff} className="flex flex-col items-center bg-card/40 rounded-3xl p-6 border border-border/5 group hover:border-primary/20 transition-all shadow-lg hover:shadow-primary/5">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6 group-hover:text-primary transition-colors">{diff}</span>
-                      <div className="flex items-center justify-between w-full px-2">
-                        <button onClick={() => setProbs(p => {
-                          const prev = p || { easy: 0, medium: 0, hard: 0 };
-                          return { ...prev, [diff]: Math.max(0, prev[diff] - 1) };
-                        })} className="w-8 h-8 rounded-xl bg-muted/40 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"><Minus className="w-4 h-4"/></button>
-                        <span className="text-3xl font-black text-foreground tabular-nums">{(probs?.[diff] || 0)}</span>
-                        <button onClick={() => setProbs(p => {
-                          const prev = p || { easy: 0, medium: 0, hard: 0 };
-                          return { ...prev, [diff]: prev[diff] + 1 };
-                        })} className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"><Plus className="w-4 h-4"/></button>
+                   <div key={diff} className="flex flex-col items-center bg-card/40 rounded-3xl p-5 border border-border/5 group hover:border-primary/20 transition-all">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">{diff}</span>
+                      <div className="flex items-center justify-between w-full">
+                        <button onClick={() => setProbs(p => ({ ...p, [diff]: Math.max(0, p[diff] - 1) }))} className="w-7 h-7 rounded-lg bg-muted/40 flex items-center justify-center text-muted-foreground hover:bg-muted-foreground/20"><Minus className="w-3 h-3"/></button>
+                        <span className="text-2xl font-black text-foreground">{probs[diff]}</span>
+                        <button onClick={() => setProbs(p => ({ ...p, [diff]: p[diff] + 1 }))} className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white"><Plus className="w-3 h-3"/></button>
                       </div>
                    </div>
                  ))}
@@ -391,22 +414,22 @@ function DailyTaskChecklist() {
 
            <div className="grid grid-cols-2 gap-6">
               <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 flex flex-col justify-between group hover:border-secondary/30 transition-all">
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">Focus Hours Recorded</span>
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Focus Hours Recorded</span>
                  <div className="flex items-end justify-between">
                     <Clock className="w-8 h-8 text-secondary mb-2" />
-                    <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-24 bg-transparent text-right font-black text-secondary text-5xl focus:outline-none tabular-nums" />
+                    <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-20 bg-transparent text-right font-black text-secondary text-4xl focus:outline-none" />
                  </div>
               </div>
               <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 flex flex-col justify-between group hover:border-primary/30 transition-all">
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">Physiology Snapshot</span>
-                 <div className="flex gap-6 items-center justify-end">
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Energy & Confidence</span>
+                 <div className="flex gap-4 items-center justify-end">
                     <div className="flex flex-col items-center">
-                       <span className="text-[10px] font-black text-muted-foreground mb-2">NRG</span>
-                       <button onClick={() => setEnergy(e => Math.min(10, e + 1))} className={`w-10 h-10 rounded-xl font-black text-sm transition-all ${energy > 7 ? 'bg-rose-500/20 text-rose-500 border border-rose-500/30' : 'bg-muted/40 text-muted-foreground'}`}>{energy}</button>
+                       <span className="text-[9px] font-black text-muted-foreground mb-2">NRG</span>
+                       <button onClick={() => setEnergy(e => (e % 10) + 1)} className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 font-black text-sm border border-rose-500/20">{energy}</button>
                     </div>
                     <div className="flex flex-col items-center">
-                       <span className="text-[10px] font-black text-muted-foreground mb-2">CON</span>
-                       <button onClick={() => setConfidence(c => Math.min(10, c + 1))} className={`w-10 h-10 rounded-xl font-black text-sm transition-all ${confidence > 7 ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-muted/40 text-muted-foreground'}`}>{confidence}</button>
+                       <span className="text-[9px] font-black text-muted-foreground mb-2">CON</span>
+                       <button onClick={() => setConfidence(c => (c % 10) + 1)} className="w-10 h-10 rounded-xl bg-primary/10 text-primary font-black text-sm border border-primary/20">{confidence}</button>
                     </div>
                  </div>
               </div>
@@ -414,47 +437,66 @@ function DailyTaskChecklist() {
         </div>
 
         <div className="lg:col-span-5 flex flex-col">
-           <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 h-full flex flex-col relative overflow-hidden group">
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-secondary/5 to-transparent pointer-events-none" />
-              <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-8 flex items-center gap-3 relative z-10">
-                <PenTool className="w-4 h-4 text-secondary" /> Tactical Extraction
+           <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 h-full flex flex-col relative overflow-hidden">
+              <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6 flex items-center gap-3">
+                <PenTool className="w-4 h-4 text-secondary" /> Extraction Log
               </h4>
-              <div className="space-y-6 flex-1 relative z-10">
+              
+              <div className="space-y-6 flex-1">
                  <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">Critical Intelligence Gathered</label>
-                    <div className="space-y-3">
-                       {(concepts || []).map((c, i) => (
+                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">Critical Intelligence</label>
+                    <div className="space-y-2">
+                       {concepts.map((c, i) => (
                           <input 
                             key={i} type="text" value={c}
                             onChange={(e) => {
-                               const n = [...(concepts || ['', '', ''])];
+                               const n = [...concepts];
                                n[i] = e.target.value;
                                setConcepts(n);
                             }}
-                            placeholder={`Intelligence Node ${i+1}...`}
-                            className="w-full bg-card/60 border border-border/10 rounded-2xl px-5 py-4 text-foreground text-sm focus:outline-none focus:border-secondary/40 transition-all font-medium placeholder:opacity-30"
+                            placeholder={`Concept ${i+1}...`}
+                            className="w-full bg-card/60 border border-border/10 rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-secondary/40 font-medium placeholder:opacity-30"
                           />
                        ))}
                     </div>
                  </div>
-                 <div className="flex-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">Blockers & System Failures</label>
+
+                 <div>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">Tomorrow's Intent</label>
+                    <div className="grid grid-cols-2 gap-3">
+                       <input 
+                         type="text" value={tmrw.morning} 
+                         onChange={(e) => setTmrw(t => ({ ...t, morning: e.target.value }))}
+                         placeholder="AM Plan"
+                         className="bg-card/60 border border-border/10 rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none border-primary/20 font-medium placeholder:opacity-30"
+                       />
+                       <input 
+                         type="text" value={tmrw.afternoon} 
+                         onChange={(e) => setTmrw(t => ({ ...t, afternoon: e.target.value }))}
+                         placeholder="PM Plan"
+                         className="bg-card/60 border border-border/10 rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none border-primary/20 font-medium placeholder:opacity-30"
+                       />
+                    </div>
+                 </div>
+
+                 <div>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">System Failures/Struggles</label>
                     <textarea 
                        value={struggles} onChange={(e) => setStruggles(e.target.value)} 
-                       className="w-full h-32 bg-card/60 border border-border/10 rounded-[28px] px-5 py-4 text-foreground text-sm focus:outline-none focus:border-secondary/40 transition-all resize-none font-medium placeholder:opacity-30"
-                       placeholder="Log any system inhibitors or technical debt encountered..."
+                       className="w-full h-24 bg-card/60 border border-border/10 rounded-2xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-secondary/40 resize-none font-medium placeholder:opacity-30"
+                       placeholder="Blockers encountered..."
                     />
                  </div>
               </div>
 
-              <div className="pt-8 relative z-10">
+              <div className="pt-6">
                  <button
                    onClick={handleSave}
-                   className={`w-full py-6 rounded-[28px] font-black uppercase tracking-[0.4em] text-[11px] transition-all flex items-center justify-center gap-4 ${
-                     saved ? 'bg-secondary/20 text-secondary border border-secondary/40 shadow-[0_0_20px_rgba(var(--secondary-rgb),0.2)]' : 'bg-primary text-foreground shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] active:scale-95'
+                   className={`w-full py-5 rounded-[24px] font-black uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-4 ${
+                     saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:scale-[1.02] active:scale-95'
                    }`}
                  >
-                   {saved ? <><ShieldCheck className="w-4 h-4" /> SECURED</> : <><Save className="w-4 h-4" /> COMMIT DATA</>}
+                   {saved ? <><ShieldCheck className="w-4 h-4" /> SECURED</> : <><Save className="w-4 h-4" /> COMMIT SESSION</>}
                  </button>
               </div>
            </div>
@@ -568,3 +610,4 @@ export default function DashboardView() {
     </motion.div>
   );
 }
+
