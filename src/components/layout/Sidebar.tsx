@@ -117,20 +117,40 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
           </div>
         )}
 
+        {/* Student Profile (Interactive) */}
+        <button 
+          onClick={onSettingsOpen}
+          className={`group flex items-center gap-3 p-3 rounded-2xl transition-all duration-300 text-left border border-transparent hover:border-primary/20 hover:bg-primary/5 ${collapsed ? 'justify-center' : ''}`}
+          title="Edit Tactical Profile"
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-xs shadow-lg shadow-primary/10 border-t border-white/20 group-hover:scale-110 transition-transform">
+            {(state.userName || 'S').charAt(0).toUpperCase()}
+          </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-foreground text-[11px] font-black truncate leading-none mb-1 group-hover:text-primary transition-colors">{state.userName || 'Student'}</p>
+                <Settings className="w-3 h-3 text-muted-foreground transition-all group-hover:rotate-90 group-hover:text-primary" />
+              </div>
+              <p className="text-muted-foreground text-[8px] font-black uppercase tracking-widest truncate opacity-50">{state.targetRole}</p>
+            </div>
+          )}
+        </button>
+
         {/* Theme Toggle & Collapse Toggle */}
         <div className="flex gap-2">
           {!collapsed && (
             <button 
               onClick={toggleTheme} 
-              className="px-4 py-4 rounded-[20px] text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-border/10"
+              className="px-4 py-3 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-border/10"
               title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             >
-              {state.theme === 'dark' ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-primary" />}
+              {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
             </button>
           )}
           <button 
             onClick={toggleSidebar}
-            className="flex-1 flex items-center justify-center py-4 rounded-[20px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all border border-transparent hover:border-border/10 font-black text-[10px] uppercase tracking-[0.3em]"
+            className="flex-1 flex items-center justify-center py-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all border border-transparent hover:border-border/10 font-black text-[9px] uppercase tracking-[0.3em]"
           >
             {collapsed ? <div className="flex flex-col gap-4 items-center">
               <button 
@@ -139,8 +159,8 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
               >
                 {state.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-primary" />}
               </button>
-              <PanelLeftOpen className="w-5 h-5" />
-            </div> : <div className="flex items-center gap-3"><PanelLeftClose className="w-4 h-4" /> SECURE CONSOLE</div>}
+              <PanelLeftOpen className="w-5 h-5 mt-2" />
+            </div> : <div className="flex items-center gap-2"><PanelLeftClose className="w-3.5 h-3.5" /> SECURE</div>}
           </button>
         </div>
       </div>
