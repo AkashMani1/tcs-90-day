@@ -265,120 +265,132 @@ function DailyTaskChecklist() {
   const pct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
       {/* Worksheet Header */}
-      <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10">
+      <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10 px-2">
          <div className="flex items-center gap-8">
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date Status</span>
               <span className="text-xs font-black text-foreground">{todayStr}</span>
             </div>
             <div className="w-[1px] h-6 bg-border/20" />
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Week #</span>
-              <span className="text-xs font-black text-primary uppercase">W{currentWeek} / 12</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Phase Progress</span>
+              <span className="text-xs font-black text-primary uppercase">Week {currentWeek} / 12</span>
             </div>
             <div className="w-[1px] h-6 bg-border/20 hidden sm:block" />
             <div className="hidden sm:flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency</span>
-              <span className="text-xs font-black text-foreground tabular-nums">{pct}%</span>
+               <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency Rating</span>
+               <div className="flex items-center gap-3">
+                  <div className="h-1 w-24 bg-muted/20 rounded-full overflow-hidden">
+                     <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="text-[10px] font-black text-primary tabular-nums">{pct}%</span>
+               </div>
             </div>
          </div>
          
          <button 
            onClick={() => setIsEditing(!isEditing)}
            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
-             isEditing ? 'bg-primary text-white' : 'bg-muted/10 text-muted-foreground hover:bg-muted/20'
+             isEditing ? 'bg-primary text-white' : 'bg-muted/10 text-muted-foreground hover:bg-muted-foreground/20'
            }`}
          >
            {isEditing ? <CheckSquare className="w-3.5 h-3.5" /> : <Settings className="w-3.5 h-3.5" />}
-           {isEditing ? 'Save Protocol' : 'Configure Protocol'}
+           {isEditing ? 'Save Deployment' : 'Configure Protocol'}
          </button>
       </div>
 
-      <div className="max-w-3xl space-y-12">
-        {/* Task Blocks (Stacked Vertically) */}
+      {/* 3-COLUMN TASK GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-2">
         {habitGroups.map((group) => (
-          <div key={group.id} className="space-y-4">
-            <div className="flex items-center gap-4">
+          <div key={group.id} className="space-y-5">
+            <div className="flex items-center justify-between border-b border-border/5 pb-2">
               {isEditing ? (
                 <input 
                   type="text" 
                   value={group.title} 
                   onChange={(e) => updateHabitGroupTitle(group.id, e.target.value)}
-                  className="bg-muted/10 border border-border/10 rounded-lg px-2 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none w-64"
+                  className="bg-muted/10 border border-border/10 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none w-full mr-2"
                 />
               ) : (
-                <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground flex items-center gap-3">
-                  {group.title}
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                  <div className="w-1 h-1 rounded-full bg-primary" /> {group.title}
                 </h4>
               )}
             </div>
             
-            <div className="flex flex-col gap-1 pl-4">
+            <div className="flex flex-col gap-2">
               {group.items.map((item) => {
                 const isChecked = log.completedHabits.includes(item.id);
                 return (
-                  <div key={item.id} className="group relative flex items-center gap-3 py-1.5">
+                  <div key={item.id} className="group relative">
                     {isEditing ? (
-                      <div className="flex-1 flex items-center gap-3 bg-muted/5 p-2 rounded-lg border border-border/5">
-                         <div className="w-4 h-4 border border-muted-foreground/30 rounded flex-shrink-0" />
-                         <div className="flex-1 space-y-1">
+                      <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-muted/5 border border-border/5">
+                         <div className="flex items-center justify-between">
                             <input 
                               type="text" value={item.label} 
                               onChange={(e) => updateHabitItem(group.id, item.id, { label: e.target.value })}
-                              className="bg-transparent text-[12px] font-bold tracking-tight w-full focus:outline-none text-foreground"
+                              className="bg-transparent text-[11px] font-bold tracking-tight w-full focus:outline-none text-foreground"
                             />
-                            <input 
-                              type="text" value={item.detail} 
-                              onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
-                              className="bg-transparent text-[9px] font-medium opacity-50 w-full focus:outline-none"
-                            />
+                            <button onClick={() => deleteHabitItem(group.id, item.id)} className="text-rose-500 opacity-40 hover:opacity-100 transition-opacity"><Minus className="w-3 h-3" /></button>
                          </div>
-                         <button onClick={() => deleteHabitItem(group.id, item.id)} className="text-rose-500 p-1"><Minus className="w-3.5 h-3.5" /></button>
+                         <input 
+                           type="text" value={item.detail} 
+                           onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
+                           className="bg-transparent text-[9px] font-medium opacity-50 w-full focus:outline-none"
+                           placeholder="Short strategy..."
+                         />
                       </div>
                     ) : (
-                      <div className="flex items-start gap-4 group/item">
-                         <button 
-                           onClick={() => toggleHabit(item.id)}
-                           className="mt-0.5 w-4.5 h-4.5 rounded-sm border flex items-center justify-center transition-all border-muted-foreground/30 hover:border-primary/50"
-                         >
-                           {isChecked ? <CheckSquare className="w-4.5 h-4.5 text-primary" /> : <Square className="w-4.5 h-4.5 opacity-20" />}
-                         </button>
-                         <div className="flex flex-col">
-                           <span className={`text-[12px] font-medium tracking-tight ${isChecked ? 'line-through opacity-40' : 'text-foreground/90'}`}>{item.label}</span>
-                           {item.detail && <span className="text-[10px] opacity-40 font-medium tracking-tight">{item.detail}</span>}
+                      <button 
+                        onClick={() => toggleHabit(item.id)}
+                        className={`w-full flex items-start gap-3 p-3 rounded-xl border transition-all text-left ${
+                          isChecked 
+                            ? 'bg-primary/5 border-primary/20 text-foreground' 
+                            : 'bg-muted/5 border-border/5 hover:border-primary/20 text-muted-foreground'
+                        }`}
+                      >
+                         <div className={`mt-0.5 w-4 h-4 rounded-sm border flex items-center justify-center transition-all ${
+                            isChecked ? 'bg-primary border-primary text-white' : 'border-muted-foreground/30'
+                         }`}>
+                           {isChecked && <CheckCheck className="w-3 h-3" />}
                          </div>
-                      </div>
+                         <div>
+                           <p className="text-[11px] font-bold tracking-tight leading-tight">{item.label}</p>
+                           {item.detail && <p className="text-[9px] opacity-40 font-medium tracking-tight mt-0.5">{item.detail}</p>}
+                         </div>
+                      </button>
                     )}
                   </div>
                 );
               })}
               {isEditing && (
-                <button onClick={() => addHabitItem(group.id, 'New Target', '')} className="mt-2 text-primary/60 hover:text-primary transition-colors flex items-center gap-2 text-[9px] font-black uppercase tracking-widest pl-1">
-                  <Plus className="w-3 h-3" /> Add Item
+                <button onClick={() => addHabitItem(group.id, 'New Target', '')} className="p-3 rounded-xl border border-dashed border-border/10 text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest">
+                  <Plus className="w-3 h-3" /> Add Objective
                 </button>
               )}
             </div>
           </div>
         ))}
+      </div>
 
-        {/* Data Sections Stacked Vertically */}
-        <div className="space-y-12 pt-10 border-t border-border/10">
+      {/* VERTICAL WORKSHEET DATA */}
+      <div className="space-y-12 pt-10 border-t border-border/5 px-2 max-w-4xl">
            {/* Problems Solved */}
            <div className="space-y-6">
               <div className="flex items-center gap-3">
                  <Target className="w-4 h-4 text-primary" />
                  <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Target Neutralization:</h4>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4 max-w-xl">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
                    <div key={diff} className="flex flex-col gap-2.5">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">- {diff} problems</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">{diff} Problems Solved</span>
                       <div className="flex items-center gap-4">
-                         <button onClick={() => updateProbs(diff, -1)} className="w-7 h-7 rounded-sm border border-border/10 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-2.5 h-2.5"/></button>
+                         <button onClick={() => updateProbs(diff, -1)} className="w-7 h-7 rounded border border-border/5 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-2.5 h-2.5"/></button>
                          <span className="text-sm font-black text-foreground tabular-nums w-4 text-center">{(log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 })[diff]}</span>
-                         <button onClick={() => updateProbs(diff, 1)} className="w-7 h-7 rounded-sm border border-primary/20 bg-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"><Plus className="w-2.5 h-2.5"/></button>
+                         <button onClick={() => updateProbs(diff, 1)} className="w-7 h-7 rounded border border-primary/20 bg-primary/10 flex items-center justify-center text-primary transition-colors"><Plus className="w-2.5 h-2.5"/></button>
                       </div>
                    </div>
                  ))}
@@ -393,13 +405,13 @@ function DailyTaskChecklist() {
               </div>
               <div className="space-y-3 pl-4">
                  {[0, 1, 2].map(i => (
-                   <div key={i} className="flex items-center gap-4 group">
-                      <span className="text-[10px] font-black text-muted-foreground opacity-30">{i+1}.</span>
+                   <div key={i} className="flex items-center gap-4">
+                      <span className="text-[10px] font-black text-muted-foreground opacity-20">{i+1}.</span>
                       <input 
                          type="text" 
                          value={(log.conceptsLearned ?? [])[i] || ''}
                          onChange={(e) => updateConcepts(i, e.target.value)}
-                         className="flex-1 bg-transparent border-b border-border/20 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-10 transition-colors"
+                         className="flex-1 bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors"
                          placeholder="__________________________________________________________"
                       />
                    </div>
@@ -414,23 +426,23 @@ function DailyTaskChecklist() {
                  <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Biometric Sync:</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 pl-4">
-                 <div className="space-y-2.5">
+                 <div className="space-y-2">
                     <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Energy (1-10)</p>
-                    <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-2xl font-black text-rose-500 tabular-nums tracking-tighter">
+                    <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-2xl font-black text-rose-500 tabular-nums">
                        {log.energy < 10 ? `0${log.energy}` : '10'}
                     </button>
                  </div>
-                 <div className="space-y-2.5">
+                 <div className="space-y-2">
                     <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Confidence (1-10)</p>
-                    <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-2xl font-black text-primary tabular-nums tracking-tighter">
+                    <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-2xl font-black text-primary tabular-nums">
                        {log.confidence < 10 ? `0${log.confidence}` : '10'}
                     </button>
                  </div>
-                 <div className="space-y-2.5">
+                 <div className="space-y-2">
                     <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Hours Logged</p>
                     <div className="flex items-baseline gap-1">
-                       <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-2xl focus:outline-none w-14 tracking-tighter" />
-                       <span className="text-[10px] font-black text-muted-foreground opacity-40 uppercase">HR</span>
+                       <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-2xl focus:outline-none w-14" />
+                       <span className="text-[10px] font-black text-muted-foreground opacity-40">HR</span>
                     </div>
                  </div>
               </div>
@@ -442,14 +454,14 @@ function DailyTaskChecklist() {
                  <CalendarDays className="w-4 h-4 text-primary" />
                  <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
               </div>
-              <div className="space-y-3 pl-4 max-w-xl">
-                 <div className="flex items-center gap-4 group">
+              <div className="space-y-3 pl-4">
+                 <div className="flex items-center gap-4 group max-w-xl">
                     <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-20">- Morning:</span>
-                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/20 py-1 text-[12px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
+                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-1 text-[11px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
                  </div>
-                 <div className="flex items-center gap-4 group">
+                 <div className="flex items-center gap-4 group max-w-xl">
                     <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-20">- Afternoon:</span>
-                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/20 py-1 text-[12px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
+                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-1 text-[11px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
                  </div>
               </div>
            </div>
@@ -458,14 +470,13 @@ function DailyTaskChecklist() {
               <button
                 onClick={handleSave}
                 className={`flex items-center gap-4 px-10 py-5 rounded-2xl font-black uppercase tracking-[0.4em] text-[10px] transition-all ${
-                  saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:scale-[1.02] active:scale-95'
+                  saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:translate-y-[-2px] active:translate-y-0'
                 }`}
               >
                 {saved ? <ShieldCheck className="w-5 h-5" /> : <Save className="w-5 h-5" />}
-                {saved ? 'Protocol Secured' : 'Commit Daily Log'}
+                {saved ? 'DATA COMMITTED' : 'COMMIT DAILY LOG'}
               </button>
            </div>
-        </div>
       </div>
     </div>
   );
