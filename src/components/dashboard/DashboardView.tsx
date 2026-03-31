@@ -126,10 +126,12 @@ function TimeMatrix({ hours }: { hours: number }) {
 
 function BiometricMonitor({ log, totalHours }: { log: any; totalHours: number }) {
   return (
-    <div className="flex flex-col gap-8 h-full py-2">
-      <HeartbeatVisual value={log.energy} />
-      <ConfidenceGauge value={log.confidence} />
-      <div className="mt-auto">
+    <div className="flex flex-col gap-10 h-full py-4">
+      <div className="space-y-10">
+        <HeartbeatVisual value={log.energy} />
+        <ConfidenceGauge value={log.confidence} />
+      </div>
+      <div className="mt-auto pt-6 border-t border-border/10">
         <TimeMatrix hours={totalHours} />
       </div>
     </div>
@@ -146,16 +148,16 @@ function BentoCard({ children, className = '', title = '', icon: Icon, badge = '
       className={`bento-card p-6 flex flex-col group ${className}`}
     >
       {(title || Icon) && (
-        <div className="flex items-center justify-between mb-8">
+        <div className={`flex items-center justify-between ${badge ? 'mb-8' : 'mb-6'}`}>
           <div className="flex items-center gap-4">
             {Icon && (
-              <div className="w-12 h-12 bg-muted/40 rounded-2xl flex items-center justify-center border border-border/10 group-hover:border-primary/30 transition-all group-hover:scale-110">
-                <Icon className="w-6 h-6 text-primary" />
+              <div className="w-10 h-10 bg-muted/40 rounded-xl flex items-center justify-center border border-border/10 group-hover:border-primary/30 transition-all group-hover:scale-110">
+                <Icon className="w-5 h-5 text-primary" />
               </div>
             )}
             <div>
-              <h3 className="text-foreground font-black text-sm uppercase tracking-widest leading-none mb-1.5">{title}</h3>
-              {badge && <p className="text-muted-foreground text-[10px] font-bold tracking-tight">{badge}</p>}
+              <h3 className="text-foreground font-black text-xs uppercase tracking-[0.2em] leading-none mb-1">{title}</h3>
+              {badge && <p className="text-muted-foreground text-[9px] font-bold tracking-tight">{badge}</p>}
             </div>
           </div>
         </div>
@@ -333,54 +335,54 @@ function DailyTaskChecklist() {
   const pct = Math.round((doneCount / totalTasks) * 100);
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <div className="flex items-center justify-between px-2">
          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Mission Efficiency</p>
-            <div className="flex items-center gap-4">
-               <div className="h-2.5 w-64 bg-muted/20 rounded-full overflow-hidden">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Efficiency Rating</p>
+            <div className="flex items-center gap-3">
+               <div className="h-1.5 w-48 bg-muted/20 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }} 
-                    className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" 
+                    className="h-full bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" 
                   />
                </div>
-               <span className="text-sm font-black text-primary tabular-nums">{pct}%</span>
+               <span className="text-xs font-black text-primary tabular-nums">{pct}%</span>
             </div>
          </div>
          <div className="text-right">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Operation Window</p>
-            <p className="text-sm font-black text-foreground uppercase tracking-tight">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Operational Sync</p>
+            <p className="text-xs font-black text-foreground uppercase tracking-tight">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
          </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {CHECKBOX_GROUPS.map((group, gi) => (
-          <div key={gi} className="space-y-4">
-            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary/70 mb-6 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" /> {group.title}
+          <div key={gi} className="space-y-3">
+            <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/70 mb-4 flex items-center gap-2">
+              <div className="w-1 h-1 rounded-full bg-primary" /> {group.title}
             </h4>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {group.items.map((item) => {
                 const isChecked = log.completedHabits.includes(item.id);
                 return (
                   <button
                     key={item.id}
                     onClick={() => toggleHabit(item.id)}
-                    className={`p-4 rounded-2xl border text-left flex items-center gap-4 transition-all group ${
+                    className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all group ${
                       isChecked 
                         ? 'bg-primary/5 border-primary/20 text-foreground' 
                         : 'bg-muted/10 border-border/10 hover:border-muted-foreground/30 text-muted-foreground'
                     }`}
                   >
-                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
+                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
                       isChecked ? 'bg-primary border-primary text-white scale-110' : 'border-muted-foreground/20'
                     }`}>
-                      {isChecked && <CheckSquare className="w-4 h-4" />}
+                      {isChecked && <CheckSquare className="w-3 h-3" />}
                     </div>
                     <div>
-                      <p className="text-xs font-black tracking-tight leading-tight mb-0.5">{item.label}</p>
-                      <p className="text-[10px] font-bold opacity-60 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.detail}</p>
+                      <p className="text-[11px] font-black tracking-tight leading-tight mb-0.5">{item.label}</p>
+                      <p className="text-[9px] font-bold opacity-50 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.detail}</p>
                     </div>
                   </button>
                 );
@@ -390,46 +392,44 @@ function DailyTaskChecklist() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-7 space-y-8">
-           <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10">
-              <div className="flex items-center justify-between mb-8">
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
-                   <Target className="w-4 h-4 text-primary" /> Target Neutralization
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-7 space-y-6">
+           <div className="bg-muted/5 rounded-3xl p-6 border border-border/10">
+              <div className="flex items-center justify-between mb-6">
+                 <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
+                   <Target className="w-3.5 h-3.5 text-primary" /> Target Neutralization
                  </h4>
               </div>
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-4">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
-                   <div key={diff} className="flex flex-col items-center bg-card/40 rounded-3xl p-5 border border-border/5 group hover:border-primary/20 transition-all">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">{diff}</span>
+                   <div key={diff} className="flex flex-col items-center bg-card/40 rounded-2xl p-4 border border-border/5 group hover:border-primary/20 transition-all">
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">{diff}</span>
                       <div className="flex items-center justify-between w-full">
-                        <button onClick={() => setProbs(p => ({ ...p, [diff]: Math.max(0, p[diff] - 1) }))} className="w-7 h-7 rounded-lg bg-muted/40 flex items-center justify-center text-muted-foreground hover:bg-muted-foreground/20"><Minus className="w-3 h-3"/></button>
-                        <span className="text-2xl font-black text-foreground">{probs[diff]}</span>
-                        <button onClick={() => setProbs(p => ({ ...p, [diff]: p[diff] + 1 }))} className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white"><Plus className="w-3 h-3"/></button>
+                        <button onClick={() => setProbs(p => ({ ...p, [diff]: Math.max(0, p[diff] - 1) }))} className="w-6 h-6 rounded-md bg-muted/40 flex items-center justify-center text-muted-foreground hover:bg-muted-foreground/20"><Minus className="w-2.5 h-2.5"/></button>
+                        <span className="text-xl font-black text-foreground">{probs[diff]}</span>
+                        <button onClick={() => setProbs(p => ({ ...p, [diff]: p[diff] + 1 }))} className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white"><Plus className="w-2.5 h-2.5"/></button>
                       </div>
                    </div>
                  ))}
               </div>
            </div>
 
-           <div className="grid grid-cols-2 gap-6">
-              <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 flex flex-col justify-between group hover:border-secondary/30 transition-all">
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Focus Hours Recorded</span>
+           <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/5 rounded-3xl p-6 border border-border/10 flex flex-col justify-between group hover:border-secondary/30 transition-all">
+                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">Focus Hours</span>
                  <div className="flex items-end justify-between">
-                    <Clock className="w-8 h-8 text-secondary mb-2" />
-                    <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-20 bg-transparent text-right font-black text-secondary text-4xl focus:outline-none" />
+                    <Clock className="w-6 h-6 text-secondary mb-1" />
+                    <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-16 bg-transparent text-right font-black text-secondary text-3xl focus:outline-none" />
                  </div>
               </div>
-              <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 flex flex-col justify-between group hover:border-primary/30 transition-all">
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Energy & Confidence</span>
-                 <div className="flex gap-4 items-center justify-end">
+              <div className="bg-muted/5 rounded-3xl p-6 border border-border/10 flex flex-col justify-between group hover:border-primary/30 transition-all">
+                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">Vitals (NRG/CON)</span>
+                 <div className="flex gap-3 items-center justify-end">
                     <div className="flex flex-col items-center">
-                       <span className="text-[9px] font-black text-muted-foreground mb-2">NRG</span>
-                       <button onClick={() => setEnergy(e => (e % 10) + 1)} className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 font-black text-sm border border-rose-500/20">{energy}</button>
+                       <button onClick={() => setEnergy(e => (e % 10) + 1)} className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-500 font-black text-xs border border-rose-500/20">{energy}</button>
                     </div>
                     <div className="flex flex-col items-center">
-                       <span className="text-[9px] font-black text-muted-foreground mb-2">CON</span>
-                       <button onClick={() => setConfidence(c => (c % 10) + 1)} className="w-10 h-10 rounded-xl bg-primary/10 text-primary font-black text-sm border border-primary/20">{confidence}</button>
+                       <button onClick={() => setConfidence(c => (c % 10) + 1)} className="w-9 h-9 rounded-lg bg-primary/10 text-primary font-black text-xs border border-primary/20">{confidence}</button>
                     </div>
                  </div>
               </div>
@@ -437,15 +437,15 @@ function DailyTaskChecklist() {
         </div>
 
         <div className="lg:col-span-5 flex flex-col">
-           <div className="bg-muted/5 rounded-[40px] p-8 border border-border/10 h-full flex flex-col relative overflow-hidden">
-              <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6 flex items-center gap-3">
-                <PenTool className="w-4 h-4 text-secondary" /> Extraction Log
+           <div className="bg-muted/5 rounded-3xl p-6 border border-border/10 h-full flex flex-col relative overflow-hidden">
+              <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4 flex items-center gap-3">
+                <PenTool className="w-3.5 h-3.5 text-secondary" /> Extraction Log
               </h4>
               
-              <div className="space-y-6 flex-1">
+              <div className="space-y-4 flex-1">
                  <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">Critical Intelligence</label>
-                    <div className="space-y-2">
+                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-2 ml-1">Insights</label>
+                    <div className="space-y-1.5">
                        {concepts.map((c, i) => (
                           <input 
                             key={i} type="text" value={c}
@@ -454,37 +454,37 @@ function DailyTaskChecklist() {
                                n[i] = e.target.value;
                                setConcepts(n);
                             }}
-                            placeholder={`Concept ${i+1}...`}
-                            className="w-full bg-card/60 border border-border/10 rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-secondary/40 font-medium placeholder:opacity-30"
+                            placeholder={`Concept ${i+1}`}
+                            className="w-full bg-card/60 border border-border/10 rounded-lg px-3 py-2 text-foreground text-xs focus:outline-none focus:border-secondary/40 font-medium placeholder:opacity-20"
                           />
                        ))}
                     </div>
                  </div>
 
                  <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">Tomorrow's Intent</label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-2 ml-1">Plan</label>
+                    <div className="grid grid-cols-2 gap-2">
                        <input 
                          type="text" value={tmrw.morning} 
                          onChange={(e) => setTmrw(t => ({ ...t, morning: e.target.value }))}
                          placeholder="AM Plan"
-                         className="bg-card/60 border border-border/10 rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none border-primary/20 font-medium placeholder:opacity-30"
+                         className="bg-card/60 border border-border/10 rounded-lg px-3 py-2 text-foreground text-xs focus:outline-none border-primary/20 font-medium placeholder:opacity-20"
                        />
                        <input 
                          type="text" value={tmrw.afternoon} 
                          onChange={(e) => setTmrw(t => ({ ...t, afternoon: e.target.value }))}
                          placeholder="PM Plan"
-                         className="bg-card/60 border border-border/10 rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none border-primary/20 font-medium placeholder:opacity-30"
+                         className="bg-card/60 border border-border/10 rounded-lg px-3 py-2 text-foreground text-xs focus:outline-none border-primary/20 font-medium placeholder:opacity-20"
                        />
                     </div>
                  </div>
 
                  <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground block mb-3 ml-1">System Failures/Struggles</label>
+                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-2 ml-1">Struggles</label>
                     <textarea 
                        value={struggles} onChange={(e) => setStruggles(e.target.value)} 
-                       className="w-full h-24 bg-card/60 border border-border/10 rounded-2xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-secondary/40 resize-none font-medium placeholder:opacity-30"
-                       placeholder="Blockers encountered..."
+                       className="w-full h-20 bg-card/60 border border-border/10 rounded-xl px-3 py-2 text-foreground text-xs focus:outline-none focus:border-secondary/40 resize-none font-medium placeholder:opacity-20"
+                       placeholder="..."
                     />
                  </div>
               </div>
@@ -550,64 +550,67 @@ export default function DashboardView() {
   const log = state.dailyLogs.find(l => l.date === today()) || { energy: 5, confidence: 5 };
 
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="grid grid-cols-12 gap-8"
-    >
-      
-      {/* ROW 1: Hero & Quick Stats */}
-      <BentoCard className="col-span-12 lg:col-span-8 overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10 py-4">
-           <div className="max-w-md">
-              <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
-              <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                Platform operational. Currently in <span className="text-primary font-black">Week {currentWeek}</span> of the 12-week Placement Cycle. 
-                System deployment is <span className="text-primary font-black">{progressPct}% effective</span> against regional benchmarks.
-              </p>
-           </div>
-           <div className="flex gap-12">
-              <div className="text-center group">
-                 <p className="text-5xl font-black text-foreground mb-2 group-hover:text-primary transition-colors tabular-nums">{streak}</p>
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-[12px] decoration-primary/30 decoration-4">Day Streak</p>
-              </div>
-              <div className="text-center group">
-                 <p className="text-5xl font-black text-foreground mb-2 group-hover:text-secondary transition-colors tabular-nums">{totalDone}</p>
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-[12px] decoration-secondary/30 decoration-4">Nodes Mastered</p>
-              </div>
-           </div>
-        </div>
-      </BentoCard>
-
-      <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
-        <StreakGuard />
-        <BentoCard className="flex-1" title="Protocol Focus" icon={Target}>
-           <QuoteCard />
+    <div className="relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary-rgb),0.05),transparent_50%)] pointer-events-none" />
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-12 gap-6 relative z-10"
+      >
+        
+        {/* ROW 1: Hero & Quick Stats */}
+        <BentoCard className="col-span-12 lg:col-span-8 overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-8 py-2">
+             <div className="md:col-span-3">
+                <h2 className="text-3xl font-black text-foreground mb-3 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
+                <p className="text-muted-foreground text-sm font-medium leading-relaxed opacity-80">
+                  Platform operational. Currently in <span className="text-primary font-black">Week {currentWeek}</span> of the 12-week Placement Cycle. 
+                  System deployment is <span className="text-primary font-black">{progressPct}% effective</span> against regional benchmarks.
+                </p>
+             </div>
+             <div className="md:col-span-2 flex items-center justify-end gap-10 border-l border-border/10 pl-10">
+                <div className="text-center group">
+                   <p className="text-4xl font-black text-foreground mb-1 group-hover:text-primary transition-colors tabular-nums">{streak}</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-[10px] decoration-primary/30 decoration-4">Day Streak</p>
+                </div>
+                <div className="text-center group">
+                   <p className="text-4xl font-black text-foreground mb-1 group-hover:text-secondary transition-colors tabular-nums">{totalDone}</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-[10px] decoration-secondary/30 decoration-4">Nodes Mastered</p>
+                </div>
+             </div>
+          </div>
         </BentoCard>
-      </div>
 
-      {/* ROW 2: The Core Checklist */}
-      <BentoCard className="col-span-12 lg:col-span-9" title="Accountability Log" icon={CheckCheck}>
-        <DailyTaskChecklist />
-      </BentoCard>
-
-      {/* ROW 2 RIGHT: Biometric Vitals */}
-      <div className="col-span-12 lg:col-span-3">
-         <BentoCard className="h-full" title="Biometric Monitor" icon={Activity}>
-            <BiometricMonitor log={log} totalHours={totalHours} />
-         </BentoCard>
-      </div>
-
-      {/* ROW 3: Consistency */}
-      <BentoCard className="col-span-12" title="Mission Consistency" icon={BarChart3} badge="Technical activity logs over the last 140 operational cycles">
-        <div className="py-6">
-           <Heatmap dailyLogs={state.dailyLogs} />
+        <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+          <StreakGuard />
+          <BentoCard className="flex-1" title="Protocol Focus" icon={Target}>
+             <QuoteCard />
+          </BentoCard>
         </div>
-      </BentoCard>
 
-    </motion.div>
+        {/* ROW 2: The Core Checklist */}
+        <BentoCard className="col-span-12 lg:col-span-9" title="Accountability Log" icon={CheckCheck}>
+          <DailyTaskChecklist />
+        </BentoCard>
+
+        {/* ROW 2 RIGHT: Biometric Vitals */}
+        <div className="col-span-12 lg:col-span-3">
+           <BentoCard className="h-full" title="Biometric Monitor" icon={Activity}>
+              <BiometricMonitor log={log} totalHours={totalHours} />
+           </BentoCard>
+        </div>
+
+        {/* ROW 3: Consistency */}
+        <BentoCard className="col-span-12" title="Mission Consistency" icon={BarChart3} badge="Technical activity logs over the last 140 operational cycles">
+          <div className="py-2">
+             <Heatmap dailyLogs={state.dailyLogs} />
+          </div>
+        </BentoCard>
+
+      </motion.div>
+    </div>
   );
 }
 
