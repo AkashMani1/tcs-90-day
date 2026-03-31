@@ -7,11 +7,10 @@ import {
   Save, CheckCheck, Activity, ShieldCheck, AlertTriangle, 
   Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb, 
   Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target,
-  Heart, Zap, Shield, Timer
+  Heart, Zap, Shield, Timer, Settings
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcTotalHours, calcCurrentWeek, today, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
-import { QUOTES } from '@/lib/defaultData';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
@@ -40,108 +39,47 @@ const itemVariants = {
 
 // ── Biometric Monitor components ─────────────────────────────────────────────
 
-function HeartbeatVisual({ value }: { value: number }) {
-  const pulseScale = 1 + (value / 10) * 0.2;
-  return (
-    <div className="relative w-full h-20 flex items-center justify-center overflow-hidden bg-muted/10 rounded-2xl border border-border/5 group">
-      <svg className="absolute inset-0 w-full h-full opacity-20 dark:opacity-30">
-        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-muted-foreground/20" />
-        </pattern>
-        <rect width="100%" height="100%" fill="url(#grid)" />
-      </svg>
-      
-      <motion.div
-        animate={{ 
-          scale: [1, pulseScale, 1],
-          opacity: [0.6, 1, 0.6] 
-        }}
-        transition={{ 
-          duration: Math.max(0.4, 1.5 - (value / 10)), 
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="relative z-10"
-      >
-        <Heart className="w-10 h-10 text-rose-500 fill-rose-500/20 drop-shadow-[0_0_8px_rgba(244,63,94,0.4)]" />
-      </motion.div>
-      
-      <div className="absolute bottom-2 right-4 flex items-baseline gap-1">
-        <span className="text-xs font-black text-rose-500">{value}</span>
-        <span className="text-[8px] font-bold text-muted-foreground tracking-widest uppercase">NRG</span>
-      </div>
-    </div>
-  );
-}
+const COMMAND_QUOTES = [
+  "THE ARCHITECT OF THE SYSTEM BUILDS FROM THE UNCERTAINTY.",
+  "DIGITAL MASTERY IS BORN FROM THE REPETITION OF THE FUNDAMENTALS.",
+  "THE SYSTEM DOES NOT REWARD SPEED; IT REWARDS CONSISTENCY UNDER PRESSURE.",
+  "ELEVATE TO PRIME BY OPTIMIZING YOUR INTERNAL PROTOCOLS EVERY DAY.",
+  "TCS DIGITAL ACCEPTS ONLY THOSE WHO OUTWORK THEIR OWN UNCERTAINTY.",
+  "SUCCESS IN THE SYSTEM IS A PRODUCT OF 90 DAYS OF DISCIPLINED EXECUTION.",
+  "THE ARCHITECT DOES NOT WAIT FOR MOTIVATION; THEY RELY ON THE PROTOCOL."
+];
 
 function QuoteCard() {
-  const quote = "THE ARCHITECT OF THE SYSTEM BUILDS FROM THE UNCERTAINTY.";
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % COMMAND_QUOTES.length);
+    }, 12000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="flex flex-col gap-3 py-2 px-1">
       <div className="flex items-center gap-2 mb-1">
         <Target className="w-3.5 h-3.5 text-primary opacity-50" />
         <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">System Intent</span>
       </div>
-      <div className="relative">
+      <div className="relative min-h-[45px] flex items-center">
         <div className="absolute -left-2 top-0 w-[1px] h-full bg-gradient-to-b from-primary/50 to-transparent" />
-        <p className="text-[11px] font-bold text-foreground leading-[1.6] italic tracking-tight opacity-90">
-          "{quote}"
-        </p>
+        <AnimatePresence mode="wait">
+          <motion.p 
+            key={index}
+            initial={{ opacity: 0, x: -5 }}
+            animate={{ opacity: 0.9, x: 0 }}
+            exit={{ opacity: 0, x: 5 }}
+            transition={{ duration: 0.8 }}
+            className="text-[11px] font-bold text-foreground leading-[1.5] italic tracking-tight"
+          >
+            "{COMMAND_QUOTES[index]}"
+          </motion.p>
+        </AnimatePresence>
       </div>
-    </div>
-  );
-}
-
-function ConfidenceGauge({ value }: { value: number }) {
-  return (
-    <div className="flex flex-col gap-2 mt-4">
-      <div className="flex justify-between items-end px-1">
-        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Confidence Scale (CON)</span>
-        <span className="text-xs font-black text-primary">{value * 10}%</span>
-      </div>
-      <div className="h-2 w-full bg-muted/20 rounded-full p-0 flex gap-0.5 border border-border/5 overflow-hidden">
-        {[...Array(10)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0.2 }}
-            animate={{ 
-              opacity: i < value ? 1 : 0.1,
-              backgroundColor: i < value ? 'var(--primary)' : 'currentColor'
-            }}
-            className={`flex-1 transition-all ${i < value ? 'bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]' : 'text-muted-foreground'}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TimeMatrix({ hours }: { hours: number }) {
-  return (
-    <div className="bg-muted/5 rounded-2xl p-4 border border-border/5 flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
-          <Timer className="w-4 h-4 text-secondary" />
-        </div>
-        <div>
-          <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-50 mb-0.5">Focus Clock</p>
-          <p className="text-sm font-black text-foreground tabular-nums">{hours.toFixed(1)}<span className="text-[10px] ml-0.5 opacity-50">h</span></p>
-        </div>
-      </div>
-      <div className="flex -space-x-1 overflow-hidden opacity-30">
-        {[...Array(4)].map((_, i) => (
-           <div key={i} className="w-4 h-4 rounded-full border border-background bg-secondary/20" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function BiometricMonitor({ log, totalHours }: { log: any; totalHours: number }) {
-  // Only Focus Clock remains in simplified view
-  return (
-    <div className="flex flex-col gap-6 py-2">
-      <TimeMatrix hours={totalHours} />
     </div>
   );
 }
@@ -273,283 +211,265 @@ function StreakGuard() {
 
 function DailyTaskChecklist() {
   const { 
-    state, getTodayLog, updateDailyLog, toggleHabit, 
+    state, updateDailyLog, toggleHabit, 
     addHabitItem, updateHabitItem, deleteHabitItem, updateHabitGroupTitle 
   } = useApp();
-  const log = getTodayLog();
-  const [saved, setSaved] = useState(false);
+  
   const [isEditing, setIsEditing] = useState(false);
-  const [newItem, setNewItem] = useState<{ groupId: string; label: string; detail: string } | null>(null);
+  const [saved, setSaved] = useState(false);
+  
+  const todayStr = today();
+  const log = state.dailyLogs.find(l => l.date === todayStr) || {
+    date: todayStr,
+    completedHabits: [],
+    problemsSolved: { easy: 0, medium: 0, hard: 0 },
+    hours: 0,
+    energy: 5,
+    confidence: 5,
+    conceptsLearned: ['', '', ''],
+    struggles: '',
+    tomorrowPlan: { morning: '', afternoon: '' }
+  };
 
-  // Sync local state
-  const [probs, setProbs] = useState(log.problemsSolved || { easy: 0, medium: 0, hard: 0 });
-  const [concepts, setConcepts] = useState(log.conceptsLearned || ['', '', '']);
-  const [struggles, setStruggles] = useState(log.struggles || '');
-  const [hrs, setHrs] = useState(log.hours || 0);
-  const [energy, setEnergy] = useState(log.energy || 5);
-  const [confidence, setConfidence] = useState(log.confidence || 5);
-  const [tmrw, setTmrw] = useState(log.tomorrowPlan || { morning: '', afternoon: '' });
-
-  useEffect(() => {
-    setProbs(log.problemsSolved || { easy: 0, medium: 0, hard: 0 });
-    setConcepts(log.conceptsLearned || ['', '', '']);
-    setStruggles(log.struggles || '');
-    setHrs(log.hours || 0);
-    setEnergy(log.energy || 5);
-    setConfidence(log.confidence || 5);
-    setTmrw(log.tomorrowPlan || { morning: '', afternoon: '' });
-  }, [log.date]);
+  const habitGroups = state.habitGroups || [];
 
   const handleSave = () => {
-    updateDailyLog({ 
-      problemsSolved: probs, 
-      conceptsLearned: concepts, 
-      struggles, 
-      hours: hrs,
-      energy,
-      confidence,
-      tomorrowPlan: tmrw
-    });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const habitGroups = state.habitGroups || [];
+  const updateProbs = (diff: 'easy' | 'medium' | 'hard', delta: number) => {
+    const current = log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 };
+    const nextProbs = { ...current, [diff]: Math.max(0, current[diff] + delta) };
+    updateDailyLog({ ...log, problemsSolved: nextProbs });
+  };
+
+  const updateVitals = (key: string, val: number) => {
+    updateDailyLog({ ...log, [key]: val });
+  };
+
+  const updateConcepts = (idx: number, val: string) => {
+    const next = [...(log.conceptsLearned || ['', '', ''])];
+    next[idx] = val;
+    updateDailyLog({ ...log, conceptsLearned: next });
+  };
+
+  const updatePlan = (key: 'morning' | 'afternoon', val: string) => {
+    const currentPlan = log.tomorrowPlan ?? { morning: '', afternoon: '' };
+    updateDailyLog({ ...log, tomorrowPlan: { ...currentPlan, [key]: val } });
+  };
+
+  const currentWeek = calcCurrentWeek(state.startDate);
   const totalTasks = habitGroups.reduce((acc, g) => acc + g.items.length, 0);
   const doneCount = log.completedHabits.length;
   const pct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between px-2">
-         <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Efficiency Rating</p>
-            <div className="flex items-center gap-3">
-               <div className="h-1.5 w-48 bg-muted/20 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${pct}%` }} 
-                    className="h-full bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" 
-                  />
-               </div>
-               <span className="text-xs font-black text-primary tabular-nums">{pct}%</span>
+    <div className="flex flex-col gap-10">
+      {/* Worksheet Header */}
+      <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10">
+         <div className="flex items-center gap-8">
+            <div className="flex flex-col">
+              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date</span>
+              <span className="text-xs font-black text-foreground">{todayStr}</span>
+            </div>
+            <div className="w-[1px] h-6 bg-border/20" />
+            <div className="flex flex-col">
+              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Week #</span>
+              <span className="text-xs font-black text-primary uppercase">W{currentWeek} / 12</span>
+            </div>
+            <div className="w-[1px] h-6 bg-border/20 hidden sm:block" />
+            <div className="hidden sm:flex flex-col">
+              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency</span>
+              <span className="text-xs font-black text-foreground tabular-nums">{pct}%</span>
             </div>
          </div>
-         <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsEditing(!isEditing)}
-              className={`p-2 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${
-                isEditing ? 'bg-primary text-white border-primary shadow-lg' : 'bg-muted/10 border-border/10 text-muted-foreground hover:text-primary hover:border-primary/30'
-              }`}
-            >
-              {isEditing ? 'Save Protocol' : 'Configure Protocol'}
-            </button>
-            <div className="text-right">
-               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Operational Sync</p>
-               <p className="text-xs font-black text-foreground uppercase tracking-tight">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
-            </div>
-         </div>
+         
+         <button 
+           onClick={() => setIsEditing(!isEditing)}
+           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+             isEditing ? 'bg-primary text-white' : 'bg-muted/10 text-muted-foreground hover:bg-muted/20'
+           }`}
+         >
+           {isEditing ? <CheckSquare className="w-3.5 h-3.5" /> : <Settings className="w-3.5 h-3.5" />}
+           {isEditing ? 'Save Protocol' : 'Configure Protocol'}
+         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="max-w-3xl space-y-12">
+        {/* Task Blocks (Stacked Vertically) */}
         {habitGroups.map((group) => (
           <div key={group.id} className="space-y-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-4">
               {isEditing ? (
                 <input 
                   type="text" 
                   value={group.title} 
                   onChange={(e) => updateHabitGroupTitle(group.id, e.target.value)}
-                  className="bg-muted/10 border border-border/10 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none focus:border-primary/40 w-full mr-2"
+                  className="bg-muted/10 border border-border/10 rounded-lg px-2 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none w-64"
                 />
               ) : (
-                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/70 flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-primary" /> {group.title}
+                <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground flex items-center gap-3">
+                  {group.title}
                 </h4>
               )}
             </div>
             
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1 pl-4">
               {group.items.map((item) => {
                 const isChecked = log.completedHabits.includes(item.id);
                 return (
-                  <div key={item.id} className="relative group">
+                  <div key={item.id} className="group relative flex items-center gap-3 py-1.5">
                     {isEditing ? (
-                      <div className="p-3 rounded-xl border border-border/10 bg-muted/5 space-y-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <input 
-                            type="text" 
-                            value={item.label} 
-                            onChange={(e) => updateHabitItem(group.id, item.id, { label: e.target.value })}
-                            className="bg-transparent text-[11px] font-black tracking-tight w-full focus:outline-none text-foreground"
-                            placeholder="Item Label"
-                          />
-                          <button 
-                            onClick={() => deleteHabitItem(group.id, item.id)}
-                            className="text-rose-500 hover:text-rose-600 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <Minus className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <input 
-                          type="text" 
-                          value={item.detail} 
-                          onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
-                          className="bg-transparent text-[9px] font-bold opacity-50 w-full focus:outline-none"
-                          placeholder="Short description"
-                        />
+                      <div className="flex-1 flex items-center gap-3 bg-muted/5 p-2 rounded-lg border border-border/5">
+                         <div className="w-4 h-4 border border-muted-foreground/30 rounded flex-shrink-0" />
+                         <div className="flex-1 space-y-1">
+                            <input 
+                              type="text" value={item.label} 
+                              onChange={(e) => updateHabitItem(group.id, item.id, { label: e.target.value })}
+                              className="bg-transparent text-[12px] font-bold tracking-tight w-full focus:outline-none text-foreground"
+                            />
+                            <input 
+                              type="text" value={item.detail} 
+                              onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
+                              className="bg-transparent text-[9px] font-medium opacity-50 w-full focus:outline-none"
+                            />
+                         </div>
+                         <button onClick={() => deleteHabitItem(group.id, item.id)} className="text-rose-500 p-1"><Minus className="w-3.5 h-3.5" /></button>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => toggleHabit(item.id)}
-                        className={`w-full p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
-                          isChecked 
-                            ? 'bg-primary/5 border-primary/20 text-foreground shadow-sm shadow-primary/5' 
-                            : 'bg-muted/10 border-border/10 hover:border-muted-foreground/30 text-muted-foreground'
-                        }`}
-                      >
-                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
-                          isChecked ? 'bg-primary border-primary text-white scale-110' : 'border-muted-foreground/20'
-                        }`}>
-                          {isChecked && <CheckCheck className="w-3 h-3" />}
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-black tracking-tight leading-tight mb-0.5">{item.label}</p>
-                          <p className="text-[9px] font-bold opacity-50 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.detail}</p>
-                        </div>
-                      </button>
+                      <div className="flex items-start gap-4 group/item">
+                         <button 
+                           onClick={() => toggleHabit(item.id)}
+                           className="mt-0.5 w-4.5 h-4.5 rounded-sm border flex items-center justify-center transition-all border-muted-foreground/30 hover:border-primary/50"
+                         >
+                           {isChecked ? <CheckSquare className="w-4.5 h-4.5 text-primary" /> : <Square className="w-4.5 h-4.5 opacity-20" />}
+                         </button>
+                         <div className="flex flex-col">
+                           <span className={`text-[12px] font-medium tracking-tight ${isChecked ? 'line-through opacity-40' : 'text-foreground/90'}`}>{item.label}</span>
+                           {item.detail && <span className="text-[10px] opacity-40 font-medium tracking-tight">{item.detail}</span>}
+                         </div>
+                      </div>
                     )}
                   </div>
                 );
               })}
-              
               {isEditing && (
-                <button 
-                  onClick={() => addHabitItem(group.id, 'New Objective', 'Brief description')}
-                  className="p-3 rounded-xl border border-dashed border-border/20 text-muted-foreground hover:text-primary hover:border-primary/30 transition-all flex items-center justify-center gap-2 text-[10px] font-bold"
-                >
-                  <Plus className="w-3.5 h-3.5" /> Add Strategy
+                <button onClick={() => addHabitItem(group.id, 'New Target', '')} className="mt-2 text-primary/60 hover:text-primary transition-colors flex items-center gap-2 text-[9px] font-black uppercase tracking-widest pl-1">
+                  <Plus className="w-3 h-3" /> Add Item
                 </button>
               )}
             </div>
           </div>
         ))}
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-7 space-y-6">
-           <div className="bg-muted/5 rounded-3xl p-6 border border-border/10">
-              <div className="flex items-center justify-between mb-6">
-                 <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
-                   <Target className="w-3.5 h-3.5 text-primary" /> Target Neutralization
-                 </h4>
+        {/* Data Sections Stacked Vertically */}
+        <div className="space-y-12 pt-10 border-t border-border/10">
+           {/* Problems Solved */}
+           <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                 <Target className="w-4 h-4 text-primary" />
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Target Neutralization:</h4>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4 max-w-xl">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
-                   <div key={diff} className="flex flex-col items-center bg-card/40 rounded-2xl p-4 border border-border/5 group hover:border-primary/20 transition-all">
-                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">{diff}</span>
-                      <div className="flex items-center justify-between w-full">
-                        <button onClick={() => setProbs(p => ({ ...p, [diff]: Math.max(0, p[diff] - 1) }))} className="w-6 h-6 rounded-md bg-muted/40 flex items-center justify-center text-muted-foreground hover:bg-muted-foreground/20"><Minus className="w-2.5 h-2.5"/></button>
-                        <span className="text-xl font-black text-foreground">{probs[diff]}</span>
-                        <button onClick={() => setProbs(p => ({ ...p, [diff]: p[diff] + 1 }))} className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white"><Plus className="w-2.5 h-2.5"/></button>
+                   <div key={diff} className="flex flex-col gap-2.5">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">- {diff} problems</span>
+                      <div className="flex items-center gap-4">
+                         <button onClick={() => updateProbs(diff, -1)} className="w-7 h-7 rounded-sm border border-border/10 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-2.5 h-2.5"/></button>
+                         <span className="text-sm font-black text-foreground tabular-nums w-4 text-center">{(log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 })[diff]}</span>
+                         <button onClick={() => updateProbs(diff, 1)} className="w-7 h-7 rounded-sm border border-primary/20 bg-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"><Plus className="w-2.5 h-2.5"/></button>
                       </div>
                    </div>
                  ))}
               </div>
            </div>
 
-           <div className="grid grid-cols-2 gap-4">
-              <div className="bg-muted/5 rounded-3xl p-6 border border-border/10 flex flex-col justify-between group hover:border-secondary/30 transition-all">
-                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">Focus Hours</span>
-                 <div className="flex items-end justify-between">
-                    <Clock className="w-6 h-6 text-secondary mb-1" />
-                    <input type="number" step="0.5" value={hrs} onChange={(e) => setHrs(Number(e.target.value))} className="w-16 bg-transparent text-right font-black text-secondary text-3xl focus:outline-none" />
-                 </div>
+           {/* Concepts Learned */}
+           <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                 <PenTool className="w-4 h-4 text-secondary" />
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Extraction Log (Insights):</h4>
               </div>
-              <div className="bg-muted/5 rounded-3xl p-6 border border-border/10 flex flex-col justify-between group hover:border-primary/30 transition-all">
-                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">Vitals (NRG/CON)</span>
-                 <div className="flex gap-3 items-center justify-end">
-                    <div className="flex flex-col items-center">
-                       <button onClick={() => setEnergy(e => (e % 10) + 1)} className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-500 font-black text-xs border border-rose-500/20">{energy}</button>
-                    </div>
-                    <div className="flex flex-col items-center">
-                       <button onClick={() => setConfidence(c => (c % 10) + 1)} className="w-9 h-9 rounded-lg bg-primary/10 text-primary font-black text-xs border border-primary/20">{confidence}</button>
+              <div className="space-y-3 pl-4">
+                 {[0, 1, 2].map(i => (
+                   <div key={i} className="flex items-center gap-4 group">
+                      <span className="text-[10px] font-black text-muted-foreground opacity-30">{i+1}.</span>
+                      <input 
+                         type="text" 
+                         value={(log.conceptsLearned ?? [])[i] || ''}
+                         onChange={(e) => updateConcepts(i, e.target.value)}
+                         className="flex-1 bg-transparent border-b border-border/20 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-10 transition-colors"
+                         placeholder="__________________________________________________________"
+                      />
+                   </div>
+                 ))}
+              </div>
+           </div>
+
+           {/* Vitals */}
+           <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                 <Activity className="w-4 h-4 text-rose-500" />
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Biometric Sync:</h4>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 pl-4">
+                 <div className="space-y-2.5">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Energy (1-10)</p>
+                    <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-2xl font-black text-rose-500 tabular-nums tracking-tighter">
+                       {log.energy < 10 ? `0${log.energy}` : '10'}
+                    </button>
+                 </div>
+                 <div className="space-y-2.5">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Confidence (1-10)</p>
+                    <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-2xl font-black text-primary tabular-nums tracking-tighter">
+                       {log.confidence < 10 ? `0${log.confidence}` : '10'}
+                    </button>
+                 </div>
+                 <div className="space-y-2.5">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Hours Logged</p>
+                    <div className="flex items-baseline gap-1">
+                       <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-2xl focus:outline-none w-14 tracking-tighter" />
+                       <span className="text-[10px] font-black text-muted-foreground opacity-40 uppercase">HR</span>
                     </div>
                  </div>
               </div>
            </div>
-        </div>
 
-        <div className="lg:col-span-5 flex flex-col">
-           <div className="bg-muted/5 rounded-3xl p-6 border border-border/10 h-full flex flex-col relative overflow-hidden">
-              <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4 flex items-center gap-3">
-                <PenTool className="w-3.5 h-3.5 text-secondary" /> Extraction Log
-              </h4>
-              
-              <div className="space-y-4 flex-1">
-                 <div>
-                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-2 ml-1">Insights</label>
-                    <div className="space-y-1.5">
-                       {concepts.map((c, i) => (
-                          <input 
-                            key={i} type="text" value={c}
-                            onChange={(e) => {
-                               const n = [...concepts];
-                               n[i] = e.target.value;
-                               setConcepts(n);
-                            }}
-                            placeholder={`Concept ${i+1}`}
-                            className="w-full bg-card/60 border border-border/10 rounded-lg px-3 py-2 text-foreground text-xs focus:outline-none focus:border-secondary/40 font-medium placeholder:opacity-20"
-                          />
-                       ))}
-                    </div>
+           {/* Tomorrow's Plan */}
+           <div className="space-y-6 pt-4">
+              <div className="flex items-center gap-3">
+                 <CalendarDays className="w-4 h-4 text-primary" />
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
+              </div>
+              <div className="space-y-3 pl-4 max-w-xl">
+                 <div className="flex items-center gap-4 group">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-20">- Morning:</span>
+                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/20 py-1 text-[12px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
                  </div>
-
-                 <div>
-                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-2 ml-1">Plan</label>
-                    <div className="grid grid-cols-2 gap-2">
-                       <input 
-                         type="text" value={tmrw.morning} 
-                         onChange={(e) => setTmrw(t => ({ ...t, morning: e.target.value }))}
-                         placeholder="AM Plan"
-                         className="bg-card/60 border border-border/10 rounded-lg px-3 py-2 text-foreground text-xs focus:outline-none border-primary/20 font-medium placeholder:opacity-20"
-                       />
-                       <input 
-                         type="text" value={tmrw.afternoon} 
-                         onChange={(e) => setTmrw(t => ({ ...t, afternoon: e.target.value }))}
-                         placeholder="PM Plan"
-                         className="bg-card/60 border border-border/10 rounded-lg px-3 py-2 text-foreground text-xs focus:outline-none border-primary/20 font-medium placeholder:opacity-20"
-                       />
-                    </div>
-                 </div>
-
-                 <div>
-                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-2 ml-1">Struggles</label>
-                    <textarea 
-                       value={struggles} onChange={(e) => setStruggles(e.target.value)} 
-                       className="w-full h-20 bg-card/60 border border-border/10 rounded-xl px-3 py-2 text-foreground text-xs focus:outline-none focus:border-secondary/40 resize-none font-medium placeholder:opacity-20"
-                       placeholder="..."
-                    />
+                 <div className="flex items-center gap-4 group">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-20">- Afternoon:</span>
+                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/20 py-1 text-[12px] font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
                  </div>
               </div>
+           </div>
 
-              <div className="pt-6">
-                 <button
-                   onClick={handleSave}
-                   className={`w-full py-5 rounded-[24px] font-black uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-4 ${
-                     saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:scale-[1.02] active:scale-95'
-                   }`}
-                 >
-                   {saved ? <><ShieldCheck className="w-4 h-4" /> SECURED</> : <><Save className="w-4 h-4" /> COMMIT SESSION</>}
-                 </button>
-              </div>
+           <div className="pt-12">
+              <button
+                onClick={handleSave}
+                className={`flex items-center gap-4 px-10 py-5 rounded-2xl font-black uppercase tracking-[0.4em] text-[10px] transition-all ${
+                  saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:scale-[1.02] active:scale-95'
+                }`}
+              >
+                {saved ? <ShieldCheck className="w-5 h-5" /> : <Save className="w-5 h-5" />}
+                {saved ? 'Protocol Secured' : 'Commit Daily Log'}
+              </button>
            </div>
         </div>
       </div>
     </div>
   );
 }
-
 
 // ── Main Dashboard ────────────────────────────────────────────────────────────
 
@@ -562,7 +482,6 @@ export default function DashboardView() {
   const currentWeek = calcCurrentWeek(state.startDate);
   const totalDone = state.problems.filter((p) => p.status === 'Done').length;
   const progressPct = Math.round((currentWeek / 12) * 100);
-  const log = state.dailyLogs.find(l => l.date === today()) || { energy: 5, confidence: 5 };
 
   return (
     <div className="relative">
@@ -641,4 +560,3 @@ export default function DashboardView() {
     </div>
   );
 }
-
