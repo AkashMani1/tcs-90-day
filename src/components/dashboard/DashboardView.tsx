@@ -207,6 +207,38 @@ function StreakGuard() {
   );
 }
 
+// ── Default Protocols ────────────────────────────────────────────────────────
+
+const INITIAL_HABIT_GROUPS = [
+  {
+    id: 'morning',
+    title: 'Morning Block (2.5-3h)',
+    items: [
+      { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
+      { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
+      { id: 'm_understood', label: 'Logical Lock', detail: 'Understood Topic Fully' },
+    ]
+  },
+  {
+    id: 'afternoon',
+    title: 'Afternoon Block (2-2.5h)',
+    items: [
+      { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
+      { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
+      { id: 'a_review', label: 'Solution Extraction', detail: 'Reviewed Hard Cases' },
+    ]
+  },
+  {
+    id: 'evening',
+    title: 'Evening Review (30-60m)',
+    items: [
+      { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
+      { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
+      { id: 'e_plan', label: 'Next-Day Intent', detail: 'Planned Next Topics' },
+    ]
+  }
+];
+
 // ── Daily Accountability Console ─────────────────────────────────────────────
 
 function DailyTaskChecklist() {
@@ -231,7 +263,9 @@ function DailyTaskChecklist() {
     tomorrowPlan: { morning: '', afternoon: '' }
   };
 
-  const habitGroups = state.habitGroups || [];
+  const habitGroups = state.habitGroups && state.habitGroups.length > 0 
+    ? state.habitGroups 
+    : INITIAL_HABIT_GROUPS;
 
   const handleSave = () => {
     setSaved(true);
