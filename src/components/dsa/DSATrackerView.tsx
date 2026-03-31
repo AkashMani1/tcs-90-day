@@ -278,20 +278,40 @@ export default function DSATrackerView() {
 
          {/* Problem Bento List */}
          <div className="space-y-4">
-            {problems.length === 0 ? (
-               <div className="py-20 text-center border-2 border-dashed border-obsidian-surface-highest/10 rounded-3xl">
-                  <AlertTriangle className="w-10 h-10 text-slate-800 mx-auto mb-4 opacity-20" />
-                  <p className="text-slate-600 text-xs font-black uppercase tracking-widest">No active targets in current sector</p>
-               </div>
-            ) : (
-               groupedProblems.map(([topic, groupProps]) => (
-                  <div key={topic} className="space-y-3">
-                     <div className="flex items-center gap-3 px-2 py-2">
-                        <div className="w-1.5 h-6 bg-neon-indigo rounded-full" />
-                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">{topic} <span className="opacity-40 ml-1">[{groupProps.length}]</span></span>
-                     </div>
-                     {groupProps.map((p) => (
-                        <div key={p.id} className="bento-card !p-5 hover:border-slate-700/50 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+            <AnimatePresence mode="popLayout">
+               {problems.length === 0 ? (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="py-20 text-center border-2 border-dashed border-obsidian-surface-highest/10 rounded-3xl"
+                  >
+                     <AlertTriangle className="w-10 h-10 text-slate-800 mx-auto mb-4 opacity-20" />
+                     <p className="text-slate-600 text-xs font-black uppercase tracking-widest">No active targets in current sector</p>
+                  </motion.div>
+               ) : (
+                  groupedProblems.map(([topic, groupProps]) => (
+                     <div key={topic} className="space-y-3">
+                        <motion.div 
+                          layout
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex items-center gap-3 px-2 py-2"
+                        >
+                           <div className="w-1.5 h-6 bg-neon-indigo rounded-full" />
+                           <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">{topic} <span className="opacity-40 ml-1">[{groupProps.length}]</span></span>
+                        </motion.div>
+                        <AnimatePresence mode="popLayout">
+                           {groupProps.map((p) => (
+                              <motion.div 
+                                key={p.id} 
+                                layout
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.98 }}
+                                transition={{ duration: 0.2 }}
+                                className="bento-card !p-5 hover:border-slate-700/50 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group"
+                              >
                            <div className="flex items-start gap-5 flex-1 min-w-0">
                               <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border transition-all ${
                                  p.status === 'Done' ? 'bg-neon-cyan/20 border-neon-cyan/30 text-neon-cyan-tint' : 'bg-obsidian-surface-highest/20 border-slate-700/50 text-slate-600'
@@ -340,13 +360,15 @@ export default function DSATrackerView() {
                                  </button>
                               </div>
                            </div>
-                        </div>
+                        </motion.div>
                      ))}
-                  </div>
-               ))
-            )}
-         </div>
-      </div>
+                  </AnimatePresence>
+               </div>
+            ))
+         )}
+      </AnimatePresence>
+   </div>
+</div>
 
       {/* Sidebar Metrics */}
       <div className="col-span-12 lg:col-span-3 space-y-6">
