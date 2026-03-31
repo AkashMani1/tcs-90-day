@@ -1,0 +1,25 @@
+
+> study-os@1.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 1373ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.5s (595 modules)
+ GET / 200 in 2719ms
+ ✓ Compiled in 160ms (301 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 287ms (572 modules)
+ GET / 200 in 279ms
+ ✓ Compiled in 174ms (586 modules)
+ ✓ Compiled in 112ms (572 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 54ms
+ GET / 200 in 22ms
+ ✓ Compiled in 237ms (586 modules)
+ GET / 200 in 75ms
+ GET / 200 in 39ms
