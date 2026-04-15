@@ -44,7 +44,7 @@ export default function Home() {
           marginLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '280px') 
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-        className="flex-1 min-w-0 min-h-screen relative pb-24 md:pb-0 overflow-x-hidden"
+        className="flex-1 min-w-0 min-h-screen relative pb-24 md:pb-0"
       >
         {/* Decorative Background Elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">

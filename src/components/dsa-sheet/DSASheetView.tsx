@@ -634,7 +634,7 @@ export default function DSASheetView() {
 
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
-                  <div className="overflow-x-auto lg:overflow-x-visible">
+                  <div className="overflow-x-auto">
                   <div className="hidden lg:grid grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 px-5 py-4 border border-white/10 bg-[#0f1117] text-white text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
                     <span></span>
                     <span>Problem</span>
