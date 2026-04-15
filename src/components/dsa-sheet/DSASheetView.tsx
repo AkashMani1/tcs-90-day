@@ -26,9 +26,9 @@ import { DSASheetItem, Difficulty } from '@/lib/types';
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1T5-nGsJ9WNwna44e9WWRD0jlZIT5KxVOGvylcvvVrY8/edit?gid=0#gid=0';
 
 const DIFFICULTY_STYLE: Record<Difficulty, string> = {
-  Easy: 'bg-emerald-500/16 text-emerald-300',
-  Medium: 'bg-amber-500/16 text-amber-300',
-  Hard: 'bg-rose-500/16 text-rose-300',
+  Easy: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300',
+  Medium: 'bg-amber-500/15 text-amber-600 dark:text-amber-300',
+  Hard: 'bg-rose-500/15 text-rose-600 dark:text-rose-300',
 };
 
 const TIMER_STYLE: Record<Difficulty, string> = {
@@ -63,23 +63,23 @@ function NoteEditor({
   const [value, setValue] = useState(item.notes || '');
 
   return (
-    <div className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="w-full max-w-xl rounded-[28px] border border-white/10 bg-[#11141b] overflow-hidden"
+        className="w-full max-w-xl rounded-[28px] border border-border/30 bg-card overflow-hidden shadow-2xl"
       >
-        <div className="px-7 py-5 border-b border-white/10 flex items-center justify-between gap-4">
+        <div className="px-7 py-5 border-b border-border/30 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl border border-white/10 bg-white/[0.03] flex items-center justify-center text-slate-200">
+            <div className="w-11 h-11 rounded-2xl border border-border/30 bg-muted/20 flex items-center justify-center text-foreground">
               <BookMarked className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-black text-white">Question Notes</p>
-              <p className="text-xs text-slate-500 mt-1">{item.title}</p>
+              <p className="text-sm font-black text-foreground">Question Notes</p>
+              <p className="text-xs text-muted-foreground mt-1">{item.title}</p>
             </div>
           </div>
-          <button onClick={onClose} className="rounded-2xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300">
+          <button onClick={onClose} className="rounded-2xl border border-border/30 px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground">
             Close
           </button>
         </div>
@@ -89,12 +89,12 @@ function NoteEditor({
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Write trigger points, approach hints, edge cases, or what you want to remember next time..."
-            className="w-full min-h-[220px] rounded-[24px] bg-white/[0.03] border border-white/10 px-5 py-4 text-sm leading-7 text-slate-100 focus:outline-none focus:border-[#ff7a59]/40"
+            className="w-full min-h-[220px] rounded-[24px] bg-muted/20 border border-border/30 px-5 py-4 text-sm leading-7 text-foreground focus:outline-none focus:border-primary/40"
           />
         </div>
 
-        <div className="px-7 py-5 border-t border-white/10 flex justify-end gap-3">
-          <button onClick={onClose} className="rounded-2xl border border-white/10 px-5 py-3 text-sm font-bold text-slate-300">Cancel</button>
+        <div className="px-7 py-5 border-t border-border/30 flex justify-end gap-3">
+          <button onClick={onClose} className="rounded-2xl border border-border/30 px-5 py-3 text-sm font-bold text-muted-foreground hover:text-foreground">Cancel</button>
           <button
             onClick={() => {
               onSave(value);
@@ -126,11 +126,11 @@ function NoteButton({
       className={`relative w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${
         hasNote
           ? 'border-[#ff7a59]/40 bg-[#ff7a59]/10 text-[#ff7a59]'
-          : 'border-white/10 bg-white/[0.02] text-slate-400 hover:border-[#ff7a59]/30 hover:text-white'
+          : 'border-border/30 bg-muted/20 text-muted-foreground hover:border-[#ff7a59]/30 hover:text-foreground'
       }`}
     >
       <BookMarked className="w-4 h-4" />
-      {hasNote ? <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#17191f]" /> : null}
+      {hasNote ? <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-card" /> : null}
     </button>
   );
 }
@@ -225,7 +225,7 @@ function CompanyBadge({ company }: { company: string }) {
 
   if (logoUrl) {
     return (
-      <div title={company} className="w-10 h-10 shrink-0 rounded-full border-2 border-[#17191f] bg-white overflow-hidden flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+      <div title={company} className="w-10 h-10 shrink-0 rounded-full border-2 border-background bg-white overflow-hidden flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
         <img
           src={logoUrl}
           alt={company}
@@ -244,7 +244,7 @@ function CompanyBadge({ company }: { company: string }) {
   }
 
   return (
-    <div title={company} className="w-10 h-10 shrink-0 rounded-full border-2 border-[#17191f] bg-white text-[#111319] flex items-center justify-center text-[11px] font-black shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+    <div title={company} className="w-10 h-10 shrink-0 rounded-full border-2 border-background bg-white text-[#111319] flex items-center justify-center text-[11px] font-black shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
       {getCompanyMonogram(company)}
     </div>
   );
@@ -258,7 +258,7 @@ function ProgressRing({ progress }: { progress: number }) {
   return (
     <div className="relative w-48 h-48 flex items-center justify-center">
       <svg className="w-48 h-48 -rotate-90">
-        <circle cx="96" cy="96" r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="14" />
+        <circle cx="96" cy="96" r={radius} fill="none" stroke="rgba(128,128,128,0.15)" strokeWidth="14" />
         <circle
           cx="96"
           cy="96"
@@ -272,8 +272,8 @@ function ProgressRing({ progress }: { progress: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-5xl font-black text-emerald-400">{progress}%</span>
-        <span className="text-[11px] tracking-[0.28em] uppercase text-slate-500 font-black mt-2">Progress</span>
+        <span className="text-5xl font-black text-emerald-500 dark:text-emerald-400">{progress}%</span>
+        <span className="text-[11px] tracking-[0.28em] uppercase text-muted-foreground font-black mt-2">Progress</span>
       </div>
     </div>
   );
@@ -303,32 +303,32 @@ function SheetEditor({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
       <motion.form
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         onSubmit={submit}
-        className="w-full max-w-3xl max-h-[90vh] rounded-[30px] border border-white/10 bg-[#101218] overflow-hidden flex flex-col"
+        className="w-full max-w-3xl max-h-[90vh] rounded-[30px] border border-border/30 bg-card overflow-hidden flex flex-col shadow-2xl"
       >
-        <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between sticky top-0 bg-[#101218] z-10">
+        <div className="px-8 py-6 border-b border-border/30 flex items-center justify-between sticky top-0 bg-card z-10">
           <div>
             <p className="text-[11px] font-black tracking-[0.28em] uppercase text-primary">DSA Sheet</p>
-            <h2 className="text-2xl font-black text-white mt-2">{item ? 'Edit Question' : 'Add Question'}</h2>
+            <h2 className="text-2xl font-black text-foreground mt-2">{item ? 'Edit Question' : 'Add Question'}</h2>
           </div>
-          <button type="button" onClick={onClose} className="rounded-2xl border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 hover:text-white">
+          <button type="button" onClick={onClose} className="rounded-2xl border border-border/30 px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground">
             Close
           </button>
         </div>
 
         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto">
           <label className="md:col-span-2">
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Problem</span>
-            <input value={form.title} onChange={(e) => update('title', e.target.value)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Problem</span>
+            <input value={form.title} onChange={(e) => update('title', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" />
           </label>
 
           <label>
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Section</span>
-            <input list="dsa-sections" value={form.section} onChange={(e) => update('section', e.target.value)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Section</span>
+            <input list="dsa-sections" value={form.section} onChange={(e) => update('section', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" />
             <datalist id="dsa-sections">
               {sections.map((section) => (
                 <option key={section} value={section} />
@@ -337,13 +337,13 @@ function SheetEditor({
           </label>
 
           <label>
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Sub Topic</span>
-            <input value={form.subgroup} onChange={(e) => update('subgroup', e.target.value)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" placeholder="Traversal, 2 Heaps, Mirror and Symmetry..." />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Sub Topic</span>
+            <input value={form.subgroup} onChange={(e) => update('subgroup', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="Traversal, 2 Heaps, Mirror and Symmetry..." />
           </label>
 
           <label>
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Difficulty</span>
-            <select value={form.difficulty} onChange={(e) => update('difficulty', e.target.value as Difficulty)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40">
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Difficulty</span>
+            <select value={form.difficulty} onChange={(e) => update('difficulty', e.target.value as Difficulty)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40">
               <option value="Easy">Easy</option>
               <option value="Medium">Medium</option>
               <option value="Hard">Hard</option>
@@ -351,33 +351,33 @@ function SheetEditor({
           </label>
 
           <label>
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Practice URL</span>
-            <input value={form.practiceUrl} onChange={(e) => update('practiceUrl', e.target.value)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" placeholder="https://leetcode.com/..." />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Practice URL</span>
+            <input value={form.practiceUrl} onChange={(e) => update('practiceUrl', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="https://leetcode.com/..." />
           </label>
 
           <label>
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Video URL</span>
-            <input value={form.videoUrl} onChange={(e) => update('videoUrl', e.target.value)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" placeholder="https://youtube.com/..." />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Video URL</span>
+            <input value={form.videoUrl} onChange={(e) => update('videoUrl', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="https://youtube.com/..." />
           </label>
 
           <label className="md:col-span-2">
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Interview Companies</span>
-            <input value={form.companies} onChange={(e) => update('companies', e.target.value)} className="w-full rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" placeholder="Amazon, Google, TCS, Infosys" />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Interview Companies</span>
+            <input value={form.companies} onChange={(e) => update('companies', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="Amazon, Google, TCS, Infosys" />
           </label>
 
           <label className="md:col-span-2">
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Resource Links</span>
-            <textarea value={form.resourceLinks} onChange={(e) => update('resourceLinks', e.target.value)} className="w-full min-h-[110px] rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" placeholder="One link per line" />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Resource Links</span>
+            <textarea value={form.resourceLinks} onChange={(e) => update('resourceLinks', e.target.value)} className="w-full min-h-[110px] rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="One link per line" />
           </label>
 
           <label className="md:col-span-2">
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-slate-500 font-black mb-2">Notes</span>
-            <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} className="w-full min-h-[96px] rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4 text-white focus:outline-none focus:border-primary/40" placeholder="Personal notes or admin hints" />
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Notes</span>
+            <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} className="w-full min-h-[96px] rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="Personal notes or admin hints" />
           </label>
         </div>
 
-        <div className="px-8 py-6 border-t border-white/10 flex justify-end gap-3 sticky bottom-0 bg-[#101218] z-10">
-          <button type="button" onClick={onClose} className="rounded-2xl border border-white/10 px-5 py-3 text-sm font-bold text-slate-300">Cancel</button>
+        <div className="px-8 py-6 border-t border-border/30 flex justify-end gap-3 sticky bottom-0 bg-card z-10">
+          <button type="button" onClick={onClose} className="rounded-2xl border border-border/30 px-5 py-3 text-sm font-bold text-muted-foreground hover:text-foreground">Cancel</button>
           <button type="submit" className="rounded-2xl bg-primary px-5 py-3 text-sm font-black text-white">Save</button>
         </div>
       </motion.form>
@@ -511,24 +511,24 @@ export default function DSASheetView() {
         />
       )}
 
-      <section className="rounded-[34px] border border-white/10 bg-[#090b12] overflow-hidden relative">
-        <div className="absolute inset-0 opacity-35 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '86px 86px' }} />
+      <section className="rounded-[34px] border border-border/30 bg-card overflow-hidden relative shadow-xl">
+        <div className="absolute inset-0 opacity-20 dark:opacity-35 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(128,128,128,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.1) 1px, transparent 1px)', backgroundSize: '86px 86px' }} />
         <div className="relative z-10 px-8 md:px-10 py-6 md:py-7">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 
             {/* Left: title + meta */}
             <div>
-              <h2 className="text-[22px] md:text-[26px] leading-[1.2] font-black tracking-tight text-white">
+              <h2 className="text-[22px] md:text-[26px] leading-[1.2] font-black tracking-tight text-foreground">
                 <span className="text-[#ff7a59]">DSA Sheet</span> — Most Important Interview Questions
               </h2>
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-slate-400 font-medium">
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted-foreground font-medium">
                 <span>All DSA topics covered</span>
-                <span className="text-white/20">•</span>
-                <span>Easy: <span className="text-emerald-400 font-bold">{stats.easy}</span></span>
-                <span>Medium: <span className="text-amber-400 font-bold">{stats.medium}</span></span>
-                <span>Hard: <span className="text-rose-400 font-bold">{stats.hard}</span></span>
-                <span className="text-white/20">•</span>
-                <span className="text-white font-semibold">{stats.completed}/{stats.total} solved</span>
+                <span className="text-border">•</span>
+                <span>Easy: <span className="text-emerald-500 dark:text-emerald-400 font-bold">{stats.easy}</span></span>
+                <span>Medium: <span className="text-amber-500 dark:text-amber-400 font-bold">{stats.medium}</span></span>
+                <span>Hard: <span className="text-rose-500 dark:text-rose-400 font-bold">{stats.hard}</span></span>
+                <span className="text-border">•</span>
+                <span className="text-foreground font-semibold">{stats.completed}/{stats.total} solved</span>
               </div>
               <div className="mt-3 flex items-center gap-3">
                 <div className="flex -space-x-2">
@@ -536,7 +536,7 @@ export default function DSASheetView() {
                     <div
                       key={label}
                       title={label}
-                      className={`w-7 h-7 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-[10px] ${
+                      className={`w-7 h-7 rounded-full border-2 border-card flex items-center justify-center font-black text-[10px] ${
                         index === 0 ? 'bg-[#c084fc] text-white' : index === 1 ? 'bg-[#f9a8d4] text-[#111319]' : index === 2 ? 'bg-[#86efac] text-[#111319]' : 'bg-[#fbbf24] text-[#111319]'
                       }`}
                     >
@@ -544,19 +544,19 @@ export default function DSASheetView() {
                     </div>
                   ))}
                 </div>
-                <p className="text-[12px] font-semibold text-slate-400">{Math.max(372, stats.total + 121)}+ solving now</p>
+                <p className="text-[12px] font-semibold text-muted-foreground">{Math.max(372, stats.total + 121)}+ solving now</p>
               </div>
             </div>
 
             {/* Right: action buttons */}
             <div className="flex flex-wrap gap-2 shrink-0">
-              <button onClick={openCreate} className="rounded-full border border-white/14 px-4 py-2 text-[12px] font-bold text-white hover:border-[#ff7a59]/50">
+              <button onClick={openCreate} className="rounded-full border border-border/40 px-4 py-2 text-[12px] font-bold text-foreground hover:border-[#ff7a59]/50">
                 <span className="inline-flex items-center gap-2"><Plus className="w-3.5 h-3.5" /> Add Question</span>
               </button>
-              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-white/14 px-4 py-2 text-[12px] font-bold text-white hover:border-[#ff7a59]/50">
+              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-border/40 px-4 py-2 text-[12px] font-bold text-foreground hover:border-[#ff7a59]/50">
                 <span className="inline-flex items-center gap-2"><Link2 className="w-3.5 h-3.5" /> Source Sheet</span>
               </a>
-              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-4 py-2 text-[12px] font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10' : 'border-white/14 text-white'}`}>
+              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-4 py-2 text-[12px] font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-300 bg-emerald-500/10' : 'border-border/40 text-foreground'}`}>
                 <span className="inline-flex items-center gap-2"><BookmarkCheck className="w-3.5 h-3.5" /> Saved</span>
               </button>
             </div>
@@ -565,37 +565,37 @@ export default function DSASheetView() {
       </section>
 
 
-      <div className="rounded-[30px] border border-white/10 bg-[#0d1016] p-5 md:p-6">
+      <div className="rounded-[30px] border border-border/30 bg-card p-5 md:p-6 shadow-md">
         <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_repeat(4,auto)] gap-3">
           <label className="relative">
-            <Search className="w-4 h-4 text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search problem, company, notes, section"
-              className="w-full rounded-2xl bg-white/[0.03] border border-white/10 pl-11 pr-4 py-3.5 text-white focus:outline-none focus:border-[#ff7a59]/40"
+              className="w-full rounded-2xl bg-muted/20 border border-border/30 pl-11 pr-4 py-3.5 text-foreground focus:outline-none focus:border-[#ff7a59]/40"
             />
           </label>
 
-          <select value={difficultyFilter} onChange={(event) => setDifficultyFilter(event.target.value as Difficulty | 'All')} className="rounded-2xl bg-white/[0.03] border border-white/10 px-4 py-3.5 text-white focus:outline-none focus:border-[#ff7a59]/40">
+          <select value={difficultyFilter} onChange={(event) => setDifficultyFilter(event.target.value as Difficulty | 'All')} className="rounded-2xl bg-muted/20 border border-border/30 px-4 py-3.5 text-foreground focus:outline-none focus:border-[#ff7a59]/40">
             <option value="All">All levels</option>
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
           </select>
 
-          <select value={sectionFilter} onChange={(event) => setSectionFilter(event.target.value)} className="rounded-2xl bg-white/[0.03] border border-white/10 px-4 py-3.5 text-white focus:outline-none focus:border-[#ff7a59]/40">
+          <select value={sectionFilter} onChange={(event) => setSectionFilter(event.target.value)} className="rounded-2xl bg-muted/20 border border-border/30 px-4 py-3.5 text-foreground focus:outline-none focus:border-[#ff7a59]/40">
             <option value="All">All sections</option>
             {sections.map((section) => (
               <option key={section} value={section}>{section}</option>
             ))}
           </select>
 
-          <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${savedOnly ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-white/10 text-slate-300'}`}>
+          <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${savedOnly ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'border-border/30 text-muted-foreground hover:text-foreground'}`}>
             Saved only
           </button>
 
-          <button onClick={() => setCompletedOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${completedOnly ? 'border-primary/40 bg-primary/10 text-primary' : 'border-white/10 text-slate-300'}`}>
+          <button onClick={() => setCompletedOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${completedOnly ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border/30 text-muted-foreground hover:text-foreground'}`}>
             Completed only
           </button>
         </div>
@@ -607,13 +607,13 @@ export default function DSASheetView() {
           const solved = sectionItems.filter((item) => item.completed).length;
 
           return (
-            <div key={section} className="rounded-[30px] border border-white/10 bg-[#12141a] overflow-hidden">
+            <div key={section} className="rounded-[30px] border border-border/30 bg-card overflow-hidden shadow-md">
               <button onClick={() => setCollapsedSections((prev) => ({ ...prev, [section]: !prev[section] }))} className="w-full px-6 py-4.5 flex items-center justify-between gap-4 text-left">
                 <div>
                   <p className="text-[18px] md:text-[20px] font-bold tracking-[-0.02em] text-[#ff7a59]">{section}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-[15px] md:text-[16px] font-semibold text-slate-300">{solved}/{sectionItems.length}</span>
+                  <span className="text-[15px] md:text-[16px] font-semibold text-muted-foreground">{solved}/{sectionItems.length}</span>
                   {collapsed ? <ChevronDown className="w-4 h-4 text-[#ff7a59]" /> : <ChevronUp className="w-4 h-4 text-[#ff7a59]" />}
                 </div>
               </button>
@@ -621,7 +621,7 @@ export default function DSASheetView() {
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
                   <div className="w-full">
-                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 px-4 py-3.5 border border-white/10 bg-[#0f1117] text-white text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
+                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 px-4 py-3.5 border border-border/30 bg-muted/20 text-foreground text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
                     <span></span>
                     <span>Problem</span>
                     <span>Youtube</span>
@@ -633,7 +633,7 @@ export default function DSASheetView() {
                     <span>Save</span>
                   </div>
 
-                  <div className="space-y-0 border-x border-b border-white/10 rounded-b-[18px] overflow-hidden">
+                  <div className="space-y-0 border-x border-b border-border/30 rounded-b-[18px] overflow-hidden">
                     {(() => {
                       const grouped = sectionItems.reduce<Record<string, DSASheetItem[]>>((acc, item) => {
                         const key = item.subgroup?.trim() || '__ungrouped__';
@@ -648,31 +648,31 @@ export default function DSASheetView() {
                       return entries.map(([subgroup, subgroupItems], subgroupIndex) => (
                         <div key={`${section}-${subgroup}`}>
                           {shouldShowSubgroups && subgroup !== '__ungrouped__' ? (
-                            <div className={`px-5 py-3.5 bg-[#14171d] ${subgroupIndex > 0 ? 'border-t border-white/10' : ''}`}>
-                              <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-slate-400">{subgroup}</p>
+                            <div className={`px-5 py-3.5 bg-muted/30 ${subgroupIndex > 0 ? 'border-t border-border/30' : ''}`}>
+                              <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{subgroup}</p>
                             </div>
                           ) : subgroupIndex > 0 && shouldShowSubgroups ? (
-                            <div className="border-t border-white/10" />
+                            <div className="border-t border-border/30" />
                           ) : null}
                           {subgroupItems.map((item) => {
                           return (
-                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-white/8 bg-[#17191f]">
-                          <button onClick={() => updateDsaSheetItem(item.id, { completed: !item.completed })} className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400">
-                            {item.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <Circle className="w-5 h-5" />}
+                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-border/20 bg-muted/5 hover:bg-muted/10 transition-colors">
+                          <button onClick={() => updateDsaSheetItem(item.id, { completed: !item.completed })} className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            {item.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5" />}
                           </button>
 
                           <div>
                             <div className="flex items-center gap-3 flex-wrap">
-                              <p className={`text-[14px] md:text-[15px] font-semibold leading-[1.45] tracking-[-0.01em] ${item.completed ? 'text-slate-500 line-through' : 'text-white'}`}>{item.title}</p>
-                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.04em] ${item.source === 'admin' ? 'bg-white/8 text-slate-300' : 'bg-primary/10 text-primary'}`}>
+                              <p className={`text-[14px] md:text-[15px] font-semibold leading-[1.45] tracking-[-0.01em] ${item.completed ? 'text-muted-foreground line-through' : 'text-foreground'}`}>{item.title}</p>
+                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.04em] ${item.source === 'admin' ? 'bg-muted/40 text-muted-foreground' : 'bg-primary/10 text-primary'}`}>
                                 {item.source === 'admin' ? 'Suggested' : 'Custom'}
                               </span>
                             </div>
                             <div className="mt-2.5 flex gap-2">
-                              <button onClick={() => openEdit(item)} className="rounded-xl border border-white/10 p-2 text-slate-300 hover:text-white">
+                              <button onClick={() => openEdit(item)} className="rounded-xl border border-border/30 p-2 text-muted-foreground hover:text-foreground">
                                 <Pencil className="w-4 h-4" />
                               </button>
-                              <button onClick={() => deleteDsaSheetItem(item.id)} className="rounded-xl border border-white/10 p-2 text-slate-300 hover:text-rose-300">
+                              <button onClick={() => deleteDsaSheetItem(item.id)} className="rounded-xl border border-border/30 p-2 text-muted-foreground hover:text-rose-500">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
@@ -687,14 +687,14 @@ export default function DSASheetView() {
                                 title={isYouTubeUrl(item.videoUrl) ? 'Open YouTube video' : 'Open video link'}
                                 className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors ${
                                   isYouTubeUrl(item.videoUrl)
-                                    ? 'border-red-500/30 bg-red-500/12 text-red-300 hover:bg-red-500/18'
-                                    : 'border-white/10 text-slate-200 hover:border-white/20'
+                                    ? 'border-red-500/30 bg-red-500/12 text-red-500 dark:text-red-300 hover:bg-red-500/18'
+                                    : 'border-border/30 text-muted-foreground hover:border-border/60'
                                 }`}
                               >
                                 <PlayCircle className="w-5 h-5" />
                               </a>
                             ) : (
-                              <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-white/10 flex items-center justify-center text-slate-500">
+                              <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-border/30 flex items-center justify-center text-muted-foreground">
                                 <Plus className="w-4 h-4" />
                               </button>
                             )}
@@ -702,11 +702,11 @@ export default function DSASheetView() {
 
                           <div className="flex lg:justify-center">
                             {item.practiceLinks[0] ? (
-                              <a href={item.practiceLinks[0]} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-200">
+                              <a href={item.practiceLinks[0]} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground">
                                 <Code2 className="w-5 h-5" />
                               </a>
                             ) : (
-                              <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-white/10 flex items-center justify-center text-slate-500">
+                              <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-border/30 flex items-center justify-center text-muted-foreground">
                                 <ExternalLink className="w-4 h-4" />
                               </button>
                             )}
@@ -716,7 +716,7 @@ export default function DSASheetView() {
                             <span className={`inline-flex rounded-full px-2.5 py-1.5 text-[11px] font-bold ${DIFFICULTY_STYLE[item.difficulty]}`}>{item.difficulty}</span>
                           </div>
 
-                          <div className="flex items-center gap-3 text-white">
+                          <div className="flex items-center gap-3 text-foreground">
                             <span className="text-[14px] font-semibold tracking-[-0.01em]">{TIMER_STYLE[item.difficulty]}</span>
                           </div>
 
@@ -733,13 +733,13 @@ export default function DSASheetView() {
                                   </div>
                                 ))}
                                 {item.companies.length > 4 ? (
-                                  <div className="-ml-2.5 w-10 h-10 shrink-0 rounded-full border-2 border-[#17191f] bg-[#111319] text-white flex items-center justify-center text-xs font-black" style={{ zIndex: 1 }}>
+                                  <div className="-ml-2.5 w-10 h-10 shrink-0 rounded-full border-2 border-card bg-muted text-foreground flex items-center justify-center text-xs font-black" style={{ zIndex: 1 }}>
                                     +{item.companies.length - 4}
                                   </div>
                                 ) : null}
                               </div>
                             ) : (
-                              <button onClick={() => openEdit(item)} className="inline-flex items-center gap-2 text-sm text-slate-500">
+                              <button onClick={() => openEdit(item)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
                                 <Building2 className="w-4 h-4" />
                                 Add
                               </button>
@@ -751,7 +751,7 @@ export default function DSASheetView() {
                           </div>
 
                           <div>
-                            <button onClick={() => updateDsaSheetItem(item.id, { saved: !item.saved })} className="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-slate-200">
+                            <button onClick={() => updateDsaSheetItem(item.id, { saved: !item.saved })} className="w-10 h-10 rounded-xl border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground">
                               {item.saved ? <BookmarkCheck className="w-5 h-5 text-primary" /> : <Bookmark className="w-5 h-5" />}
                             </button>
                           </div>
@@ -770,9 +770,9 @@ export default function DSASheetView() {
         })}
 
         {!groupedItems.length ? (
-          <div className="rounded-[30px] border border-dashed border-white/10 bg-[#0e1016] py-16 text-center">
-            <p className="text-2xl font-black text-white">No matching questions found</p>
-            <p className="text-slate-500 mt-2">Try another filter or add a new personal question.</p>
+          <div className="rounded-[30px] border border-dashed border-border/30 bg-muted/10 py-16 text-center">
+            <p className="text-2xl font-black text-foreground">No matching questions found</p>
+            <p className="text-muted-foreground mt-2">Try another filter or add a new personal question.</p>
           </div>
         ) : null}
       </div>

@@ -56,18 +56,18 @@ export default function Home() {
           {/* Header / Breadcrumb Section */}
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
             <div>
-              <div className="flex items-center gap-2 mb-3 text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">
-                <span className="hover:text-neon-indigo transition-colors cursor-pointer">PlacePrep</span>
-                <span className="text-obsidian-surface-highest">/</span>
-                <div className="flex items-center gap-1.5 text-neon-indigo-tint font-black">
+              <div className="flex items-center gap-2 mb-3 text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span className="hover:text-primary transition-colors cursor-pointer">PlacePrep</span>
+                <span className="text-border">/</span>
+                <div className="flex items-center gap-1.5 text-primary font-black">
                   <Icon className="w-3.5 h-3.5" />
                   <span>{label}</span>
                 </div>
               </div>
               {activeTab !== 'dsaSheet' ? (
-                <h1 className="text-3xl font-black text-white tracking-tight">
+                <h1 className="text-3xl font-black text-foreground tracking-tight">
                   {activeTab === 'dashboard' ? (
-                    <>Morning, <span className="bg-gradient-to-r from-neon-indigo-tint to-neon-cyan-tint bg-clip-text text-transparent">{state.userName}</span></>
+                    <>Morning, <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{state.userName}</span></>
                   ) : label}
                 </h1>
               ) : null}
@@ -97,24 +97,24 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="relative z-10 border-t border-obsidian-surface-highest/10 mt-20 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-slate-600 text-[11px] font-bold uppercase tracking-widest">
+        <footer className="relative z-10 border-t border-border/20 mt-20 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-widest">
             PlacePrep NINJA © 2026
           </p>
           <div className="flex items-center gap-6">
-             <span className="text-slate-700 text-[10px] font-bold uppercase tracking-widest">Encrypted Local Storage</span>
-             <span className="text-slate-700 text-[10px] font-bold uppercase tracking-widest">v5.4.0-obsidian</span>
+             <span className="text-muted-foreground/60 text-[10px] font-bold uppercase tracking-widest">Encrypted Local Storage</span>
+             <span className="text-muted-foreground/60 text-[10px] font-bold uppercase tracking-widest">v5.4.0-obsidian</span>
           </div>
         </footer>
       </motion.main>
 
       {/* Mobile bottom nav - hidden by CSS but here for structure */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-obsidian/95 backdrop-blur-xl border-t border-obsidian-surface-highest/20 flex md:hidden z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border/20 flex md:hidden z-50">
         {(Object.entries(TAB_LABELS) as [TabId, { label: string; icon: React.ElementType }][]).map(([id, { label, icon: Icon }]) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-wider transition-all ${activeTab === id ? 'text-neon-indigo' : 'text-slate-600'}`}
+            className={`flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-wider transition-all ${activeTab === id ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Icon className="w-5 h-5 mb-0.5" />
             {label.split(' ')[0]}

@@ -128,11 +128,11 @@ function getDailySubmissionCount(log: DashboardDailyLog) {
 }
 
 function getLeetCodeHeatColor(count: number, isToday: boolean) {
-  if (count === 0) return `bg-[#2b2b2b] border-[#2b2b2b] ${isToday ? 'ring-1 ring-[#ff7a59]/35' : ''}`;
-  if (count <= 2) return `bg-[#315834] border-[#315834] ${isToday ? 'ring-1 ring-[#7fd46a]/45' : ''}`;
-  if (count <= 4) return `bg-[#4f8b49] border-[#4f8b49] ${isToday ? 'ring-1 ring-[#8ce46c]/50' : ''}`;
-  if (count <= 7) return `bg-[#6bc35f] border-[#6bc35f] ${isToday ? 'ring-1 ring-[#b9f77c]/55' : ''}`;
-  return `bg-[#8cf06a] border-[#8cf06a] shadow-[0_0_14px_rgba(140,240,106,0.22)] ${isToday ? 'ring-1 ring-white/30' : ''}`;
+  if (count === 0) return `bg-muted/60 dark:bg-[#2b2b2b] border-border/40 dark:border-[#2b2b2b] ${isToday ? 'ring-1 ring-orange-400/35' : ''}`;
+  if (count <= 2) return `bg-emerald-200 dark:bg-[#315834] border-emerald-300/50 dark:border-[#315834] ${isToday ? 'ring-1 ring-emerald-400/45' : ''}`;
+  if (count <= 4) return `bg-emerald-400 dark:bg-[#4f8b49] border-emerald-400/70 dark:border-[#4f8b49] ${isToday ? 'ring-1 ring-emerald-400/50' : ''}`;
+  if (count <= 7) return `bg-emerald-500 dark:bg-[#6bc35f] border-emerald-500/70 dark:border-[#6bc35f] ${isToday ? 'ring-1 ring-emerald-400/55' : ''}`;
+  return `bg-emerald-500 dark:bg-[#8cf06a] border-emerald-500 dark:border-[#8cf06a] shadow-[0_0_14px_rgba(140,240,106,0.22)] ${isToday ? 'ring-1 ring-white/30' : ''}`;
 }
 
 // ── Monthly heatmap builder ────────────────────────────────────────────────────
@@ -240,7 +240,7 @@ function DeploymentLogPanel() {
   );
 
   return (
-    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-6 py-3 shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
+    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-border/30 dark:border-white/10 bg-card dark:bg-[#1b1d22] px-6 py-3 shadow-[0_24px_80px_rgba(0,0,0,0.08)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
 
       {/* Header — title, stats, year switcher all in one row */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -249,9 +249,9 @@ function DeploymentLogPanel() {
             <h3 className="text-[16px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
             <p className="text-[12px] text-[#ff6c61]">{totalSubmissions} submissions in {selectedYear}</p>
           </div>
-          <div className="flex items-center gap-4 text-[12px] text-slate-400">
-            <p>Active days: <span className="font-semibold text-white">{totalActiveDays}</span></p>
-            <p>Max streak: <span className="font-semibold text-white">{maxStreak}</span></p>
+          <div className="flex items-center gap-4 text-[12px] text-muted-foreground">
+            <p>Active days: <span className="font-semibold text-foreground">{totalActiveDays}</span></p>
+            <p>Max streak: <span className="font-semibold text-foreground">{maxStreak}</span></p>
           </div>
         </div>
 
@@ -259,7 +259,7 @@ function DeploymentLogPanel() {
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => startTransition(() => setSelectedYear((y) => y - 1))}
-            className="w-7 h-7 flex items-center justify-center rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/25 transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-full border border-border/30 dark:border-white/10 text-muted-foreground hover:text-foreground hover:border-border/60 dark:hover:border-white/25 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -269,7 +269,7 @@ function DeploymentLogPanel() {
           <button
             onClick={() => canGoNext && startTransition(() => setSelectedYear((y) => y + 1))}
             disabled={!canGoNext}
-            className="w-7 h-7 flex items-center justify-center rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/25 transition-colors disabled:opacity-30"
+            className="w-7 h-7 flex items-center justify-center rounded-full border border-border/30 dark:border-white/10 text-muted-foreground hover:text-foreground hover:border-border/60 dark:hover:border-white/25 transition-colors disabled:opacity-30"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -278,10 +278,10 @@ function DeploymentLogPanel() {
 
       {/* Monthly heatmap grid */}
       <div className="mt-3 overflow-x-auto" style={{ overflowY: 'visible' }}>
-        <div className="flex gap-2" style={{ minWidth: 'max-content' }}>
+        <div className="flex w-full justify-between gap-1">
           {monthGroups.map((month) => (
             <div key={month.name} className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold text-white/55 mb-0.5 tracking-wide">{month.name}</span>
+              <span className="text-[10px] font-semibold text-muted-foreground mb-0.5 tracking-wide">{month.name}</span>
               <div className="flex gap-[3px]">
                 {month.weeks.map((week, wi) => (
                   <div key={wi} className="flex flex-col gap-[3px]">
@@ -309,7 +309,7 @@ function DeploymentLogPanel() {
       {/* Fixed-position tooltip */}
       {tooltip && (
         <div
-          className="pointer-events-none fixed z-[999] whitespace-nowrap rounded-xl border border-white/10 bg-[#101216] px-3 py-2 text-[11px] text-white shadow-2xl"
+          className="pointer-events-none fixed z-[999] whitespace-nowrap rounded-xl border border-border/20 bg-card px-3 py-2 text-[11px] text-foreground shadow-2xl"
           style={{
             left: Math.min(
               Math.max(tooltip.x, 80),
@@ -320,8 +320,8 @@ function DeploymentLogPanel() {
           }}
         >
           <span className="font-bold">{tooltip.count} submissions</span>
-          <span className="mx-2 text-white/30">|</span>
-          <span className="text-white/60">
+          <span className="mx-2 text-muted-foreground/50">|</span>
+          <span className="text-muted-foreground">
             {tooltip.date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
           </span>
         </div>
@@ -382,7 +382,7 @@ function DSASheetProgressCard() {
                     <circle
                       cx={cx} cy={cy} r={ring.r}
                       fill="none"
-                      stroke="rgba(255,255,255,0.07)"
+                      stroke="rgba(128,128,128,0.15)"
                       strokeWidth={ring.sw}
                       strokeLinecap="round"
                     />
@@ -404,10 +404,10 @@ function DSASheetProgressCard() {
             {/* Center label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
               <p className="leading-none">
-                <span className="text-[20px] font-black text-white">{solved}</span>
-                <span className="text-[13px] font-bold text-slate-400">/{total}</span>
+                <span className="text-[20px] font-black text-foreground">{solved}</span>
+                <span className="text-[13px] font-bold text-muted-foreground">/{total}</span>
               </p>
-              <p className="text-[10px] font-semibold text-slate-300 mt-1">Solved</p>
+              <p className="text-[10px] font-semibold text-muted-foreground mt-1">Solved</p>
             </div>
           </div>
 
@@ -415,8 +415,8 @@ function DSASheetProgressCard() {
           <div className="flex-1 flex flex-col justify-center gap-3">
             {diffRows.map((row) => (
               <div key={row.label} className="flex items-center gap-3">
-                <span className="text-[15px] font-semibold text-white w-[58px] shrink-0">{row.label}</span>
-                <div className="flex-1 h-[10px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[15px] font-semibold text-foreground w-[58px] shrink-0">{row.label}</span>
+                <div className="flex-1 h-[10px] rounded-full overflow-hidden bg-muted/50">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -425,7 +425,7 @@ function DSASheetProgressCard() {
                     }}
                   />
                 </div>
-                <span className="text-[15px] font-semibold text-white w-[58px] shrink-0 text-right">
+                <span className="text-[15px] font-semibold text-foreground w-[58px] shrink-0 text-right">
                   {row.solved}/{row.total}
                 </span>
               </div>
@@ -436,7 +436,7 @@ function DSASheetProgressCard() {
               {diffRows.map((d) => (
                 <div key={d.label} className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-                  <span className="text-[12px] text-slate-300 font-medium">{d.label}</span>
+                  <span className="text-[12px] text-muted-foreground font-medium">{d.label}</span>
                 </div>
               ))}
             </div>

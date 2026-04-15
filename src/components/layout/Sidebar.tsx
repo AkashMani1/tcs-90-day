@@ -47,7 +47,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
       className="fixed left-0 top-0 h-screen glass border-r border-border/10 hidden md:flex flex-col z-50 select-none overflow-hidden"
     >
       {/* Logo Area */}
-      <div className={`py-8 flex items-center border-b border-border/5 ${isExpanded ? 'px-6 justify-between' : 'justify-center'}`}>
+      <div className={`py-8 flex items-center border-b border-border/10 ${isExpanded ? 'px-6 justify-between' : 'justify-center'}`}>
         <div className="flex items-center gap-4 overflow-hidden">
           <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/5 flex-shrink-0 relative group">
             <div className="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
