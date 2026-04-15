@@ -225,11 +225,11 @@ function CompanyBadge({ company }: { company: string }) {
 
   if (logoUrl) {
     return (
-      <div title={company} className="w-11 h-11 rounded-full border-2 border-[#17191f] bg-white overflow-hidden flex items-center justify-center">
+      <div title={company} className="w-10 h-10 shrink-0 rounded-full border-2 border-[#17191f] bg-white overflow-hidden flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
         <img
           src={logoUrl}
           alt={company}
-          className="w-7 h-7 object-contain"
+          className="w-6 h-6 object-contain"
           onError={(event) => {
             event.currentTarget.style.display = 'none';
             const fallback = event.currentTarget.nextElementSibling as HTMLElement | null;
@@ -244,7 +244,7 @@ function CompanyBadge({ company }: { company: string }) {
   }
 
   return (
-    <div title={company} className="w-11 h-11 rounded-full border-2 border-[#17191f] bg-white text-[#111319] flex items-center justify-center text-[11px] font-black">
+    <div title={company} className="w-10 h-10 shrink-0 rounded-full border-2 border-[#17191f] bg-white text-[#111319] flex items-center justify-center text-[11px] font-black shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
       {getCompanyMonogram(company)}
     </div>
   );
@@ -619,7 +619,7 @@ export default function DSASheetView() {
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
                   <div className="overflow-x-auto lg:overflow-x-visible">
-                  <div className="hidden lg:grid grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_120px_72px_72px] gap-4 px-5 py-5 border border-white/10 bg-[#0f1117] text-white text-[12px] font-black rounded-t-[18px] uppercase tracking-[0.16em]">
+                  <div className="hidden lg:grid grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 px-5 py-5 border border-white/10 bg-[#0f1117] text-white text-[12px] font-black rounded-t-[18px] uppercase tracking-[0.16em]">
                     <span></span>
                     <span>Problem</span>
                     <span>Youtube</span>
@@ -646,7 +646,7 @@ export default function DSASheetView() {
                         </div>
                         {subgroupItems.map((item) => {
                           return (
-                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_120px_72px_72px] gap-4 items-center px-5 py-5 border-t border-white/8 bg-[#17191f]">
+                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 items-center px-5 py-5 border-t border-white/8 bg-[#17191f]">
                           <button onClick={() => updateDsaSheetItem(item.id, { completed: !item.completed })} className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400">
                             {item.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <Circle className="w-5 h-5" />}
                           </button>
@@ -710,14 +710,20 @@ export default function DSASheetView() {
                             <span className="text-lg font-black">{TIMER_STYLE[item.difficulty]}</span>
                           </div>
 
-                          <div className="flex items-center">
+                          <div className="flex items-center lg:justify-center">
                             {item.companies.length ? (
-                              <div className="flex -space-x-2">
-                                {item.companies.slice(0, 4).map((company) => (
-                                  <CompanyBadge key={`${item.id}-${company}`} company={company} />
+                              <div className="flex items-center pl-1">
+                                {item.companies.slice(0, 4).map((company, companyIndex) => (
+                                  <div
+                                    key={`${item.id}-${company}`}
+                                    className={companyIndex === 0 ? '' : '-ml-2.5'}
+                                    style={{ zIndex: 10 - companyIndex }}
+                                  >
+                                    <CompanyBadge company={company} />
+                                  </div>
                                 ))}
                                 {item.companies.length > 4 ? (
-                                  <div className="w-11 h-11 rounded-full border-2 border-[#17191f] bg-[#111319] text-white flex items-center justify-center text-sm font-black">
+                                  <div className="-ml-2.5 w-10 h-10 shrink-0 rounded-full border-2 border-[#17191f] bg-[#111319] text-white flex items-center justify-center text-xs font-black" style={{ zIndex: 1 }}>
                                     +{item.companies.length - 4}
                                   </div>
                                 ) : null}
