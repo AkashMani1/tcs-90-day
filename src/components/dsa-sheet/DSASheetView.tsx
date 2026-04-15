@@ -513,71 +513,57 @@ export default function DSASheetView() {
 
       <section className="rounded-[34px] border border-white/10 bg-[#090b12] overflow-hidden relative">
         <div className="absolute inset-0 opacity-35 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '86px 86px' }} />
-        <div className="relative z-10 px-8 md:px-10 py-9 md:py-10 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8 xl:gap-10 items-start">
-          <div className="max-w-[620px]">
-            <h2 className="text-[28px] md:text-[34px] leading-[1.18] font-black tracking-tight text-white max-w-[620px]">
-              <span className="text-[#ff7a59]">DSA Sheet</span> - Most Important
-              <br />
-              Interview Questions
-            </h2>
+        <div className="relative z-10 px-8 md:px-10 py-6 md:py-7">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 
-            <div className="mt-5 space-y-2.5 text-slate-100">
-              <p className="text-[13px] md:text-[14px] leading-relaxed">• All DSA topics covered</p>
-              <p className="text-[13px] md:text-[14px] leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span>• Will this be enough for Placements, is this for me?</span>
-                <button className="text-[#ff7a59] font-bold text-[12px] md:text-[13px]">View More</button>
-              </p>
-              <p className="text-[13px] md:text-[14px] leading-relaxed font-semibold">• Easy: {stats.easy} | Medium: {stats.medium} | Hard: {stats.hard}</p>
-            </div>
-
-            <div className="mt-6 flex items-center gap-3.5">
-              <div className="flex -space-x-2.5">
-                {HERO_USERS.map((label, index) => (
-                  <div
-                    key={label}
-                    title={label}
-                    className={`w-9 h-9 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-[11px] ${
-                      index === 0
-                        ? 'bg-[#c084fc] text-white'
-                        : index === 1
-                          ? 'bg-[#f9a8d4] text-[#111319]'
-                          : index === 2
-                            ? 'bg-[#86efac] text-[#111319]'
-                            : 'bg-[#fbbf24] text-[#111319]'
-                    }`}
-                  >
-                    {label.split(' ').map((part) => part[0]).join('')}
-                  </div>
-                ))}
+            {/* Left: title + meta */}
+            <div>
+              <h2 className="text-[22px] md:text-[26px] leading-[1.2] font-black tracking-tight text-white">
+                <span className="text-[#ff7a59]">DSA Sheet</span> — Most Important Interview Questions
+              </h2>
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-slate-400 font-medium">
+                <span>All DSA topics covered</span>
+                <span className="text-white/20">•</span>
+                <span>Easy: <span className="text-emerald-400 font-bold">{stats.easy}</span></span>
+                <span>Medium: <span className="text-amber-400 font-bold">{stats.medium}</span></span>
+                <span>Hard: <span className="text-rose-400 font-bold">{stats.hard}</span></span>
+                <span className="text-white/20">•</span>
+                <span className="text-white font-semibold">{stats.completed}/{stats.total} solved</span>
               </div>
-              <p className="text-[14px] md:text-[15px] font-bold text-white">{Math.max(372, stats.total + 121)}+ people solving now</p>
+              <div className="mt-3 flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {HERO_USERS.map((label, index) => (
+                    <div
+                      key={label}
+                      title={label}
+                      className={`w-7 h-7 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-[10px] ${
+                        index === 0 ? 'bg-[#c084fc] text-white' : index === 1 ? 'bg-[#f9a8d4] text-[#111319]' : index === 2 ? 'bg-[#86efac] text-[#111319]' : 'bg-[#fbbf24] text-[#111319]'
+                      }`}
+                    >
+                      {label.split(' ').map((part) => part[0]).join('')}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[12px] font-semibold text-slate-400">{Math.max(372, stats.total + 121)}+ solving now</p>
+              </div>
             </div>
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <button onClick={openCreate} className="rounded-full border border-white/14 px-4 py-2.5 text-[13px] font-bold text-white hover:border-[#ff7a59]/50">
-                <span className="inline-flex items-center gap-2"><Plus className="w-4 h-4" /> Add Question</span>
+            {/* Right: action buttons */}
+            <div className="flex flex-wrap gap-2 shrink-0">
+              <button onClick={openCreate} className="rounded-full border border-white/14 px-4 py-2 text-[12px] font-bold text-white hover:border-[#ff7a59]/50">
+                <span className="inline-flex items-center gap-2"><Plus className="w-3.5 h-3.5" /> Add Question</span>
               </button>
-              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-white/14 px-4 py-2.5 text-[13px] font-bold text-white hover:border-[#ff7a59]/50">
-                <span className="inline-flex items-center gap-2"><Link2 className="w-4 h-4" /> Source Sheet</span>
+              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-white/14 px-4 py-2 text-[12px] font-bold text-white hover:border-[#ff7a59]/50">
+                <span className="inline-flex items-center gap-2"><Link2 className="w-3.5 h-3.5" /> Source Sheet</span>
               </a>
-              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-4 py-2.5 text-[13px] font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10' : 'border-white/14 text-white'}`}>
-                <span className="inline-flex items-center gap-2"><BookmarkCheck className="w-4 h-4" /> Saved Questions</span>
+              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-4 py-2 text-[12px] font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10' : 'border-white/14 text-white'}`}>
+                <span className="inline-flex items-center gap-2"><BookmarkCheck className="w-3.5 h-3.5" /> Saved</span>
               </button>
-            </div>
-          </div>
-
-          <div className="w-full xl:w-[220px] xl:pt-1 flex flex-col items-center xl:items-end gap-4 justify-self-end">
-            <div className="scale-[0.9] origin-center xl:origin-top-right">
-              <ProgressRing progress={stats.progress} />
-            </div>
-            <div className="text-center xl:text-right max-w-[220px]">
-              <p className="text-5xl font-black text-white leading-none">{stats.completed} <span className="text-slate-500 text-3xl">/ {stats.total}</span></p>
-              <p className="text-[13px] uppercase tracking-[0.22em] text-slate-500 font-black mt-2">Problems Solved</p>
-              <p className="text-[13px] leading-6 text-slate-400 mt-3">Save important questions, add your own picks, and practice pattern by pattern.</p>
             </div>
           </div>
         </div>
       </section>
+
 
       <div className="rounded-[30px] border border-white/10 bg-[#0d1016] p-5 md:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_repeat(4,auto)] gap-3">
