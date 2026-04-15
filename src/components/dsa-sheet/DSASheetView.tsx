@@ -634,8 +634,8 @@ export default function DSASheetView() {
 
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
-                  <div className="overflow-x-auto">
-                  <div className="hidden lg:grid grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 px-5 py-4 border border-white/10 bg-[#0f1117] text-white text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
+                  <div className="w-full">
+                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 px-4 py-3.5 border border-white/10 bg-[#0f1117] text-white text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
                     <span></span>
                     <span>Problem</span>
                     <span>Youtube</span>
@@ -670,7 +670,7 @@ export default function DSASheetView() {
                           ) : null}
                           {subgroupItems.map((item) => {
                           return (
-                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 items-center px-5 py-4 border-t border-white/8 bg-[#17191f]">
+                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-white/8 bg-[#17191f]">
                           <button onClick={() => updateDsaSheetItem(item.id, { completed: !item.completed })} className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400">
                             {item.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <Circle className="w-5 h-5" />}
                           </button>
@@ -699,7 +699,7 @@ export default function DSASheetView() {
                                 target="_blank"
                                 rel="noreferrer"
                                 title={isYouTubeUrl(item.videoUrl) ? 'Open YouTube video' : 'Open video link'}
-                                className={`w-14 h-14 rounded-full border flex items-center justify-center transition-colors ${
+                                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors ${
                                   isYouTubeUrl(item.videoUrl)
                                     ? 'border-red-500/30 bg-red-500/12 text-red-300 hover:bg-red-500/18'
                                     : 'border-white/10 text-slate-200 hover:border-white/20'
@@ -708,7 +708,7 @@ export default function DSASheetView() {
                                 <PlayCircle className="w-5 h-5" />
                               </a>
                             ) : (
-                              <button onClick={() => openEdit(item)} className="w-14 h-14 rounded-full border border-dashed border-white/10 flex items-center justify-center text-slate-500">
+                              <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-white/10 flex items-center justify-center text-slate-500">
                                 <Plus className="w-4 h-4" />
                               </button>
                             )}
@@ -716,11 +716,11 @@ export default function DSASheetView() {
 
                           <div className="flex lg:justify-center">
                             {item.practiceLinks[0] ? (
-                              <a href={item.practiceLinks[0]} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center text-slate-200">
+                              <a href={item.practiceLinks[0]} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-200">
                                 <Code2 className="w-5 h-5" />
                               </a>
                             ) : (
-                              <button onClick={() => openEdit(item)} className="w-14 h-14 rounded-full border border-dashed border-white/10 flex items-center justify-center text-slate-500">
+                              <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-white/10 flex items-center justify-center text-slate-500">
                                 <ExternalLink className="w-4 h-4" />
                               </button>
                             )}
@@ -765,7 +765,7 @@ export default function DSASheetView() {
                           </div>
 
                           <div>
-                            <button onClick={() => updateDsaSheetItem(item.id, { saved: !item.saved })} className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center text-slate-200">
+                            <button onClick={() => updateDsaSheetItem(item.id, { saved: !item.saved })} className="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-slate-200">
                               {item.saved ? <BookmarkCheck className="w-5 h-5 text-primary" /> : <Bookmark className="w-5 h-5" />}
                             </button>
                           </div>
