@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useEffect, useMemo, useState } from 'react';
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle, 
@@ -193,20 +193,30 @@ function DeploymentLogPanel() {
   const { state } = useApp();
   const dailyLogs = state.dailyLogs as DashboardDailyLog[];
   const currentYear = new Date().getFullYear();
-  const availableYears = useMemo(() => {
-    const years = new Set<number>([currentYear]);
-    for (const log of dailyLogs) {
-      years.add(new Date(log.date).getFullYear());
-    }
-    return Array.from(years).sort((a, b) => a - b);
-  }, [dailyLogs, currentYear]);
-  const [selectedYear, setSelectedYear] = useState(() => currentYear);
 
-  useEffect(() => {
-    if (!availableYears.includes(selectedYear)) {
-      setSelectedYear(currentYear);
-    }
-  }, [availableYears, selectedYear, currentYear]);
+  // ── Free year navigation – never locked to only years with data ──────────────
+  const [selectedYear, setSelectedYear] = useState(() => currentYear);
+  const canGoPrev = true;                        // always allow going back
+  const canGoNext = selectedYear < currentYear;   // don't jump into the future
+
+  // ── Tooltip via React state + fixed position (avoids overflow clip) ──────────
+  const [tooltip, setTooltip] = useState<{
+    count: number; date: Date; x: number; y: number;
+  } | null>(null);
+
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>, cell: { count?: number; date: Date }) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setTooltip({
+        count: cell.count || 0,
+        date: cell.date,
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      });
+    },
+    []
+  );
+  const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
   const logsForYear = useMemo(
     () => dailyLogs.filter((log) => new Date(log.date).getFullYear() === selectedYear),
@@ -233,25 +243,22 @@ function DeploymentLogPanel() {
     [logsForYear]
   );
   const heatmap = useMemo(() => buildYearlyHeatmap(logsForYear, selectedYear), [logsForYear, selectedYear]);
-  const currentYearIndex = availableYears.indexOf(selectedYear);
-  const canGoPrev = currentYearIndex > 0;
-  const canGoNext = currentYearIndex < availableYears.length - 1;
 
   return (
-    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-6 py-4 shadow-[0_24px_80px_rgba(0,0,0,0.3)] overflow-visible">
+    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-6 py-4 shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
         <div className="flex items-baseline gap-3 flex-wrap">
           <h3 className="text-[18px] md:text-[20px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
           <p className="text-[13px] md:text-[14px] text-[#ff6c61]">{totalSubmissions} submissions in {selectedYear}</p>
         </div>
-
         <div className="flex items-center gap-5 text-[13px] md:text-[14px] text-slate-400 flex-wrap">
           <p>Total active days: <span className="font-semibold text-white">{totalActiveDays}</span></p>
           <p>Max streak: <span className="font-semibold text-white">{maxStreak}</span></p>
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
+      {/* Heatmap – overflow-x-auto but overflow-y-visible so tooltip is never clipped */}
+      <div className="mt-4 overflow-x-auto" style={{ overflowY: 'visible' }}>
         <div className="min-w-[860px]">
           <div className="relative">
             <div className="flex gap-1">
@@ -264,26 +271,14 @@ function DeploymentLogPanel() {
                     <motion.div
                       key={cell.key}
                       whileHover={cell.inYear ? { scale: 1.35, zIndex: 20 } : undefined}
-                      className={`group relative h-4 w-4 rounded-[2px] border transition-all duration-200 ${
-                        cell.inYear ? getLeetCodeHeatColor(cell.count || 0, cell.isToday) : 'border-transparent bg-transparent'
+                      onMouseEnter={(e) => cell.inYear && handleMouseEnter(e, { count: cell.count ?? 0, date: cell.date })}
+                      onMouseLeave={handleMouseLeave}
+                      className={`h-4 w-4 rounded-[2px] border transition-all duration-200 ${
+                        cell.inYear
+                          ? getLeetCodeHeatColor(cell.count || 0, cell.isToday)
+                          : 'border-transparent bg-transparent'
                       }`}
-                    >
-                      {cell.inYear ? (
-                        <div
-                          className={`pointer-events-none absolute bottom-full z-20 mb-3 hidden whitespace-nowrap rounded-md border border-white/10 bg-[#101216] px-3 py-1.5 text-[11px] text-white shadow-2xl group-hover:block ${
-                            weekIndex <= 1
-                              ? 'left-0'
-                              : weekIndex >= heatmap.weeks.length - 2
-                                ? 'right-0'
-                                : 'left-1/2 -translate-x-1/2'
-                          }`}
-                        >
-                          <span className="font-semibold">{cell.count || 0} submissions</span>
-                          <span className="mx-2 text-white/30">|</span>
-                          <span className="text-white/75">{cell.date.toLocaleDateString()}</span>
-                        </div>
-                      ) : null}
-                    </motion.div>
+                    />
                   ))}
                 </div>
               ))}
@@ -304,11 +299,11 @@ function DeploymentLogPanel() {
         </div>
       </div>
 
+      {/* Year navigation */}
       <div className="mt-3 flex items-center justify-end gap-3">
         <button
-          onClick={() => canGoPrev && startTransition(() => setSelectedYear(availableYears[currentYearIndex - 1]))}
-          disabled={!canGoPrev}
-          className="text-slate-300 disabled:opacity-30"
+          onClick={() => startTransition(() => setSelectedYear((y) => y - 1))}
+          className="text-slate-300"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -316,13 +311,34 @@ function DeploymentLogPanel() {
           {selectedYear}
         </div>
         <button
-          onClick={() => canGoNext && startTransition(() => setSelectedYear(availableYears[currentYearIndex + 1]))}
+          onClick={() => canGoNext && startTransition(() => setSelectedYear((y) => y + 1))}
           disabled={!canGoNext}
           className="text-slate-300 disabled:opacity-30"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Fixed-position tooltip – never clipped by scroll containers */}
+      {tooltip && (
+        <div
+          className="pointer-events-none fixed z-[999] whitespace-nowrap rounded-xl border border-white/10 bg-[#101216] px-3 py-2 text-[11px] text-white shadow-2xl"
+          style={{
+            left: Math.min(
+              Math.max(tooltip.x, 80),
+              typeof window !== 'undefined' ? window.innerWidth - 160 : tooltip.x
+            ),
+            top: tooltip.y - 48,
+            transform: 'translateX(-50%)',
+          }}
+        >
+          <span className="font-bold">{tooltip.count} submissions</span>
+          <span className="mx-2 text-white/30">|</span>
+          <span className="text-white/60">
+            {tooltip.date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+          </span>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -339,65 +355,80 @@ function DSASheetProgressCard() {
   const mediumSolved = items.filter((item) => item.difficulty === 'Medium' && item.completed).length;
   const hardSolved = items.filter((item) => item.difficulty === 'Hard' && item.completed).length;
 
-  const rings = [
-    { radius: 78, color: '#36b4b8', solved: easySolved, total: easyTotal },
-    { radius: 56, color: '#c7992d', solved: mediumSolved, total: mediumTotal },
-    { radius: 34, color: '#c44343', solved: hardSolved, total: hardTotal },
+  const SVG = 140;
+  const cx = SVG / 2;
+  const cy = SVG / 2;
+
+  const diffRows = [
+    { label: 'Easy',   color: '#36b4b8', solved: easySolved,   total: easyTotal   },
+    { label: 'Medium', color: '#c7992d', solved: mediumSolved, total: mediumTotal },
+    { label: 'Hard',   color: '#c44343', solved: hardSolved,   total: hardTotal   },
+  ];
+
+  // Ring radii and stroke – outer→Easy, middle→Medium, inner→Hard
+  const ringDefs = [
+    { r: 60, sw: 8, color: '#36b4b8', solved: easySolved,   total: easyTotal   },
+    { r: 44, sw: 8, color: '#c7992d', solved: mediumSolved, total: mediumTotal },
+    { r: 28, sw: 8, color: '#c44343', solved: hardSolved,   total: hardTotal   },
   ];
 
   return (
-    <BentoCard className="col-span-12 lg:col-span-5 overflow-hidden relative !p-0 min-h-[250px]">
-      <div className="px-6 py-6 h-full">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-[#ff7a59]">DSA Sheet Progress</h3>
-            <p className="text-[11px] text-slate-500 mt-1">Live sync from your sheet tracker</p>
-          </div>
-          <div className="text-right">
-            <p className="text-[28px] font-black text-white leading-none">{solved}<span className="text-slate-500">/{total}</span></p>
-            <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500 mt-1">Solved</p>
-          </div>
-        </div>
+    <BentoCard className="col-span-12 lg:col-span-5 overflow-hidden relative !p-0">
+      <div className="px-6 pt-5 pb-6 h-full flex flex-col gap-4">
 
-        <div className="mt-5 flex flex-col xl:flex-row items-center gap-6">
-          <div className="relative w-[158px] h-[158px] shrink-0">
-            <svg className="w-full h-full -rotate-90">
-              {rings.map((ring) => {
-                const circumference = 2 * Math.PI * ring.radius;
-                const progress = ring.total > 0 ? ring.solved / ring.total : 0;
+        {/* Title */}
+        <h3 className="text-[17px] font-black text-[#ff7a59] leading-none">DSA Sheet Progress</h3>
+
+        {/* Rings + Bars row */}
+        <div className="flex items-center gap-6 flex-1">
+
+          {/* ── Concentric Rings ── */}
+          <div className="relative shrink-0" style={{ width: SVG, height: SVG }}>
+            <svg width={SVG} height={SVG} className="-rotate-90" style={{ overflow: 'visible' }}>
+              {ringDefs.map((ring) => {
+                const circ = 2 * Math.PI * ring.r;
+                const prog = ring.total > 0 ? ring.solved / ring.total : 0;
                 return (
-                  <g key={ring.radius}>
-                    <circle cx="79" cy="79" r={ring.radius * 0.75} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="7" />
+                  <g key={ring.r}>
+                    {/* Track */}
                     <circle
-                      cx="79"
-                      cy="79"
-                      r={ring.radius * 0.75}
+                      cx={cx} cy={cy} r={ring.r}
+                      fill="none"
+                      stroke="rgba(255,255,255,0.07)"
+                      strokeWidth={ring.sw}
+                      strokeLinecap="round"
+                    />
+                    {/* Progress arc */}
+                    <circle
+                      cx={cx} cy={cy} r={ring.r}
                       fill="none"
                       stroke={ring.color}
-                      strokeWidth="7"
+                      strokeWidth={ring.sw}
                       strokeLinecap="round"
-                      strokeDasharray={2 * Math.PI * (ring.radius * 0.75)}
-                      strokeDashoffset={2 * Math.PI * (ring.radius * 0.75) * (1 - progress)}
+                      strokeDasharray={circ}
+                      strokeDashoffset={circ * (1 - prog)}
                     />
                   </g>
                 );
               })}
             </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <p className="text-[18px] font-black text-white">{solved}<span className="text-slate-400">/{total}</span></p>
-              <p className="text-[12px] text-slate-300">Solved</p>
+
+            {/* Center label */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+              <p className="leading-none">
+                <span className="text-[20px] font-black text-white">{solved}</span>
+                <span className="text-[13px] font-bold text-slate-400">/{total}</span>
+              </p>
+              <p className="text-[10px] font-semibold text-slate-300 mt-1">Solved</p>
             </div>
           </div>
 
-          <div className="flex-1 w-full space-y-4">
-            {[
-              { label: 'Easy', color: '#36b4b8', solved: easySolved, total: easyTotal },
-              { label: 'Medium', color: '#c7992d', solved: mediumSolved, total: mediumTotal },
-              { label: 'Hard', color: '#c44343', solved: hardSolved, total: hardTotal },
-            ].map((row) => (
-              <div key={row.label} className="grid grid-cols-[74px_minmax(0,1fr)_58px] items-center gap-4">
-                <span className="text-[15px] font-semibold text-white">{row.label}</span>
-                <div className="h-3 rounded-full bg-white/8 overflow-hidden">
+          {/* ── Progress Bars ── */}
+          <div className="flex-1 flex flex-col justify-center gap-4">
+            {diffRows.map((row) => (
+              <div key={row.label} className="flex items-center gap-3">
+                <span className="text-[15px] font-semibold text-white w-[58px] shrink-0">{row.label}</span>
+                <div className="flex-1 h-[10px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }}>
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -406,28 +437,29 @@ function DSASheetProgressCard() {
                     }}
                   />
                 </div>
-                <span className="text-[15px] font-semibold text-white text-right">{row.solved}/{row.total}</span>
+                <span className="text-[15px] font-semibold text-white w-[58px] shrink-0 text-right">
+                  {row.solved}/{row.total}
+                </span>
               </div>
             ))}
 
-            <div className="flex items-center justify-end gap-4 pt-1 text-[12px] text-slate-300 flex-wrap">
-              {[
-                { label: 'Easy', color: '#36b4b8' },
-                { label: 'Medium', color: '#c7992d' },
-                { label: 'Hard', color: '#c44343' },
-              ].map((legend) => (
-                <div key={legend.label} className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: legend.color }} />
-                  <span>{legend.label}</span>
+            {/* Legend */}
+            <div className="flex items-center justify-end gap-4 pt-1">
+              {diffRows.map((d) => (
+                <div key={d.label} className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                  <span className="text-[12px] text-slate-300 font-medium">{d.label}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
+
       </div>
     </BentoCard>
   );
 }
+
 
 // ── Streak Guard ─────────────────────────────────────────────────────────────
 
