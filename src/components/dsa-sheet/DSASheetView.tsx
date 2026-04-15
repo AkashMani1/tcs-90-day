@@ -509,30 +509,30 @@ export default function DSASheetView() {
 
       <section className="rounded-[34px] border border-white/10 bg-[#090b12] overflow-hidden relative">
         <div className="absolute inset-0 opacity-35 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '86px 86px' }} />
-        <div className="relative z-10 px-8 md:px-10 py-10 md:py-12 flex flex-col xl:flex-row gap-10 xl:items-start xl:justify-between">
-          <div className="max-w-3xl">
-            <h2 className="text-[38px] md:text-[54px] leading-[1.08] font-black tracking-tight text-white max-w-3xl">
+        <div className="relative z-10 px-8 md:px-10 py-9 md:py-10 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8 xl:gap-10 items-start">
+          <div className="max-w-[620px]">
+            <h2 className="text-[28px] md:text-[34px] leading-[1.18] font-black tracking-tight text-white max-w-[620px]">
               <span className="text-[#ff7a59]">DSA Sheet</span> - Most Important
               <br />
               Interview Questions
             </h2>
 
-            <div className="mt-7 space-y-3 text-slate-100">
-              <p className="text-base md:text-lg leading-relaxed">• All DSA topics covered</p>
-              <p className="text-base md:text-lg leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
+            <div className="mt-5 space-y-2.5 text-slate-100">
+              <p className="text-[13px] md:text-[14px] leading-relaxed">• All DSA topics covered</p>
+              <p className="text-[13px] md:text-[14px] leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span>• Will this be enough for Placements, is this for me?</span>
-                <button className="text-[#ff7a59] font-bold text-sm md:text-base">View More</button>
+                <button className="text-[#ff7a59] font-bold text-[12px] md:text-[13px]">View More</button>
               </p>
-              <p className="text-base md:text-lg leading-relaxed font-semibold">• Easy: {stats.easy} | Medium: {stats.medium} | Hard: {stats.hard}</p>
+              <p className="text-[13px] md:text-[14px] leading-relaxed font-semibold">• Easy: {stats.easy} | Medium: {stats.medium} | Hard: {stats.hard}</p>
             </div>
 
-            <div className="mt-8 flex items-center gap-4">
-              <div className="flex -space-x-3">
+            <div className="mt-6 flex items-center gap-3.5">
+              <div className="flex -space-x-2.5">
                 {HERO_USERS.map((label, index) => (
                   <div
                     key={label}
                     title={label}
-                    className={`w-11 h-11 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-sm ${
+                    className={`w-9 h-9 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-[11px] ${
                       index === 0
                         ? 'bg-[#c084fc] text-white'
                         : index === 1
@@ -546,28 +546,30 @@ export default function DSASheetView() {
                   </div>
                 ))}
               </div>
-              <p className="text-xl md:text-2xl font-bold text-white">{Math.max(372, stats.total + 121)}+ people solving now</p>
+              <p className="text-[14px] md:text-[15px] font-bold text-white">{Math.max(372, stats.total + 121)}+ people solving now</p>
             </div>
 
-            <div className="mt-9 flex flex-wrap gap-4">
-              <button onClick={openCreate} className="rounded-full border border-white/14 px-5 py-3 text-sm font-bold text-white hover:border-[#ff7a59]/50">
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button onClick={openCreate} className="rounded-full border border-white/14 px-4 py-2.5 text-[13px] font-bold text-white hover:border-[#ff7a59]/50">
                 <span className="inline-flex items-center gap-2"><Plus className="w-4 h-4" /> Add Question</span>
               </button>
-              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-white/14 px-5 py-3 text-sm font-bold text-white hover:border-[#ff7a59]/50">
+              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-white/14 px-4 py-2.5 text-[13px] font-bold text-white hover:border-[#ff7a59]/50">
                 <span className="inline-flex items-center gap-2"><Link2 className="w-4 h-4" /> Source Sheet</span>
               </a>
-              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-5 py-3 text-sm font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10' : 'border-white/14 text-white'}`}>
+              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-4 py-2.5 text-[13px] font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10' : 'border-white/14 text-white'}`}>
                 <span className="inline-flex items-center gap-2"><BookmarkCheck className="w-4 h-4" /> Saved Questions</span>
               </button>
             </div>
           </div>
 
-          <div className="xl:min-w-[260px] xl:pt-2 flex flex-col items-center xl:items-end gap-5">
-            <ProgressRing progress={stats.progress} />
-            <div className="text-center xl:text-right">
-              <p className="text-6xl font-black text-white">{stats.completed} <span className="text-slate-500 text-4xl">/ {stats.total}</span></p>
+          <div className="w-full xl:w-[220px] xl:pt-1 flex flex-col items-center xl:items-end gap-4 justify-self-end">
+            <div className="scale-[0.9] origin-center xl:origin-top-right">
+              <ProgressRing progress={stats.progress} />
+            </div>
+            <div className="text-center xl:text-right max-w-[220px]">
+              <p className="text-5xl font-black text-white leading-none">{stats.completed} <span className="text-slate-500 text-3xl">/ {stats.total}</span></p>
               <p className="text-[13px] uppercase tracking-[0.22em] text-slate-500 font-black mt-2">Problems Solved</p>
-              <p className="text-sm text-slate-400 mt-3">Save important questions, add your own picks, and practice pattern by pattern.</p>
+              <p className="text-[13px] leading-6 text-slate-400 mt-3">Save important questions, add your own picks, and practice pattern by pattern.</p>
             </div>
           </div>
         </div>
