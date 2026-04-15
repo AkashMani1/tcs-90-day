@@ -43,7 +43,8 @@ export default function Home() {
         animate={{ 
           marginLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '280px') 
         }}
-        className="flex-1 min-h-screen relative pb-24 md:pb-0"
+        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+        className="flex-1 min-w-0 min-h-screen relative pb-24 md:pb-0 overflow-x-hidden"
       >
         {/* Decorative Background Elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -51,7 +52,7 @@ export default function Home() {
            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neon-cyan/5 blur-[120px] rounded-full" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           {/* Header / Breadcrumb Section */}
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
             <div>

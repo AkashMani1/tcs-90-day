@@ -192,21 +192,21 @@ function buildYearlyHeatmap(logs: DashboardDailyLog[], selectedYear: number) {
 function DeploymentLogPanel() {
   const { state } = useApp();
   const dailyLogs = state.dailyLogs as DashboardDailyLog[];
+  const currentYear = new Date().getFullYear();
   const availableYears = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    const years = new Set<number>([currentYear, currentYear + 1]);
+    const years = new Set<number>([currentYear]);
     for (const log of dailyLogs) {
       years.add(new Date(log.date).getFullYear());
     }
     return Array.from(years).sort((a, b) => a - b);
-  }, [dailyLogs]);
-  const [selectedYear, setSelectedYear] = useState(() => availableYears[availableYears.length - 1]);
+  }, [dailyLogs, currentYear]);
+  const [selectedYear, setSelectedYear] = useState(() => currentYear);
 
   useEffect(() => {
     if (!availableYears.includes(selectedYear)) {
-      setSelectedYear(availableYears[availableYears.length - 1]);
+      setSelectedYear(currentYear);
     }
-  }, [availableYears, selectedYear]);
+  }, [availableYears, selectedYear, currentYear]);
 
   const logsForYear = useMemo(
     () => dailyLogs.filter((log) => new Date(log.date).getFullYear() === selectedYear),
@@ -238,20 +238,20 @@ function DeploymentLogPanel() {
   const canGoNext = currentYearIndex < availableYears.length - 1;
 
   return (
-    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-7 py-6 shadow-[0_24px_80px_rgba(0,0,0,0.3)] overflow-visible">
-      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-6 py-4 shadow-[0_24px_80px_rgba(0,0,0,0.3)] overflow-visible">
+      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
         <div className="flex items-baseline gap-3 flex-wrap">
-          <h3 className="text-[22px] md:text-[24px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
-          <p className="text-[14px] md:text-[16px] text-[#ff6c61]">{totalSubmissions} submissions in this year</p>
+          <h3 className="text-[18px] md:text-[20px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
+          <p className="text-[13px] md:text-[14px] text-[#ff6c61]">{totalSubmissions} submissions in {selectedYear}</p>
         </div>
 
-        <div className="flex items-center gap-7 text-[16px] md:text-[18px] text-slate-400 flex-wrap">
+        <div className="flex items-center gap-5 text-[13px] md:text-[14px] text-slate-400 flex-wrap">
           <p>Total active days: <span className="font-semibold text-white">{totalActiveDays}</span></p>
           <p>Max streak: <span className="font-semibold text-white">{maxStreak}</span></p>
         </div>
       </div>
 
-      <div className="mt-7 overflow-x-auto">
+      <div className="mt-4 overflow-x-auto">
         <div className="min-w-[860px]">
           <div className="relative">
             <div className="flex gap-1">
@@ -304,15 +304,15 @@ function DeploymentLogPanel() {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-end gap-4">
+      <div className="mt-3 flex items-center justify-end gap-3">
         <button
           onClick={() => canGoPrev && startTransition(() => setSelectedYear(availableYears[currentYearIndex - 1]))}
           disabled={!canGoPrev}
           className="text-slate-300 disabled:opacity-30"
         >
-          <ChevronLeft className="w-7 h-7" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
-        <div className="min-w-[112px] rounded-full border border-[#6b3b34] bg-[#2a2220] px-5 py-2.5 text-center text-[17px] font-black tracking-[0.04em] text-[#ff7a59]">
+        <div className="min-w-[96px] rounded-full border border-[#6b3b34] bg-[#2a2220] px-4 py-1.5 text-center text-[15px] font-black tracking-[0.04em] text-[#ff7a59]">
           {selectedYear}
         </div>
         <button
@@ -320,7 +320,7 @@ function DeploymentLogPanel() {
           disabled={!canGoNext}
           className="text-slate-300 disabled:opacity-30"
         >
-          <ChevronRight className="w-7 h-7" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       </div>
     </motion.div>
