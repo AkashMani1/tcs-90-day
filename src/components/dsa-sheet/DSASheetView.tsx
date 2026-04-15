@@ -37,11 +37,7 @@ const TIMER_STYLE: Record<Difficulty, string> = {
   Hard: '60 Min',
 };
 
-const FEATURE_CHIPS = [
-  'All DSA topics covered',
-  'Questions grouped by section and subtopic',
-  'Add, edit, save, and track your progress',
-];
+const HERO_USERS = ['User 1', 'User 2', 'User 3', 'User 4'];
 
 type FormState = {
   title: string;
@@ -515,28 +511,42 @@ export default function DSASheetView() {
         <div className="absolute inset-0 opacity-35 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '86px 86px' }} />
         <div className="relative z-10 px-8 md:px-10 py-10 md:py-12 flex flex-col xl:flex-row gap-10 xl:items-start xl:justify-between">
           <div className="max-w-3xl">
-            <h2 className="text-[48px] md:text-[58px] leading-[1.02] font-black tracking-tight text-white">
+            <h2 className="text-[38px] md:text-[54px] leading-[1.08] font-black tracking-tight text-white max-w-3xl">
               <span className="text-[#ff7a59]">DSA Sheet</span> - Most Important
               <br />
               Interview Questions
             </h2>
 
-            <div className="mt-8 space-y-4 text-slate-200 text-xl">
-              {FEATURE_CHIPS.map((line) => (
-                <p key={line} className="leading-relaxed">• {line}</p>
-              ))}
-              <p className="leading-relaxed">• Easy: {stats.easy} | Medium: {stats.medium} | Hard: {stats.hard}</p>
+            <div className="mt-7 space-y-3 text-slate-100">
+              <p className="text-base md:text-lg leading-relaxed">• All DSA topics covered</p>
+              <p className="text-base md:text-lg leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span>• Will this be enough for Placements, is this for me?</span>
+                <button className="text-[#ff7a59] font-bold text-sm md:text-base">View More</button>
+              </p>
+              <p className="text-base md:text-lg leading-relaxed font-semibold">• Easy: {stats.easy} | Medium: {stats.medium} | Hard: {stats.hard}</p>
             </div>
 
             <div className="mt-8 flex items-center gap-4">
               <div className="flex -space-x-3">
-                {['A', 'D', 'S', '+'].map((label, index) => (
-                  <div key={label} className={`w-12 h-12 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-sm ${index === 3 ? 'bg-[#ff7a59] text-white' : 'bg-white text-[#111319]'}`}>
-                    {label}
+                {HERO_USERS.map((label, index) => (
+                  <div
+                    key={label}
+                    title={label}
+                    className={`w-11 h-11 rounded-full border-2 border-[#090b12] flex items-center justify-center font-black text-sm ${
+                      index === 0
+                        ? 'bg-[#c084fc] text-white'
+                        : index === 1
+                          ? 'bg-[#f9a8d4] text-[#111319]'
+                          : index === 2
+                            ? 'bg-[#86efac] text-[#111319]'
+                            : 'bg-[#fbbf24] text-[#111319]'
+                    }`}
+                  >
+                    {label.split(' ').map((part) => part[0]).join('')}
                   </div>
                 ))}
               </div>
-              <p className="text-2xl font-bold text-white">{stats.total}+ questions ready to practice</p>
+              <p className="text-xl md:text-2xl font-bold text-white">{Math.max(372, stats.total + 121)}+ people solving now</p>
             </div>
 
             <div className="mt-9 flex flex-wrap gap-4">
