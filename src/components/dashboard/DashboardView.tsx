@@ -135,58 +135,57 @@ function getLeetCodeHeatColor(count: number, isToday: boolean) {
   return `bg-[#8cf06a] border-[#8cf06a] shadow-[0_0_14px_rgba(140,240,106,0.22)] ${isToday ? 'ring-1 ring-white/30' : ''}`;
 }
 
-function getYearRange(selectedYear: number) {
-  const start = new Date(selectedYear, 0, 1);
-  const end = new Date(selectedYear, 11, 31);
+// ── Monthly heatmap builder ────────────────────────────────────────────────────
 
-  const startPadding = (start.getDay() + 6) % 7;
-  const rangeStart = new Date(start);
-  rangeStart.setDate(start.getDate() - startPadding);
-
-  const endPadding = 6 - ((end.getDay() + 6) % 7);
-  const rangeEnd = new Date(end);
-  rangeEnd.setDate(end.getDate() + endPadding);
-
-  return { start, end, rangeStart, rangeEnd };
+interface HeatCell {
+  date: Date;
+  key: string;
+  count: number;
+  isToday: boolean;
 }
 
-function buildYearlyHeatmap(logs: DashboardDailyLog[], selectedYear: number) {
+interface MonthGroup {
+  name: string;    // e.g. "January"
+  short: string;   // e.g. "Jan"
+  weeks: (HeatCell | null)[][];  // weeks[weekIdx][dow 0=Mon..6=Sun]
+}
+
+function buildMonthlyGroups(logs: DashboardDailyLog[], year: number): MonthGroup[] {
   const logMap = new Map(logs.map((log) => [log.date, getDailySubmissionCount(log)]));
   const todayStr = today();
-  const { start, end, rangeStart, rangeEnd } = getYearRange(selectedYear);
-  const cells: { date: Date; count: number | null; key: string; isToday: boolean; inYear: boolean }[] = [];
 
-  for (let cursor = new Date(rangeStart); cursor <= rangeEnd; cursor.setDate(cursor.getDate() + 1)) {
-    const current = new Date(cursor);
-    const key = toDateStr(current);
-    const inYear = current >= start && current <= end;
+  return Array.from({ length: 12 }, (_, m) => {
+    const firstDay   = new Date(year, m, 1);
+    const daysInMonth = new Date(year, m + 1, 0).getDate();
+    // Mon=0 … Sun=6
+    const startDow   = (firstDay.getDay() + 6) % 7;
+    const numWeeks   = Math.ceil((startDow + daysInMonth) / 7);
 
-    cells.push({
-      date: current,
-      key,
-      inYear,
-      isToday: key === todayStr,
-      count: inYear ? logMap.get(key) ?? 0 : null,
-    });
-  }
+    // weeks[w][d] = HeatCell | null (null = padding)
+    const weeks: (HeatCell | null)[][] = Array.from({ length: numWeeks }, () =>
+      Array<HeatCell | null>(7).fill(null)
+    );
 
-  const weeks: typeof cells[] = [];
-  for (let index = 0; index < cells.length; index += 7) {
-    weeks.push(cells.slice(index, index + 7));
-  }
+    for (let d = 0; d < daysInMonth; d++) {
+      const ci   = startDow + d;
+      const w    = Math.floor(ci / 7);
+      const dow  = ci % 7;
+      const date = new Date(year, m, d + 1);
+      const key  = toDateStr(date);
+      weeks[w][dow] = {
+        date,
+        key,
+        count: logMap.get(key) ?? 0,
+        isToday: key === todayStr,
+      };
+    }
 
-  const monthLabels = Array.from({ length: 12 }, (_, month) => {
-    const monthStart = new Date(selectedYear, month, 1);
-    const diff = Math.floor((monthStart.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
     return {
-      label: monthStart.toLocaleString('default', { month: 'short' }),
-      column: Math.floor(diff / 7),
+      name:  firstDay.toLocaleString('default', { month: 'long' }),
+      short: firstDay.toLocaleString('default', { month: 'short' }),
+      weeks,
     };
   });
-
-  const monthStartColumns = new Set(monthLabels.map((month) => month.column).filter((column) => column > 0));
-
-  return { weeks, monthLabels, monthStartColumns };
 }
 
 function DeploymentLogPanel() {
@@ -194,25 +193,17 @@ function DeploymentLogPanel() {
   const dailyLogs = state.dailyLogs as DashboardDailyLog[];
   const currentYear = new Date().getFullYear();
 
-  // ── Free year navigation – never locked to only years with data ──────────────
+  // ── Free year navigation ──────────────────────────────────────────────────
   const [selectedYear, setSelectedYear] = useState(() => currentYear);
-  const canGoPrev = true;                        // always allow going back
-  const canGoNext = selectedYear < currentYear;   // don't jump into the future
+  const canGoNext = selectedYear < currentYear;
 
-  // ── Tooltip via React state + fixed position (avoids overflow clip) ──────────
-  const [tooltip, setTooltip] = useState<{
-    count: number; date: Date; x: number; y: number;
-  } | null>(null);
+  // ── Tooltip via React state + fixed position ───────────────────────────────
+  const [tooltip, setTooltip] = useState<{ count: number; date: Date; x: number; y: number } | null>(null);
 
   const handleMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>, cell: { count?: number; date: Date }) => {
+    (e: React.MouseEvent<HTMLDivElement>, cell: HeatCell) => {
       const rect = e.currentTarget.getBoundingClientRect();
-      setTooltip({
-        count: cell.count || 0,
-        date: cell.date,
-        x: rect.left + rect.width / 2,
-        y: rect.top,
-      });
+      setTooltip({ count: cell.count, date: cell.date, x: rect.left + rect.width / 2, y: rect.top });
     },
     []
   );
@@ -242,84 +233,80 @@ function DeploymentLogPanel() {
       ).best,
     [logsForYear]
   );
-  const heatmap = useMemo(() => buildYearlyHeatmap(logsForYear, selectedYear), [logsForYear, selectedYear]);
+
+  const monthGroups = useMemo(
+    () => buildMonthlyGroups(logsForYear, selectedYear),
+    [logsForYear, selectedYear]
+  );
 
   return (
-    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-6 py-4 shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
-      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
-        <div className="flex items-baseline gap-3 flex-wrap">
-          <h3 className="text-[18px] md:text-[20px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
-          <p className="text-[13px] md:text-[14px] text-[#ff6c61]">{totalSubmissions} submissions in {selectedYear}</p>
-        </div>
-        <div className="flex items-center gap-5 text-[13px] md:text-[14px] text-slate-400 flex-wrap">
-          <p>Total active days: <span className="font-semibold text-white">{totalActiveDays}</span></p>
-          <p>Max streak: <span className="font-semibold text-white">{maxStreak}</span></p>
-        </div>
-      </div>
+    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-6 py-3 shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
 
-      {/* Heatmap – overflow-x-auto but overflow-y-visible so tooltip is never clipped */}
-      <div className="mt-4 overflow-x-auto" style={{ overflowY: 'visible' }}>
-        <div className="min-w-[860px]">
-          <div className="relative">
-            <div className="flex gap-1">
-              {heatmap.weeks.map((week, weekIndex) => (
-                <div
-                  key={weekIndex}
-                  className={`flex flex-col gap-1 ${heatmap.monthStartColumns.has(weekIndex) ? 'ml-2.5' : ''}`}
-                >
-                  {week.map((cell) => (
-                    <motion.div
-                      key={cell.key}
-                      whileHover={cell.inYear ? { scale: 1.35, zIndex: 20 } : undefined}
-                      onMouseEnter={(e) => cell.inYear && handleMouseEnter(e, { count: cell.count ?? 0, date: cell.date })}
-                      onMouseLeave={handleMouseLeave}
-                      className={`h-4 w-4 rounded-[2px] border transition-all duration-200 ${
-                        cell.inYear
-                          ? getLeetCodeHeatColor(cell.count || 0, cell.isToday)
-                          : 'border-transparent bg-transparent'
-                      }`}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-
-            <div className="relative mt-4 h-7">
-              {heatmap.monthLabels.map((month) => (
-                <span
-                  key={`${selectedYear}-${month.label}-${month.column}`}
-                  className="absolute text-[12px] md:text-[13px] font-medium text-white/85"
-                  style={{ left: `${month.column * 20 + Math.max(0, month.column - 1) * 4}px` }}
-                >
-                  {month.label}
-                </span>
-              ))}
-            </div>
+      {/* Header — title, stats, year switcher all in one row */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-baseline gap-3">
+            <h3 className="text-[16px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
+            <p className="text-[12px] text-[#ff6c61]">{totalSubmissions} submissions in {selectedYear}</p>
+          </div>
+          <div className="flex items-center gap-4 text-[12px] text-slate-400">
+            <p>Active days: <span className="font-semibold text-white">{totalActiveDays}</span></p>
+            <p>Max streak: <span className="font-semibold text-white">{maxStreak}</span></p>
           </div>
         </div>
-      </div>
 
-      {/* Year navigation */}
-      <div className="mt-3 flex items-center justify-end gap-3">
-        <button
-          onClick={() => startTransition(() => setSelectedYear((y) => y - 1))}
-          className="text-slate-300"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <div className="min-w-[96px] rounded-full border border-[#6b3b34] bg-[#2a2220] px-4 py-1.5 text-center text-[15px] font-black tracking-[0.04em] text-[#ff7a59]">
-          {selectedYear}
+        {/* Year switcher — top right */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={() => startTransition(() => setSelectedYear((y) => y - 1))}
+            className="w-7 h-7 flex items-center justify-center rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/25 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="rounded-full border border-[#6b3b34] bg-[#2a2220] px-3 py-1 text-[13px] font-black tracking-[0.04em] text-[#ff7a59]">
+            {selectedYear}
+          </div>
+          <button
+            onClick={() => canGoNext && startTransition(() => setSelectedYear((y) => y + 1))}
+            disabled={!canGoNext}
+            className="w-7 h-7 flex items-center justify-center rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/25 transition-colors disabled:opacity-30"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
-        <button
-          onClick={() => canGoNext && startTransition(() => setSelectedYear((y) => y + 1))}
-          disabled={!canGoNext}
-          className="text-slate-300 disabled:opacity-30"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
       </div>
 
-      {/* Fixed-position tooltip – never clipped by scroll containers */}
+      {/* Monthly heatmap grid */}
+      <div className="mt-3 overflow-x-auto" style={{ overflowY: 'visible' }}>
+        <div className="flex gap-2" style={{ minWidth: 'max-content' }}>
+          {monthGroups.map((month) => (
+            <div key={month.name} className="flex flex-col gap-1">
+              <span className="text-[10px] font-semibold text-white/55 mb-0.5 tracking-wide">{month.name}</span>
+              <div className="flex gap-[3px]">
+                {month.weeks.map((week, wi) => (
+                  <div key={wi} className="flex flex-col gap-[3px]">
+                    {week.map((cell, di) =>
+                      cell ? (
+                        <motion.div
+                          key={cell.key}
+                          whileHover={{ scale: 1.4, zIndex: 20 }}
+                          onMouseEnter={(e) => handleMouseEnter(e, cell)}
+                          onMouseLeave={handleMouseLeave}
+                          className={`h-[13px] w-[13px] rounded-[2px] border cursor-default transition-all duration-150 ${getLeetCodeHeatColor(cell.count, cell.isToday)}`}
+                        />
+                      ) : (
+                        <div key={`pad-${wi}-${di}`} className="h-[13px] w-[13px]" />
+                      )
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Fixed-position tooltip */}
       {tooltip && (
         <div
           className="pointer-events-none fixed z-[999] whitespace-nowrap rounded-xl border border-white/10 bg-[#101216] px-3 py-2 text-[11px] text-white shadow-2xl"
@@ -342,6 +329,7 @@ function DeploymentLogPanel() {
     </motion.div>
   );
 }
+
 
 function DSASheetProgressCard() {
   const { state } = useApp();
@@ -374,13 +362,13 @@ function DSASheetProgressCard() {
 
   return (
     <BentoCard className="col-span-12 lg:col-span-5 overflow-hidden relative !p-0">
-      <div className="px-6 pt-5 pb-6 h-full flex flex-col gap-4">
+      <div className="px-6 pt-4 pb-4 h-full flex flex-col gap-3">
 
         {/* Title */}
         <h3 className="text-[17px] font-black text-[#ff7a59] leading-none">DSA Sheet Progress</h3>
 
         {/* Rings + Bars row */}
-        <div className="flex items-center gap-6 flex-1">
+        <div className="flex items-center gap-4 flex-1">
 
           {/* ── Concentric Rings ── */}
           <div className="relative shrink-0" style={{ width: SVG, height: SVG }}>
@@ -424,7 +412,7 @@ function DSASheetProgressCard() {
           </div>
 
           {/* ── Progress Bars ── */}
-          <div className="flex-1 flex flex-col justify-center gap-4">
+          <div className="flex-1 flex flex-col justify-center gap-3">
             {diffRows.map((row) => (
               <div key={row.label} className="flex items-center gap-3">
                 <span className="text-[15px] font-semibold text-white w-[58px] shrink-0">{row.label}</span>
@@ -460,6 +448,44 @@ function DSASheetProgressCard() {
   );
 }
 
+
+// ── Streak Pill (inline inside Tactical Overview) ────────────────────────────
+
+function StreakPill() {
+  const { state } = useApp();
+  const status = getStreakStatus(state.dailyLogs);
+  const [timeLeft, setTimeLeft] = useState(getHoursUntilMidnight());
+
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(getHoursUntilMidnight()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (status === 'None') return null;
+
+  const isProtected = status === 'Protected';
+
+  return (
+    <div
+      className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] font-black shrink-0 ${
+        isProtected
+          ? 'bg-secondary/10 border-secondary/25 text-secondary'
+          : 'bg-primary/10 border-primary/25 text-primary animate-pulse'
+      }`}
+    >
+      {isProtected
+        ? <ShieldCheck className="w-3.5 h-3.5" />
+        : <AlertTriangle className="w-3.5 h-3.5" />
+      }
+      <span className="uppercase tracking-wider">
+        {isProtected ? 'Secured' : 'At Risk'}
+      </span>
+      {!isProtected && (
+        <span className="opacity-60 font-bold tabular-nums">{timeLeft}</span>
+      )}
+    </div>
+  );
+}
 
 // ── Streak Guard ─────────────────────────────────────────────────────────────
 
@@ -726,25 +752,47 @@ function DailyTaskChecklist() {
               </div>
            </div>
 
-           {/* Concepts Learned */}
-           <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                 <PenTool className="w-5 h-5 text-secondary" />
-                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Extraction Log (Insights):</h4>
+           {/* Extraction Log + Mission Deck — side by side */}
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+
+              {/* Concepts Learned */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-4">
+                    <PenTool className="w-5 h-5 text-secondary" />
+                    <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Extraction Log (Insights):</h4>
+                 </div>
+                 <div className="space-y-3 pl-4">
+                    {[0, 1, 2].map(i => (
+                      <div key={i} className="flex items-center gap-5">
+                         <span className="text-[11px] font-black text-muted-foreground opacity-20">{i+1}.</span>
+                         <input 
+                            type="text" 
+                            value={(log.conceptsLearned ?? [])[i] || ''}
+                            onChange={(e) => updateConcepts(i, e.target.value)}
+                            className="flex-1 bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors"
+                            placeholder="__________________________________________________________"
+                         />
+                      </div>
+                    ))}
+                 </div>
               </div>
-              <div className="space-y-3 pl-4">
-                 {[0, 1, 2].map(i => (
-                   <div key={i} className="flex items-center gap-5">
-                      <span className="text-[11px] font-black text-muted-foreground opacity-20">{i+1}.</span>
-                      <input 
-                         type="text" 
-                         value={(log.conceptsLearned ?? [])[i] || ''}
-                         onChange={(e) => updateConcepts(i, e.target.value)}
-                         className="flex-1 bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors"
-                         placeholder="__________________________________________________________"
-                      />
-                   </div>
-                 ))}
+
+              {/* Tomorrow's Plan */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-4">
+                    <CalendarDays className="w-5 h-5 text-primary" />
+                    <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
+                 </div>
+                 <div className="space-y-4 pl-4">
+                    <div className="flex items-center gap-6 group">
+                       <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Morning:</span>
+                       <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
+                    </div>
+                    <div className="flex items-center gap-6 group">
+                       <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Afternoon:</span>
+                       <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
+                    </div>
+                 </div>
               </div>
            </div>
 
@@ -777,25 +825,7 @@ function DailyTaskChecklist() {
               </div>
            </div>
 
-           {/* Tomorrow's Plan */}
-           <div className="space-y-6 pt-4">
-              <div className="flex items-center gap-4">
-                 <CalendarDays className="w-5 h-5 text-primary" />
-                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
-              </div>
-              <div className="space-y-4 pl-4">
-                 <div className="flex items-center gap-6 group max-w-xl">
-                    <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Morning:</span>
-                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
-                 </div>
-                 <div className="flex items-center gap-6 group max-w-xl">
-                    <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Afternoon:</span>
-                    <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
-                 </div>
-              </div>
-           </div>
-
-           <div className="pt-12">
+            <div className="pt-12">
               <button
                 onClick={handleSave}
                 className={`flex items-center gap-5 px-12 py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all ${
@@ -834,16 +864,20 @@ export default function DashboardView() {
       >
         
         {/* TOP ROW: Tactical Overview & DSA Sheet Progress */}
-        <BentoCard className="col-span-12 lg:col-span-7 overflow-hidden relative min-h-[250px] !p-0">
+        <BentoCard className="col-span-12 lg:col-span-7 overflow-hidden relative !p-0">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
-          <div className="relative z-10 h-full px-6 py-6 flex flex-col justify-between gap-6">
-             <div className="space-y-4">
-                <div>
-                   <h2 className="text-[12px] font-black uppercase tracking-[0.22em] text-foreground mb-2 leading-none">Tactical Overview</h2>
-                   <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                      <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-60">Platform Operational</p>
+          <div className="relative z-10 h-full px-6 py-4 flex flex-col justify-between gap-4">
+             <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                   <div>
+                     <h2 className="text-[12px] font-black uppercase tracking-[0.22em] text-foreground mb-1.5 leading-none">Tactical Overview</h2>
+                     <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                        <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-60">Platform Operational</p>
+                     </div>
                    </div>
+                   {/* Inline Streak Shield */}
+                   <StreakPill />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
@@ -860,15 +894,15 @@ export default function DashboardView() {
              
              <div className="grid grid-cols-3 gap-6 md:gap-8">
                 <div className="group">
-                   <p className="text-[36px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-2">{streak}</p>
+                   <p className="text-[28px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-1">{streak}</p>
                    <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Days Streak</p>
                 </div>
                 <div className="group">
-                   <p className="text-[36px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-2">{totalDone}</p>
+                   <p className="text-[28px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-1">{totalDone}</p>
                    <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Nodes Mastery</p>
                 </div>
                 <div className="group">
-                   <p className="text-[36px] font-black text-foreground/50 tabular-nums leading-none mb-2">{progressPct}%</p>
+                   <p className="text-[28px] font-black text-foreground/50 tabular-nums leading-none mb-1">{progressPct}%</p>
                    <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Effective</p>
                 </div>
              </div>
@@ -876,10 +910,6 @@ export default function DashboardView() {
         </BentoCard>
 
         <DSASheetProgressCard />
-
-        <div className="col-span-12">
-           <StreakGuard />
-        </div>
 
         <DeploymentLogPanel />
 
