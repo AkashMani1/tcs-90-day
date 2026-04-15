@@ -2,6 +2,7 @@ export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export type ProblemStatus = 'Todo' | 'Done' | 'Revisit';
 export type Platform = 'LeetCode' | 'GFG' | 'CodeVita' | 'Other';
 export type Phase = 'Ninja' | 'Digital' | 'Prime';
+export type DSASheetSource = 'admin' | 'user';
 
 export interface Problem {
   id: string;
@@ -14,6 +15,25 @@ export interface Problem {
   status: ProblemStatus;
   notes: string;
   addedAt: string;
+}
+
+export interface DSASheetItem {
+  id: string;
+  section: string;
+  subgroup?: string;
+  sectionOrder: number;
+  order: number;
+  title: string;
+  difficulty: Difficulty;
+  practiceLinks: string[];
+  resourceLinks: string[];
+  videoUrl: string;
+  companies: string[];
+  notes?: string;
+  completed: boolean;
+  saved: boolean;
+  source?: DSASheetSource;
+  hidden?: boolean;
 }
 
 export interface MockInterview {
@@ -104,6 +124,7 @@ export interface HabitGroup {
 export interface AppState {
   weeks: WeekPlan[];
   problems: Problem[];
+  dsaSheetItems?: DSASheetItem[];
   mocks: MockInterview[];
   stars: StarStory[];
   knowledgeBase: KnowledgeItem[];

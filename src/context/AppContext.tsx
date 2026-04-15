@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useCallback } from 'react';
-import { AppState, Problem, MockInterview, WeekTask, StarStory, KnowledgeItem, DailyLog, KnowledgeCategory, ProjectRecord } from '@/lib/types';
+import { AppState, Problem, MockInterview, WeekTask, StarStory, KnowledgeItem, DailyLog, KnowledgeCategory, ProjectRecord, DSASheetItem } from '@/lib/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import {
   DEFAULT_WEEKS,
@@ -11,11 +11,13 @@ import {
   HABIT_TEMPLATES,
 } from '@/lib/defaultData';
 import { KILL_LIST_PROBLEMS } from '@/lib/killListData';
+import { DEFAULT_DSA_SHEET_ITEMS, mergeDsaSheetItems } from '@/lib/dsaSheetSeed';
 import { today, generateId } from '@/lib/utils';
 
 const INITIAL_STATE: AppState = {
   weeks: DEFAULT_WEEKS,
   problems: KILL_LIST_PROBLEMS,
+  dsaSheetItems: DEFAULT_DSA_SHEET_ITEMS,
   mocks: DEFAULT_MOCKS,
   stars: DEFAULT_STARS,
   knowledgeBase: DEFAULT_KNOWLEDGE,
@@ -83,6 +85,9 @@ interface AppContextType {
   addProblem: (p: Omit<Problem, 'id' | 'addedAt'>) => void;
   updateProblem: (id: string, updates: Partial<Problem>) => void;
   deleteProblem: (id: string) => void;
+  addDsaSheetItem: (item: Omit<DSASheetItem, 'id'>) => void;
+  updateDsaSheetItem: (id: string, updates: Partial<DSASheetItem>) => void;
+  deleteDsaSheetItem: (id: string) => void;
 
   // Mocks
   addMock: (m: Omit<MockInterview, 'id'>) => void;
@@ -121,6 +126,21 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState, initialized] = useLocalStorage<AppState>('placeprep_v5', INITIAL_STATE);
+
+  React.useEffect(() => {
+    const merged = mergeDsaSheetItems(state.dsaSheetItems);
+    const shouldHydrate =
+      !Array.isArray(state.dsaSheetItems) ||
+      state.dsaSheetItems.length !== merged.length ||
+      JSON.stringify(state.dsaSheetItems) !== JSON.stringify(merged);
+
+    if (shouldHydrate) {
+      setState((prev: AppState) => ({
+        ...prev,
+        dsaSheetItems: merged,
+      }));
+    }
+  }, [setState, state.dsaSheetItems]);
 
   const mutate = useCallback((updater: (s: AppState) => AppState) => {
     setState((prev: AppState) => updater(prev));
@@ -269,6 +289,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     mutate((s) => ({ ...s, problems: s.problems.filter((p) => p.id !== id) }));
   }, [mutate]);
 
+  const addDsaSheetItem = useCallback((item: Omit<DSASheetItem, 'id'>) => {
+    mutate((s) => ({
+      ...s,
+      dsaSheetItems: [...(s.dsaSheetItems || DEFAULT_DSA_SHEET_ITEMS), { ...item, id: generateId(), source: 'user', hidden: false }],
+    }));
+  }, [mutate]);
+
+  const updateDsaSheetItem = useCallback((id: string, updates: Partial<DSASheetItem>) => {
+    mutate((s) => ({
+      ...s,
+      dsaSheetItems: (s.dsaSheetItems || DEFAULT_DSA_SHEET_ITEMS).map((item) =>
+        item.id === id ? { ...item, ...updates } : item
+      ),
+    }));
+  }, [mutate]);
+
+  const deleteDsaSheetItem = useCallback((id: string) => {
+    mutate((s) => ({
+      ...s,
+      dsaSheetItems: (s.dsaSheetItems || DEFAULT_DSA_SHEET_ITEMS)
+        .map((item) => {
+          if (item.id !== id) return item;
+          if (item.source === 'admin') return { ...item, hidden: true };
+          return null;
+        })
+        .filter(Boolean) as DSASheetItem[],
+    }));
+  }, [mutate]);
+
   // ── Mocks ──────────────────────────────────────────────────────────────────
   const addMock = useCallback((m: Omit<MockInterview, 'id'>) => {
     mutate((s) => ({ ...s, mocks: [{ ...m, id: generateId() }, ...s.mocks] }));
@@ -385,6 +434,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addProblem,
     updateProblem,
     deleteProblem,
+    addDsaSheetItem,
+    updateDsaSheetItem,
+    deleteDsaSheetItem,
     addMock,
     updateMock,
     deleteMock,

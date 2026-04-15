@@ -7,6 +7,7 @@ import SettingsModal from '@/components/layout/SettingsModal';
 import DashboardView from '@/components/dashboard/DashboardView';
 import RoadmapView from '@/components/roadmap/RoadmapView';
 import DSATrackerView from '@/components/dsa/DSATrackerView';
+import DSASheetView from '@/components/dsa-sheet/DSASheetView';
 import MockHubView from '@/components/mocks/MockHubView';
 import NotesVaultView from '@/components/notes/NotesVaultView';
 import ProjectLabView from '@/components/projects/ProjectLabView';
@@ -17,6 +18,7 @@ const TAB_LABELS: Record<TabId, { label: string; icon: React.ElementType }> = {
   dashboard: { label: 'Dashboard', icon: LayoutDashboard },
   roadmap: { label: '3-Month Roadmap', icon: GitMerge },
   dsa: { label: 'The Kill List', icon: Target },
+  dsaSheet: { label: 'DSA Sheet', icon: Code2 },
   mocks: { label: 'Mock Hub', icon: Video },
   notes: { label: 'Knowledge Base', icon: BookOpen },
   projects: { label: 'Project Lab', icon: Layers },
@@ -83,6 +85,7 @@ export default function Home() {
               {activeTab === 'dashboard' && <DashboardView />}
               {activeTab === 'roadmap' && <RoadmapView />}
               {activeTab === 'dsa' && <DSATrackerView />}
+              {activeTab === 'dsaSheet' && <DSASheetView />}
               {activeTab === 'mocks' && <MockHubView />}
               {activeTab === 'notes' && <NotesVaultView />}
               {activeTab === 'projects' && <ProjectLabView />}
@@ -120,4 +123,3 @@ export default function Home() {
     </div>
   );
 }
-

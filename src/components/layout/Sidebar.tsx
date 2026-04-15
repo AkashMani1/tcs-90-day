@@ -1,17 +1,18 @@
 'use client';
 
-import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, ChevronRight, Flame, Trophy, PanelLeftClose, PanelLeftOpen, Layers, Sun, Moon, Pin, PinOff } from 'lucide-react';
+import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, Flame, Trophy, Layers, Sun, Moon, Pin, PinOff } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcCurrentWeek, getStreakStatus } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
-export type TabId = 'dashboard' | 'roadmap' | 'dsa' | 'mocks' | 'notes' | 'projects';
+export type TabId = 'dashboard' | 'roadmap' | 'dsa' | 'dsaSheet' | 'mocks' | 'notes' | 'projects';
 
 const NAV_ITEMS: { id: TabId; icon: React.ElementType; label: string; badge?: string }[] = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { id: 'roadmap', icon: GitMerge, label: '3-Month Roadmap' },
   { id: 'dsa', icon: Target, label: 'The Kill List' },
+  { id: 'dsaSheet', icon: Code2, label: 'DSA Sheet' },
   { id: 'mocks', icon: Video, label: 'Mock Hub' },
   { id: 'notes', icon: BookOpen, label: 'Knowledge Base' },
   { id: 'projects', icon: Layers, label: 'Project Lab' },
@@ -167,4 +168,3 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
     </motion.aside>
   );
 }
-

@@ -2,24 +2,49 @@
 > study-os@1.0.0 dev
 > next dev
 
- ⚠ Port 3000 is in use, trying 3001 instead.
-  ▲ Next.js 14.2.35
-  - Local:        http://localhost:3001
+   ▲ Next.js 14.1.0
+   - Local:        http://localhost:3000
 
- ✓ Starting...
- ✓ Ready in 1373ms
+ ✓ Ready in 2.1s
  ○ Compiling / ...
- ✓ Compiled / in 2.5s (595 modules)
- GET / 200 in 2719ms
- ✓ Compiled in 160ms (301 modules)
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ✓ Compiled in 287ms (572 modules)
- GET / 200 in 279ms
- ✓ Compiled in 174ms (586 modules)
- ✓ Compiled in 112ms (572 modules)
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET / 200 in 54ms
- GET / 200 in 22ms
- ✓ Compiled in 237ms (586 modules)
- GET / 200 in 75ms
- GET / 200 in 39ms
+ ✓ Compiled / in 3.3s (1402 modules)
+ ✓ Compiled in 236ms (705 modules)
+ ✓ Compiled in 614ms (1393 modules)
+ ✓ Compiled in 270ms (1393 modules)
+ ✓ Compiled in 1921ms (1393 modules)
+ ✓ Compiled in 3.1s (1393 modules)
+ ✓ Compiled in 5.8s (1393 modules)
+ ✓ Compiled in 2.5s (1393 modules)
+ ✓ Compiled in 393ms (1393 modules)
+ ✓ Compiled in 453ms (1393 modules)
+ ✓ Compiled in 332ms (1393 modules)
+ ✓ Compiled in 587ms (1393 modules)
+ ✓ Compiled in 362ms (1393 modules)
+ ✓ Compiled in 2.1s (1393 modules)
+ ✓ Compiled in 4.6s (1393 modules)
+ ✓ Compiled in 3s (1393 modules)
+ ⨯ ./src/components/dashboard/DashboardView.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4m/Users/akashmani/Placement/study-os/src/components/dashboard/DashboardView.tsx[0m:375:1]
+ [2m375[0m |   const pct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
+ [2m376[0m | 
+ [2m377[0m |   return (
+ [2m378[0m |     <div className="flex flex-col gap-8">
+     : [31;1m     ^^^[0m
+ [2m379[0m |       {/* Worksheet Header */}
+ [2m380[0m |       <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10 px-2">
+ [2m381[0m |          <div className="flex items-center gap-8">
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/dashboard/DashboardView.tsx
+./src/app/page.tsx
+ ✓ Compiled in 2.7s (1393 modules)
+ ✓ Compiled in 1519ms (1393 modules)
+ ✓ Compiled in 12.9s (1393 modules)
+ ✓ Compiled in 4.9s (1393 modules)
+ ✓ Compiled in 9.7s (1393 modules)
