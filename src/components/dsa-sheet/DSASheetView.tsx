@@ -189,6 +189,10 @@ function parseCompanyList(value: string) {
   );
 }
 
+function normalizeGroupLabel(value: string) {
+  return value.trim().toLowerCase();
+}
+
 function isExternalUrl(value: string) {
   return /^https?:\/\//.test(value);
 }
@@ -618,20 +622,20 @@ export default function DSASheetView() {
 
           return (
             <div key={section} className="rounded-[30px] border border-white/10 bg-[#12141a] overflow-hidden">
-              <button onClick={() => setCollapsedSections((prev) => ({ ...prev, [section]: !prev[section] }))} className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left">
+              <button onClick={() => setCollapsedSections((prev) => ({ ...prev, [section]: !prev[section] }))} className="w-full px-6 py-4.5 flex items-center justify-between gap-4 text-left">
                 <div>
-                  <p className="text-3xl font-black text-[#ff7a59]">{section}</p>
+                  <p className="text-[18px] md:text-[20px] font-bold tracking-[-0.02em] text-[#ff7a59]">{section}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-2xl font-black text-slate-300">{solved}/{sectionItems.length}</span>
-                  {collapsed ? <ChevronDown className="w-5 h-5 text-[#ff7a59]" /> : <ChevronUp className="w-5 h-5 text-[#ff7a59]" />}
+                  <span className="text-[15px] md:text-[16px] font-semibold text-slate-300">{solved}/{sectionItems.length}</span>
+                  {collapsed ? <ChevronDown className="w-4 h-4 text-[#ff7a59]" /> : <ChevronUp className="w-4 h-4 text-[#ff7a59]" />}
                 </div>
               </button>
 
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
                   <div className="overflow-x-auto lg:overflow-x-visible">
-                  <div className="hidden lg:grid grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 px-5 py-5 border border-white/10 bg-[#0f1117] text-white text-[12px] font-black rounded-t-[18px] uppercase tracking-[0.16em]">
+                  <div className="hidden lg:grid grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 px-5 py-4 border border-white/10 bg-[#0f1117] text-white text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
                     <span></span>
                     <span>Problem</span>
                     <span>Youtube</span>
@@ -644,33 +648,41 @@ export default function DSASheetView() {
                   </div>
 
                   <div className="space-y-0 border-x border-b border-white/10 rounded-b-[18px] overflow-hidden">
-                    {Object.entries(
-                      sectionItems.reduce<Record<string, DSASheetItem[]>>((acc, item) => {
-                        const key = item.subgroup || 'Core Problems';
+                    {(() => {
+                      const grouped = sectionItems.reduce<Record<string, DSASheetItem[]>>((acc, item) => {
+                        const key = item.subgroup?.trim() || '__ungrouped__';
                         if (!acc[key]) acc[key] = [];
                         acc[key].push(item);
                         return acc;
-                      }, {})
-                    ).map(([subgroup, subgroupItems], subgroupIndex) => (
-                      <div key={`${section}-${subgroup}`}>
-                        <div className={`px-5 py-4 bg-[#14171d] ${subgroupIndex > 0 ? 'border-t border-white/10' : ''}`}>
-                          <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-400">{subgroup}</p>
-                        </div>
-                        {subgroupItems.map((item) => {
+                      }, {});
+                      const entries = Object.entries(grouped);
+                      const meaningfulSubgroups = entries.filter(([name]) => name !== '__ungrouped__' && normalizeGroupLabel(name) !== normalizeGroupLabel(section));
+                      const shouldShowSubgroups = meaningfulSubgroups.length > 0;
+
+                      return entries.map(([subgroup, subgroupItems], subgroupIndex) => (
+                        <div key={`${section}-${subgroup}`}>
+                          {shouldShowSubgroups && subgroup !== '__ungrouped__' ? (
+                            <div className={`px-5 py-3.5 bg-[#14171d] ${subgroupIndex > 0 ? 'border-t border-white/10' : ''}`}>
+                              <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-slate-400">{subgroup}</p>
+                            </div>
+                          ) : subgroupIndex > 0 && shouldShowSubgroups ? (
+                            <div className="border-t border-white/10" />
+                          ) : null}
+                          {subgroupItems.map((item) => {
                           return (
-                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 items-center px-5 py-5 border-t border-white/8 bg-[#17191f]">
+                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[56px_minmax(260px,2.4fr)_88px_96px_92px_108px_156px_72px_72px] gap-4 items-center px-5 py-4 border-t border-white/8 bg-[#17191f]">
                           <button onClick={() => updateDsaSheetItem(item.id, { completed: !item.completed })} className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400">
                             {item.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <Circle className="w-5 h-5" />}
                           </button>
 
                           <div>
                             <div className="flex items-center gap-3 flex-wrap">
-                              <p className={`text-[17px] font-bold leading-snug ${item.completed ? 'text-slate-500 line-through' : 'text-white'}`}>{item.title}</p>
-                              <span className={`px-3 py-1 rounded-full text-xs font-black ${item.source === 'admin' ? 'bg-white/8 text-slate-300' : 'bg-primary/10 text-primary'}`}>
+                              <p className={`text-[14px] md:text-[15px] font-semibold leading-[1.45] tracking-[-0.01em] ${item.completed ? 'text-slate-500 line-through' : 'text-white'}`}>{item.title}</p>
+                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.04em] ${item.source === 'admin' ? 'bg-white/8 text-slate-300' : 'bg-primary/10 text-primary'}`}>
                                 {item.source === 'admin' ? 'Suggested' : 'Custom'}
                               </span>
                             </div>
-                            <div className="mt-3 flex gap-2">
+                            <div className="mt-2.5 flex gap-2">
                               <button onClick={() => openEdit(item)} className="rounded-xl border border-white/10 p-2 text-slate-300 hover:text-white">
                                 <Pencil className="w-4 h-4" />
                               </button>
@@ -715,11 +727,11 @@ export default function DSASheetView() {
                           </div>
 
                           <div>
-                            <span className={`inline-flex rounded-full px-3 py-2 text-sm font-black ${DIFFICULTY_STYLE[item.difficulty]}`}>{item.difficulty}</span>
+                            <span className={`inline-flex rounded-full px-2.5 py-1.5 text-[11px] font-bold ${DIFFICULTY_STYLE[item.difficulty]}`}>{item.difficulty}</span>
                           </div>
 
                           <div className="flex items-center gap-3 text-white">
-                            <span className="text-lg font-black">{TIMER_STYLE[item.difficulty]}</span>
+                            <span className="text-[14px] font-semibold tracking-[-0.01em]">{TIMER_STYLE[item.difficulty]}</span>
                           </div>
 
                           <div className="flex items-center lg:justify-center">
@@ -761,7 +773,8 @@ export default function DSASheetView() {
                           );
                         })}
                       </div>
-                    ))}
+                    ));
+                    })()}
                   </div>
                   </div>
                 </div>

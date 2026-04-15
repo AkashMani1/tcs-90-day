@@ -63,11 +63,13 @@ export default function Home() {
                   <span>{label}</span>
                 </div>
               </div>
-              <h1 className="text-3xl font-black text-white tracking-tight">
-                {activeTab === 'dashboard' ? (
-                  <>Morning, <span className="bg-gradient-to-r from-neon-indigo-tint to-neon-cyan-tint bg-clip-text text-transparent">{state.userName}</span></>
-                ) : label}
-              </h1>
+              {activeTab !== 'dsaSheet' ? (
+                <h1 className="text-3xl font-black text-white tracking-tight">
+                  {activeTab === 'dashboard' ? (
+                    <>Morning, <span className="bg-gradient-to-r from-neon-indigo-tint to-neon-cyan-tint bg-clip-text text-transparent">{state.userName}</span></>
+                  ) : label}
+                </h1>
+              ) : null}
             </div>
             
             {/* Global Actions can go here */}

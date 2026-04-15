@@ -208,6 +208,15 @@ function cleanSectionName(section: string) {
     .trim();
 }
 
+function cleanSubgroupName(subgroup: string) {
+  return subgroup
+    .replace(/^\d+\s*[\.\):\-]?\s*/i, '')
+    .replace(/^pattern\s*:\s*/i, '')
+    .replace(/^pattern\s+/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function isSectionRow(question: string, links: string[]) {
   return links.length === 0 && /(pattern|^\d+\.)/i.test(question);
 }
@@ -241,7 +250,8 @@ export function parseDsaSheetCsv(csv: string): DSASheetItem[] {
     }
 
     if (patternCell) {
-      subgroup = patternCell;
+      const cleanedSubgroup = cleanSubgroupName(patternCell);
+      subgroup = cleanedSubgroup && cleanedSubgroup.toLowerCase() !== section.toLowerCase() ? cleanedSubgroup : '';
     }
 
     const videoLinks = links.filter(isYouTubeUrl);
@@ -274,6 +284,13 @@ export function parseDsaSheetCsv(csv: string): DSASheetItem[] {
 
 export const DEFAULT_DSA_SHEET_ITEMS = parseDsaSheetCsv(DSA_SHEET_CSV);
 
+function normalizeMergedSubgroup(section: string, subgroup?: string) {
+  const cleanedSubgroup = subgroup ? cleanSubgroupName(subgroup) : '';
+  if (!cleanedSubgroup) return undefined;
+  if (cleanedSubgroup.toLowerCase() === cleanSectionName(section).toLowerCase()) return undefined;
+  return cleanedSubgroup;
+}
+
 export function mergeDsaSheetItems(localItems?: DSASheetItem[]) {
   if (!Array.isArray(localItems) || localItems.length === 0) {
     return DEFAULT_DSA_SHEET_ITEMS;
@@ -285,9 +302,12 @@ export function mergeDsaSheetItems(localItems?: DSASheetItem[]) {
   const mergedAdminItems = DEFAULT_DSA_SHEET_ITEMS.map((seedItem) => {
     const localItem = localById.get(seedItem.id);
     if (!localItem) return seedItem;
+
+    const mergedSubgroup = normalizeMergedSubgroup(seedItem.section, localItem.subgroup ?? seedItem.subgroup);
     return {
       ...seedItem,
       ...localItem,
+      subgroup: mergedSubgroup,
       source: localItem.source || 'admin',
       companies: localItem.companies || seedItem.companies,
     };

@@ -184,14 +184,17 @@ function buildYearlyHeatmap(logs: DashboardDailyLog[], selectedYear: number) {
     };
   });
 
-  return { weeks, monthLabels };
+  const monthStartColumns = new Set(monthLabels.map((month) => month.column).filter((column) => column > 0));
+
+  return { weeks, monthLabels, monthStartColumns };
 }
 
 function DeploymentLogPanel() {
   const { state } = useApp();
   const dailyLogs = state.dailyLogs as DashboardDailyLog[];
   const availableYears = useMemo(() => {
-    const years = new Set<number>([new Date().getFullYear()]);
+    const currentYear = new Date().getFullYear();
+    const years = new Set<number>([currentYear, currentYear + 1]);
     for (const log of dailyLogs) {
       years.add(new Date(log.date).getFullYear());
     }
@@ -235,35 +238,46 @@ function DeploymentLogPanel() {
   const canGoNext = currentYearIndex < availableYears.length - 1;
 
   return (
-    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-8 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.3)] overflow-hidden">
-      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+    <motion.div variants={itemVariants} className="col-span-12 rounded-[30px] border border-white/10 bg-[#1b1d22] px-7 py-6 shadow-[0_24px_80px_rgba(0,0,0,0.3)] overflow-visible">
+      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
         <div className="flex items-baseline gap-3 flex-wrap">
-          <h3 className="text-[28px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
-          <p className="text-[15px] md:text-[18px] text-[#ff6c61]">{totalSubmissions} submissions in this year</p>
+          <h3 className="text-[22px] md:text-[24px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
+          <p className="text-[14px] md:text-[16px] text-[#ff6c61]">{totalSubmissions} submissions in this year</p>
         </div>
 
-        <div className="flex items-center gap-10 text-[18px] md:text-[20px] text-slate-400 flex-wrap">
+        <div className="flex items-center gap-7 text-[16px] md:text-[18px] text-slate-400 flex-wrap">
           <p>Total active days: <span className="font-semibold text-white">{totalActiveDays}</span></p>
           <p>Max streak: <span className="font-semibold text-white">{maxStreak}</span></p>
         </div>
       </div>
 
-      <div className="mt-10 overflow-x-auto">
-        <div className="min-w-[1100px]">
+      <div className="mt-7 overflow-x-auto">
+        <div className="min-w-[860px]">
           <div className="relative">
-            <div className="flex gap-2.5">
+            <div className="flex gap-1">
               {heatmap.weeks.map((week, weekIndex) => (
-                <div key={weekIndex} className="flex flex-col gap-2.5">
+                <div
+                  key={weekIndex}
+                  className={`flex flex-col gap-1 ${heatmap.monthStartColumns.has(weekIndex) ? 'ml-2.5' : ''}`}
+                >
                   {week.map((cell) => (
                     <motion.div
                       key={cell.key}
                       whileHover={cell.inYear ? { scale: 1.35, zIndex: 20 } : undefined}
-                      className={`group relative h-7 w-7 rounded-[3px] border transition-all duration-200 ${
+                      className={`group relative h-4 w-4 rounded-[2px] border transition-all duration-200 ${
                         cell.inYear ? getLeetCodeHeatColor(cell.count || 0, cell.isToday) : 'border-transparent bg-transparent'
                       }`}
                     >
                       {cell.inYear ? (
-                        <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-3 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#101216] px-3 py-1.5 text-[11px] text-white shadow-2xl group-hover:block">
+                        <div
+                          className={`pointer-events-none absolute bottom-full z-20 mb-3 hidden whitespace-nowrap rounded-md border border-white/10 bg-[#101216] px-3 py-1.5 text-[11px] text-white shadow-2xl group-hover:block ${
+                            weekIndex <= 1
+                              ? 'left-0'
+                              : weekIndex >= heatmap.weeks.length - 2
+                                ? 'right-0'
+                                : 'left-1/2 -translate-x-1/2'
+                          }`}
+                        >
                           <span className="font-semibold">{cell.count || 0} submissions</span>
                           <span className="mx-2 text-white/30">|</span>
                           <span className="text-white/75">{cell.date.toLocaleDateString()}</span>
@@ -275,12 +289,12 @@ function DeploymentLogPanel() {
               ))}
             </div>
 
-            <div className="relative mt-5 h-10">
+            <div className="relative mt-4 h-7">
               {heatmap.monthLabels.map((month) => (
                 <span
                   key={`${selectedYear}-${month.label}-${month.column}`}
-                  className="absolute text-[15px] md:text-[18px] font-medium text-white"
-                  style={{ left: `${month.column * 38}px` }}
+                  className="absolute text-[12px] md:text-[13px] font-medium text-white/85"
+                  style={{ left: `${month.column * 20 + Math.max(0, month.column - 1) * 4}px` }}
                 >
                   {month.label}
                 </span>
@@ -290,15 +304,15 @@ function DeploymentLogPanel() {
         </div>
       </div>
 
-      <div className="mt-10 flex items-center justify-end gap-6">
+      <div className="mt-6 flex items-center justify-end gap-4">
         <button
           onClick={() => canGoPrev && startTransition(() => setSelectedYear(availableYears[currentYearIndex - 1]))}
           disabled={!canGoPrev}
           className="text-slate-300 disabled:opacity-30"
         >
-          <ChevronLeft className="w-8 h-8" />
+          <ChevronLeft className="w-7 h-7" />
         </button>
-        <div className="min-w-[128px] rounded-full border border-[#6b3b34] bg-[#2a2220] px-6 py-3 text-center text-[18px] font-black tracking-[0.04em] text-[#ff7a59]">
+        <div className="min-w-[112px] rounded-full border border-[#6b3b34] bg-[#2a2220] px-5 py-2.5 text-center text-[17px] font-black tracking-[0.04em] text-[#ff7a59]">
           {selectedYear}
         </div>
         <button
@@ -306,10 +320,112 @@ function DeploymentLogPanel() {
           disabled={!canGoNext}
           className="text-slate-300 disabled:opacity-30"
         >
-          <ChevronRight className="w-8 h-8" />
+          <ChevronRight className="w-7 h-7" />
         </button>
       </div>
     </motion.div>
+  );
+}
+
+function DSASheetProgressCard() {
+  const { state } = useApp();
+  const items = (state.dsaSheetItems || []).filter((item) => !item.hidden);
+  const total = items.length;
+  const solved = items.filter((item) => item.completed).length;
+  const easyTotal = items.filter((item) => item.difficulty === 'Easy').length;
+  const mediumTotal = items.filter((item) => item.difficulty === 'Medium').length;
+  const hardTotal = items.filter((item) => item.difficulty === 'Hard').length;
+  const easySolved = items.filter((item) => item.difficulty === 'Easy' && item.completed).length;
+  const mediumSolved = items.filter((item) => item.difficulty === 'Medium' && item.completed).length;
+  const hardSolved = items.filter((item) => item.difficulty === 'Hard' && item.completed).length;
+
+  const rings = [
+    { radius: 78, color: '#36b4b8', solved: easySolved, total: easyTotal },
+    { radius: 56, color: '#c7992d', solved: mediumSolved, total: mediumTotal },
+    { radius: 34, color: '#c44343', solved: hardSolved, total: hardTotal },
+  ];
+
+  return (
+    <BentoCard className="col-span-12 lg:col-span-5 overflow-hidden relative !p-0 min-h-[250px]">
+      <div className="px-6 py-6 h-full">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-[#ff7a59]">DSA Sheet Progress</h3>
+            <p className="text-[11px] text-slate-500 mt-1">Live sync from your sheet tracker</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[28px] font-black text-white leading-none">{solved}<span className="text-slate-500">/{total}</span></p>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500 mt-1">Solved</p>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-col xl:flex-row items-center gap-6">
+          <div className="relative w-[158px] h-[158px] shrink-0">
+            <svg className="w-full h-full -rotate-90">
+              {rings.map((ring) => {
+                const circumference = 2 * Math.PI * ring.radius;
+                const progress = ring.total > 0 ? ring.solved / ring.total : 0;
+                return (
+                  <g key={ring.radius}>
+                    <circle cx="79" cy="79" r={ring.radius * 0.75} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="7" />
+                    <circle
+                      cx="79"
+                      cy="79"
+                      r={ring.radius * 0.75}
+                      fill="none"
+                      stroke={ring.color}
+                      strokeWidth="7"
+                      strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * (ring.radius * 0.75)}
+                      strokeDashoffset={2 * Math.PI * (ring.radius * 0.75) * (1 - progress)}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <p className="text-[18px] font-black text-white">{solved}<span className="text-slate-400">/{total}</span></p>
+              <p className="text-[12px] text-slate-300">Solved</p>
+            </div>
+          </div>
+
+          <div className="flex-1 w-full space-y-4">
+            {[
+              { label: 'Easy', color: '#36b4b8', solved: easySolved, total: easyTotal },
+              { label: 'Medium', color: '#c7992d', solved: mediumSolved, total: mediumTotal },
+              { label: 'Hard', color: '#c44343', solved: hardSolved, total: hardTotal },
+            ].map((row) => (
+              <div key={row.label} className="grid grid-cols-[74px_minmax(0,1fr)_58px] items-center gap-4">
+                <span className="text-[15px] font-semibold text-white">{row.label}</span>
+                <div className="h-3 rounded-full bg-white/8 overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${row.total > 0 ? (row.solved / row.total) * 100 : 0}%`,
+                      backgroundColor: row.color,
+                    }}
+                  />
+                </div>
+                <span className="text-[15px] font-semibold text-white text-right">{row.solved}/{row.total}</span>
+              </div>
+            ))}
+
+            <div className="flex items-center justify-end gap-4 pt-1 text-[12px] text-slate-300 flex-wrap">
+              {[
+                { label: 'Easy', color: '#36b4b8' },
+                { label: 'Medium', color: '#c7992d' },
+                { label: 'Hard', color: '#c44343' },
+              ].map((legend) => (
+                <div key={legend.label} className="flex items-center gap-2">
+                  <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: legend.color }} />
+                  <span>{legend.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </BentoCard>
   );
 }
 
@@ -685,16 +801,16 @@ export default function DashboardView() {
         className="grid grid-cols-12 gap-6 relative z-10"
       >
         
-        {/* TOP ROW: Tactical Overview & Streak Protection */}
-        <BentoCard className="col-span-12 lg:col-span-9 overflow-hidden relative">
+        {/* TOP ROW: Tactical Overview & DSA Sheet Progress */}
+        <BentoCard className="col-span-12 lg:col-span-7 overflow-hidden relative min-h-[250px] !p-0">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8 py-2">
+          <div className="relative z-10 h-full px-6 py-6 flex flex-col justify-between gap-6">
              <div className="space-y-4">
                 <div>
-                   <h2 className="text-3xl font-black text-foreground mb-1 leading-none tracking-tight">TACTICAL OVERVIEW</h2>
+                   <h2 className="text-[12px] font-black uppercase tracking-[0.22em] text-foreground mb-2 leading-none">Tactical Overview</h2>
                    <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                      <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Platform Operational</p>
+                      <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-60">Platform Operational</p>
                    </div>
                 </div>
 
@@ -710,41 +826,37 @@ export default function DashboardView() {
                 </div>
              </div>
              
-             <div className="flex flex-wrap items-center gap-10 md:gap-16">
+             <div className="grid grid-cols-3 gap-6 md:gap-8">
                 <div className="group">
-                   <p className="text-4xl font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-2">{streak}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Days Streak</p>
+                   <p className="text-[36px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-2">{streak}</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Days Streak</p>
                 </div>
                 <div className="group">
-                   <p className="text-4xl font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-2">{totalDone}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Nodes Mastery</p>
+                   <p className="text-[36px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-2">{totalDone}</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Nodes Mastery</p>
                 </div>
                 <div className="group">
-                   <p className="text-4xl font-black text-foreground/50 tabular-nums leading-none mb-2">{progressPct}%</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Effective</p>
+                   <p className="text-[36px] font-black text-foreground/50 tabular-nums leading-none mb-2">{progressPct}%</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Effective</p>
                 </div>
              </div>
           </div>
         </BentoCard>
 
-        <div className="col-span-12 lg:col-span-3">
+        <DSASheetProgressCard />
+
+        <div className="col-span-12">
            <StreakGuard />
         </div>
 
         <DeploymentLogPanel />
 
         {/* MAIN ROW: Workspace & Stats Sidebar */}
-        <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+        <div className="col-span-12 flex flex-col gap-6">
            <BentoCard className="flex-1" title="Accountability Log" icon={CheckCheck}>
              <DailyTaskChecklist />
            </BentoCard>
         </div>
-
-        <aside className="col-span-12 lg:col-span-4 flex flex-col gap-6 h-full">
-           <BentoCard title="Command Intent" icon={Target}>
-              <QuoteCard />
-           </BentoCard>
-        </aside>
 
       </motion.div>
     </div>
