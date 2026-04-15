@@ -175,7 +175,7 @@ function getCompanyLogoUrl(company: string) {
   const normalized = normalizeCompanyName(company).toLowerCase();
   const domain = COMPANY_DOMAIN_MAP[normalized];
   if (!domain) return '';
-  return `https://logo.clearbit.com/${domain}`;
+  return `https://www.google.com/s2/favicons?sz=128&domain_url=https://${domain}`;
 }
 
 function isYouTubeUrl(url: string) {
