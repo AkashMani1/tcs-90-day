@@ -6,7 +6,6 @@ import {
   Bookmark,
   BookmarkCheck,
   BookMarked,
-  CirclePlay,
   ChevronDown,
   ChevronUp,
   Circle,
@@ -671,7 +670,17 @@ export default function DSASheetView() {
 
                           <div className="flex lg:justify-center">
                             {item.videoUrl ? (
-                              <a href={item.videoUrl} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center text-slate-200">
+                              <a
+                                href={item.videoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                title={isYouTubeUrl(item.videoUrl) ? 'Open YouTube video' : 'Open video link'}
+                                className={`w-14 h-14 rounded-full border flex items-center justify-center transition-colors ${
+                                  isYouTubeUrl(item.videoUrl)
+                                    ? 'border-red-500/30 bg-red-500/12 text-red-300 hover:bg-red-500/18'
+                                    : 'border-white/10 text-slate-200 hover:border-white/20'
+                                }`}
+                              >
                                 <PlayCircle className="w-5 h-5" />
                               </a>
                             ) : (
@@ -705,9 +714,7 @@ export default function DSASheetView() {
                             {item.companies.length ? (
                               <div className="flex -space-x-2">
                                 {item.companies.slice(0, 4).map((company) => (
-                                  <div key={`${item.id}-${company}`} title={company} className="w-11 h-11 rounded-full border-2 border-[#17191f] bg-white text-[#111319] flex items-center justify-center text-[11px] font-black">
-                                    {getCompanyMonogram(company)}
-                                  </div>
+                                  <CompanyBadge key={`${item.id}-${company}`} company={company} />
                                 ))}
                                 {item.companies.length > 4 ? (
                                   <div className="w-11 h-11 rounded-full border-2 border-[#17191f] bg-[#111319] text-white flex items-center justify-center text-sm font-black">
