@@ -1,8 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useCallback } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useRef } from 'react';
 import { AppState, Problem, MockInterview, WeekTask, StarStory, KnowledgeItem, DailyLog, KnowledgeCategory, ProjectRecord, DSASheetItem } from '@/lib/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useAuth } from './AuthContext';
+import { syncService } from '@/lib/syncService';
+import { toast } from 'sonner';
 import {
   DEFAULT_WEEKS,
   DEFAULT_MOCKS,
@@ -63,6 +66,7 @@ const INITIAL_STATE: AppState = {
 interface AppContextType {
   state: AppState;
   initialized: boolean;
+  cloudSyncing: boolean;
 
   // Profile
   updateProfile: (name: string, role: string, startDate: string) => void;
@@ -127,26 +131,92 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState, initialized] = useLocalStorage<AppState>('placeprep_v5', INITIAL_STATE);
+  const { user } = useAuth();
+  const [cloudSyncing, setCloudSyncing] = React.useState(false);
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitialLoad = useRef(true);
 
-  React.useEffect(() => {
-    const merged = mergeDsaSheetItems(state.dsaSheetItems);
-    const shouldHydrate =
-      !Array.isArray(state.dsaSheetItems) ||
-      state.dsaSheetItems.length !== merged.length ||
-      JSON.stringify(state.dsaSheetItems) !== JSON.stringify(merged);
+  // 1. Initial Cloud Data Sync on Login
+  useEffect(() => {
+    if (user && initialized && isInitialLoad.current) {
+      const loadCloudData = async () => {
+        setCloudSyncing(true);
+        const result = await syncService.fetchCloudState(user.id);
+        
+        if (result.success && (result.logs?.length || result.dsa?.length)) {
+          setState(prev => {
+            // Merge Daily Logs
+            const mergedLogs = [...prev.dailyLogs];
+            result.logs?.forEach(cloudLog => {
+              const idx = mergedLogs.findIndex(l => l.date === cloudLog.log_date);
+              const mappedLog: DailyLog = {
+                date: cloudLog.log_date,
+                completedHabits: Array.isArray(cloudLog.tasks) ? cloudLog.tasks : [],
+                energy: cloudLog.productivity_score,
+                confidence: parseInt(cloudLog.mood) || 6,
+                hours: 0,
+                struggles: cloudLog.content,
+              };
+              if (idx > -1) {
+                // Only overwrite if cloud data is actually present
+                mergedLogs[idx] = { ...mergedLogs[idx], ...mappedLog };
+              } else {
+                mergedLogs.push(mappedLog);
+              }
+            });
 
-    if (shouldHydrate) {
-      setState((prev: AppState) => ({
-        ...prev,
-        dsaSheetItems: merged,
-      }));
+            // Merge DSA Sheet items
+            const mergedDSA = [...(prev.dsaSheetItems || [])];
+            result.dsa?.forEach(cloudDsa => {
+              const idx = mergedDSA.findIndex(item => item.id === cloudDsa.problem_slug);
+              if (idx > -1) {
+                mergedDSA[idx] = {
+                  ...mergedDSA[idx],
+                  completed: cloudDsa.status === 'solved',
+                  submissionDate: cloudDsa.submission_date,
+                  revisionDate: cloudDsa.revision_date,
+                  notes: cloudDsa.notes,
+                };
+              }
+            });
+
+            return {
+              ...prev,
+              dailyLogs: mergedLogs,
+              dsaSheetItems: mergedDSA,
+            };
+          });
+          toast.success('Cloud data synchronized');
+        }
+        setCloudSyncing(false);
+        isInitialLoad.current = false;
+      };
+
+      loadCloudData();
     }
-  }, [setState, state.dsaSheetItems]);
+  }, [user, initialized, setState]);
 
+  // 2. Debounced Cloud Backup on State Changes
+  useEffect(() => {
+    if (!user || isInitialLoad.current) return;
+
+    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    
+    syncTimeoutRef.current = setTimeout(async () => {
+      setCloudSyncing(true);
+      const result = await syncService.pushLocalState(user.id, state);
+      setCloudSyncing(false);
+    }, 5000); // 5 second debounce
+
+    return () => {
+      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    };
+  }, [state, user]);
+ 
   const mutate = useCallback((updater: (s: AppState) => AppState) => {
     setState((prev: AppState) => updater(prev));
   }, [setState]);
- 
+
   // ── Theme Sync ────────────────────────────────────────────────────────────
   React.useEffect(() => {
     if (state.theme === 'dark') {
@@ -155,7 +225,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('dark');
     }
   }, [state.theme]);
- 
+
   const toggleTheme = useCallback(() => {
     mutate((s) => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' }));
   }, [mutate]);
@@ -432,6 +502,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const value: AppContextType = {
     state,
     initialized,
+    cloudSyncing,
     updateProfile,
     toggleSidebar,
     getTodayLog,

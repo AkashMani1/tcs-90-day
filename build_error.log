@@ -1,0 +1,71 @@
+
+> study-os@1.0.0 build
+> next build
+
+   ▲ Next.js 14.1.0
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+Supabase environment variables are missing. Database features will be disabled.
+Error: supabaseUrl is required.
+    at /Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48143
+    at new r$ (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48394)
+    at rM (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:52134)
+    at 8704 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:75174)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at 6671 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:62328)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at F (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:94693)
+    at j (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:93244)
+    at rP (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:33905)
+
+Error occurred prerendering page "/_not-found". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: supabaseUrl is required.
+    at /Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48143
+    at new r$ (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48394)
+    at rM (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:52134)
+    at 8704 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:75174)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at 6671 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:62328)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at F (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:94693)
+    at j (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:93244)
+    at rP (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:33905)
+Supabase environment variables are missing. Database features will be disabled.
+Error: supabaseUrl is required.
+    at /Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48143
+    at new r$ (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48394)
+    at rM (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:52134)
+    at 8704 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:75174)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at 6671 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:62328)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at 6804 (/Users/akashmani/Placement/study-os/.next/server/app/page.js:14:4455)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at F (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:94693)
+   Generating static pages (3/4) 
+
+Error occurred prerendering page "/". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: supabaseUrl is required.
+    at /Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48143
+    at new r$ (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:48394)
+    at rM (/Users/akashmani/Placement/study-os/.next/server/chunks/585.js:57:52134)
+    at 8704 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:75174)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at 6671 (/Users/akashmani/Placement/study-os/.next/server/chunks/561.js:174:62328)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at 6804 (/Users/akashmani/Placement/study-os/.next/server/app/page.js:14:4455)
+    at t (/Users/akashmani/Placement/study-os/.next/server/webpack-runtime.js:1:127)
+    at F (/Users/akashmani/Placement/study-os/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:94693)
+ ✓ Generating static pages (4/4) 
+
+> Export encountered errors on following paths:
+	/_not-found
+	/page: /

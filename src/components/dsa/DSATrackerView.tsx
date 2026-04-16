@@ -6,6 +6,8 @@ import { useApp } from '@/context/AppContext';
 import { Problem, Difficulty, ProblemStatus, Platform } from '@/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BentoCard, ActivityRing } from '@/components/ui/Bento';
+import { List } from 'react-window';
+import React, { memo } from 'react';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
@@ -44,6 +46,105 @@ const STATUS_COLORS: Record<ProblemStatus, string> = {
   Revisit: 'text-amber-500 bg-amber-500/10 border-amber-500/30',
   Todo: 'text-muted-foreground bg-muted/20 border-border/10',
 };
+
+// ── Sub-components for Virtualization ────────────────────────────────────────
+
+const ProblemItem = memo(({ 
+  problem, 
+  onUpdate, 
+  onDelete, 
+  editingNote, 
+  setEditingNote,
+  noteDraft,
+  setNoteDraft
+}: { 
+  problem: Problem, 
+  onUpdate: (id: string, p: Partial<Problem>) => void,
+  onDelete: (id: string) => void,
+  editingNote: string | null,
+  setEditingNote: (id: string | null) => void,
+  noteDraft: string,
+  setNoteDraft: (v: string) => void
+}) => {
+  const isDone = problem.status === 'Done';
+  
+  return (
+    <motion.div 
+      layout
+      variants={itemVariants}
+      whileHover={{ scale: 1.005 }}
+      className="bento-card !p-6 hover:border-primary/30 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-8 group/card relative overflow-hidden mb-4"
+    >
+      {isDone && (
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
+      )}
+      <div className="flex items-start gap-6 flex-1 min-w-0 relative z-10">
+         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 border transition-all duration-500 ${
+            isDone ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'bg-muted/40 border-border/10 text-muted-foreground'
+         }`}>
+            {isDone ? <ShieldCheck className="w-7 h-7" /> : <FileText className="w-7 h-7" />}
+         </div>
+         <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-4 mb-2 flex-wrap">
+               <h4 className={`text-xl font-black tracking-tight truncate ${isDone ? 'text-muted-foreground/50' : 'text-foreground'}`}>{problem.name}</h4>
+               {problem.isPriority && (
+                  <span className="bg-rose-500/10 text-rose-500 border border-rose-500/30 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">High Priority</span>
+               )}
+            </div>
+            {editingNote === problem.id ? (
+               <input
+                 autoFocus value={noteDraft} onChange={(e) => setNoteDraft(e.target.value)}
+                 onBlur={() => { onUpdate(problem.id, { notes: noteDraft }); setEditingNote(null); }}
+                 onKeyDown={(e) => { if (e.key === 'Enter') { onUpdate(problem.id, { notes: noteDraft }); setEditingNote(null); } }}
+                 className="w-full bg-muted/50 border border-primary/30 rounded-xl px-4 py-2.5 text-sm font-bold text-foreground focus:outline-none"
+               />
+            ) : (
+               <p onClick={() => { setEditingNote(problem.id); setNoteDraft(problem.notes); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-all cursor-pointer truncate max-w-xl italic opacity-60 hover:opacity-100">
+                  {problem.notes || '+ Add Topic Note'}
+               </p>
+            )}
+         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-6 lg:gap-10 relative z-10">
+         <span className={`text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl border ${DIFF_COLORS[problem.difficulty]}`}>
+            {problem.difficulty} TIER
+         </span>
+         
+         <div className="flex items-center">
+            <select 
+              value={problem.status} onChange={(e) => onUpdate(problem.id, { status: e.target.value as ProblemStatus })}
+              className={`text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-xl border bg-card/60 backdrop-blur-sm cursor-pointer transition-all shadow-sm ${STATUS_COLORS[problem.status]}`}
+            >
+               {(['Todo', 'Done', 'Revisit'] as ProblemStatus[]).map(s => <option key={s} value={s} className="bg-card text-foreground">{s} Status</option>)}
+            </select>
+         </div>
+
+         <div className="flex items-center gap-4 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
+            <button onClick={() => onDelete(problem.id)} className="p-3 bg-rose-500/10 text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/20 rounded-xl transition-all border border-transparent hover:border-rose-500/30">
+               <Trash2 className="w-5 h-5" />
+            </button>
+         </div>
+      </div>
+    </motion.div>
+  );
+});
+
+ProblemItem.displayName = 'ProblemItem';
+
+const TopicHeader = memo(({ topic, count }: { topic: string, count: number }) => (
+  <motion.div 
+    layout
+    initial={{ opacity: 0, x: -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="flex items-center gap-4 px-4 py-2 mt-8 mb-4 sticky top-0 bg-background/80 backdrop-blur-md z-20"
+  >
+     <div className="w-2.5 h-8 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]" />
+     <span className="text-sm font-black text-foreground uppercase tracking-[0.3em]">{topic} <span className="opacity-30 ml-2 font-bold">[{count} PROBLEMS]</span></span>
+  </motion.div>
+));
+
+TopicHeader.displayName = 'TopicHeader';
 
 // ── Add Problem Modal ─────────────────────────────────────────────────────────
 
@@ -287,7 +388,8 @@ export default function DSATrackerView() {
                     {uniqueTopics.map((t) => <option key={t}>{t}</option>)}
                   </select>
                   <select value={filterDiff} onChange={(e) => setFilterDiff(e.target.value as Difficulty | 'All')}
-                    className="bg-card/60 border border-border/10 rounded-[18px] px-6 py-4 text-muted-foreground text-[11px] font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 appearance-none flex-1 min-w-[160px] cursor-pointer">
+                    className="bg-card/60 border border-border/10 rounded-[18px] px-6 py-4 text-muted-foreground text-[11px] font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 appearance-none flex-1 min-w-[160px] cursor-pointer"
+                  >
                     <option value="All">Tier: Dynamic</option>
                     {['Easy', 'Medium', 'Hard'].map((d) => <option key={d}>{d} Alert</option>)}
                   </select>
@@ -309,82 +411,52 @@ export default function DSATrackerView() {
                      <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No problems found in this category</p>
                   </motion.div>
                ) : (
-                  groupedProblems.map(([topic, groupProps]) => (
-                     <div key={topic} className="space-y-4">
-                        <motion.div 
-                          layout
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="flex items-center gap-4 px-4 py-2"
-                        >
-                           <div className="w-2.5 h-8 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]" />
-                           <span className="text-sm font-black text-foreground uppercase tracking-[0.3em]">{topic} <span className="opacity-30 ml-2 font-bold">[{groupProps.length} PROBLEMS]</span></span>
-                        </motion.div>
-                        <div className="space-y-4">
-                           {groupProps.map((p) => (
-                              <motion.div 
-                                key={p.id} 
-                                layout
-                                variants={itemVariants}
-                                whileHover={{ scale: 1.01 }}
-                                className="bento-card !p-6 hover:border-primary/30 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-8 group/card relative overflow-hidden"
-                              >
-                                {p.status === 'Done' && (
-                                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
-                                )}
-                                <div className="flex items-start gap-6 flex-1 min-w-0 relative z-10">
-                                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 border transition-all duration-500 ${
-                                      p.status === 'Done' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'bg-muted/40 border-border/10 text-muted-foreground'
-                                   }`}>
-                                      {p.status === 'Done' ? <ShieldCheck className="w-7 h-7" /> : <FileText className="w-7 h-7" />}
-                                   </div>
-                                   <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-4 mb-2 flex-wrap">
-                                         <h4 className={`text-xl font-black tracking-tight truncate ${p.status === 'Done' ? 'text-muted-foreground/50' : 'text-foreground'}`}>{p.name}</h4>
-                                         {p.isPriority && (
-                                            <span className="bg-rose-500/10 text-rose-500 border border-rose-500/30 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">High Priority</span>
-                                         )}
-                                      </div>
-                                      {editingNote === p.id ? (
-                                         <input
-                                           autoFocus value={noteDraft} onChange={(e) => setNoteDraft(e.target.value)}
-                                           onBlur={() => { updateProblem(p.id, { notes: noteDraft }); setEditingNote(null); }}
-                                           onKeyDown={(e) => { if (e.key === 'Enter') { updateProblem(p.id, { notes: noteDraft }); setEditingNote(null); } }}
-                                           className="w-full bg-muted/50 border border-primary/30 rounded-xl px-4 py-2.5 text-sm font-bold text-foreground focus:outline-none"
-                                         />
-                                      ) : (
-                                         <p onClick={() => { setEditingNote(p.id); setNoteDraft(p.notes); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-all cursor-pointer truncate max-w-xl italic opacity-60 hover:opacity-100">
-                                            {p.notes || '+ Add Topic Note'}
-                                         </p>
-                                      )}
-                                   </div>
-                                </div>
+                  <div className="h-[600px] w-full border border-border/10 rounded-[32px] overflow-hidden bg-muted/5 relative">
+                    {useMemo(() => {
+                      const flatList: any[] = [];
+                      groupedProblems.forEach(([topic, groupProps]) => {
+                        flatList.push({ type: 'header', topic, count: groupProps.length });
+                        groupProps.forEach((p) => {
+                          flatList.push({ type: 'problem', problem: p });
+                        });
+                      });
 
-                                <div className="flex flex-wrap items-center gap-6 lg:gap-10 relative z-10">
-                                   <span className={`text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl border ${DIFF_COLORS[p.difficulty]}`}>
-                                      {p.difficulty} TIER
-                                   </span>
-                                   
-                                   <div className="flex items-center">
-                                      <select 
-                                        value={p.status} onChange={(e) => updateProblem(p.id, { status: e.target.value as ProblemStatus })}
-                                        className={`text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-xl border bg-card/60 backdrop-blur-sm cursor-pointer transition-all shadow-sm ${STATUS_COLORS[p.status]}`}
-                                      >
-                                         {(['Todo', 'Done', 'Revisit'] as ProblemStatus[]).map(s => <option key={s} value={s} className="bg-card text-foreground">{s} Status</option>)}
-                                      </select>
-                                   </div>
+                      const Row = ({ index, style }: { index: number, style: React.CSSProperties }) => {
+                        const item = flatList[index];
+                        if (item.type === 'header') {
+                          return (
+                            <div style={style}>
+                              <TopicHeader topic={item.topic} count={item.count} />
+                            </div>
+                          );
+                        }
+                        return (
+                          <div style={style} className="px-1">
+                            <ProblemItem 
+                              problem={item.problem} 
+                              onUpdate={updateProblem} 
+                              onDelete={deleteProblem}
+                              editingNote={editingNote}
+                              setEditingNote={setEditingNote}
+                              noteDraft={noteDraft}
+                              setNoteDraft={setNoteDraft}
+                            />
+                          </div>
+                        );
+                      };
 
-                                   <div className="flex items-center gap-4 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
-                                      <button onClick={() => deleteProblem(p.id)} className="p-3 bg-rose-500/10 text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/20 rounded-xl transition-all border border-transparent hover:border-rose-500/30">
-                                         <Trash2 className="w-5 h-5" />
-                                      </button>
-                                   </div>
-                                </div>
-                              </motion.div>
-                           ))}
-                        </div>
-                     </div>
-                  ))
+                      return (
+                        <List
+                          rowCount={flatList.length}
+                          rowHeight={(index: number) => flatList[index].type === 'header' ? 80 : 130}
+                          style={{ height: 600, width: '100%' }}
+                          className="scrollbar-hide"
+                          rowComponent={Row as any}
+                          rowProps={{} as any}
+                        />
+                      );
+                    }, [groupedProblems, updateProblem, deleteProblem, editingNote, noteDraft])}
+                  </div>
                )}
             </AnimatePresence>
          </div>
