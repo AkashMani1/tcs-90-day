@@ -749,6 +749,11 @@ export default function DSASheetView() {
                                  type="date" 
                                  value={item.submissionDate || ''} 
                                  onChange={(e) => updateDsaSheetItem(item.id, { submissionDate: e.target.value })}
+                                 onClick={(e) => {
+                                   try {
+                                     (e.currentTarget as any).showPicker();
+                                   } catch (err) {}
+                                 }}
                                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                                />
                              </div>
@@ -764,6 +769,11 @@ export default function DSASheetView() {
                                  type="date" 
                                  value={item.revisionDate || ''} 
                                  onChange={(e) => updateDsaSheetItem(item.id, { revisionDate: e.target.value })}
+                                 onClick={(e) => {
+                                   try {
+                                     (e.currentTarget as any).showPicker();
+                                   } catch (err) {}
+                                 }}
                                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                                />
                              </div>
