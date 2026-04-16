@@ -84,7 +84,7 @@ function AddProjectModal({ onClose }: { onClose: () => void }) {
             <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)]">
               <Layers className="w-6 h-6 text-primary" />
             </div>
-            <h2 className="text-foreground font-black uppercase tracking-[0.2em] text-sm">Initiate Architecture Node</h2>
+            <h2 className="text-foreground font-black uppercase tracking-[0.2em] text-sm">Add New Project</h2>
           </div>
           <button onClick={onClose} className="p-3 rounded-2xl text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"><X className="w-6 h-6" /></button>
         </div>
@@ -92,27 +92,27 @@ function AddProjectModal({ onClose }: { onClose: () => void }) {
         <div className="p-10 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="md:col-span-2">
-              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Project Identifier (Tactical Name)</label>
+              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Project Title</label>
               <input type="text" value={form.name} onChange={(e) => set('name', e.target.value)}
                 placeholder="e.g. Distributed Task Orchestrator v2.0"
                 className="w-full bg-muted/40 border border-border/10 rounded-2xl px-6 py-4 text-foreground text-md font-bold focus:outline-none focus:border-primary/50 transition-all placeholder:opacity-30" />
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Operational Summary</label>
+              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Project Summary</label>
               <textarea value={form.description} onChange={(e) => set('description', e.target.value)} rows={3}
-                placeholder="Core mission and technical value proposition of the system..."
+                placeholder="Key highlights and core technical value of this project..."
                 className="w-full bg-muted/40 border border-border/10 rounded-2xl px-6 py-4 text-foreground text-sm focus:outline-none focus:border-primary/50 resize-none transition-all placeholder:opacity-30 font-medium leading-relaxed" />
             </div>
 
             <div>
-              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Deployment Role</label>
+              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">My Role</label>
               <input type="text" value={form.role} onChange={(e) => set('role', e.target.value)}
                 className="w-full bg-muted/40 border border-border/10 rounded-2xl px-6 py-4 text-foreground text-sm font-bold focus:outline-none focus:border-primary/50 transition-all" />
             </div>
 
             <div>
-              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">System Sector Status</label>
+              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Project Status</label>
               <select value={form.status} onChange={(e) => set('status', e.target.value)}
                 className="w-full bg-muted/40 border border-border/10 rounded-2xl px-6 py-4 text-foreground text-sm font-bold focus:outline-none focus:border-primary/50 appearance-none transition-all cursor-pointer">
                 <option value="Development" className="bg-card">Phase: In Development</option>
@@ -122,7 +122,7 @@ function AddProjectModal({ onClose }: { onClose: () => void }) {
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Strategic Tech Stack</label>
+              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Tech Stack</label>
               <div className="flex flex-wrap gap-3 mb-4">
                 <AnimatePresence>
                   {form.techStack.map((t) => (
@@ -145,7 +145,7 @@ function AddProjectModal({ onClose }: { onClose: () => void }) {
                   value={techInput} 
                   onChange={(e) => setTechInput(e.target.value)} 
                   onKeyDown={(e) => e.key === 'Enter' && addTech(techInput)}
-                  placeholder="Identify Tech Node (React, Go, AWS)..."
+                  placeholder="Add technology (React, Go, AWS)..."
                   className="flex-1 bg-muted/40 border border-border/10 rounded-2xl px-6 py-4 text-foreground text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:opacity-30 font-medium" 
                 />
                 <button onClick={() => addTech(techInput)} className="px-6 py-4 bg-muted hover:bg-muted-foreground/10 text-foreground rounded-2xl transition-all border border-border/10">
@@ -157,10 +157,10 @@ function AddProjectModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="flex gap-6 px-10 pb-10 pt-6 bg-muted/20">
-          <button onClick={onClose} className="flex-1 py-5 rounded-[24px] border border-border/20 text-muted-foreground hover:text-foreground hover:bg-muted/40 text-[11px] font-black uppercase tracking-[0.3em] transition-all">Abort Integration</button>
+          <button onClick={onClose} className="flex-1 py-5 rounded-[24px] border border-border/20 text-muted-foreground hover:text-foreground hover:bg-muted/40 text-[11px] font-black uppercase tracking-[0.3em] transition-all">Cancel</button>
           <button onClick={save}
             className="flex-[2] py-5 rounded-[24px] bg-primary text-foreground text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
-            <Save className="w-5 h-5" /> Commit Architecture
+            <Save className="w-5 h-5" /> Save Project
           </button>
         </div>
       </motion.div>
@@ -189,7 +189,7 @@ function ChallengeItem({
            <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
               <MessageSquare className="w-4 h-4 text-secondary" />
            </div>
-           <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground">Strategic Narrative Protocol</span>
+           <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground">Technical Implementation</span>
         </div>
         <button onClick={onDelete} className="p-2 text-muted-foreground hover:text-rose-500 transition-all bg-muted/40 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-4 h-4" /></button>
       </div>
@@ -197,7 +197,7 @@ function ChallengeItem({
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {[
           { k: 'problem' as const, label: 'SITUATION & CHALLENGE', icon: Layout, color: 'text-secondary' },
-          { k: 'solution' as const, label: 'TACTICAL ACTION', icon: Zap, color: 'text-primary' },
+          { k: 'solution' as const, label: 'MY ACTIONS', icon: Zap, color: 'text-primary' },
           { k: 'result' as const, label: 'QUANTIFIED OUTCOME', icon: Trophy, color: 'text-emerald-500' },
         ].map(({ k, label, icon: Icon, color }) => (
           <div key={k} className="space-y-4">
@@ -208,7 +208,7 @@ function ChallengeItem({
             <textarea
               value={challenge[k]}
               onChange={(e) => onUpdate({ [k]: e.target.value })}
-              placeholder={`Identify core ${k} components...`}
+              placeholder={`Describe the ${k}...`}
               className="w-full bg-muted/30 border border-border/5 rounded-[24px] px-6 py-5 text-foreground text-sm focus:outline-none focus:border-primary/30 focus:bg-muted/50 resize-none min-h-[160px] font-medium leading-relaxed transition-all placeholder:opacity-30"
             />
           </div>
@@ -278,15 +278,15 @@ export default function ProjectLabView() {
                </div>
                <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">PROJECT LABORATORY</h2>
                <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                  Strategic architecture mapping. Currently maintaining <span className="text-secondary font-black">{projects.length} architectural nodes</span>. 
-                  <span className="text-secondary font-black">{readinessCount} verified nodes</span> are interview-optimized.
+                  Comprehensive project portfolio. Currently maintaining <span className="text-secondary font-black">{projects.length} project modules</span>. 
+                  <span className="text-secondary font-black">{readinessCount} project modules</span> are interview-optimized.
                </p>
             </div>
             
             <div className="flex gap-12 items-center">
                <div className="text-center group">
                   <p className="text-6xl font-black text-foreground mb-4 group-hover:text-secondary transition-all tabular-nums tracking-tighter">{projects.length}</p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-secondary/30 decoration-4">Nodes Map</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-secondary/30 decoration-4">Project Map</p>
                </div>
                <div className="text-center group">
                   <p className="text-6xl font-black text-foreground mb-4 group-hover:text-emerald-500 transition-all tabular-nums tracking-tighter">{readinessCount}</p>
@@ -298,7 +298,7 @@ export default function ProjectLabView() {
 
       <BentoCard className="col-span-12 lg:col-span-4" title="Reliability Index">
          <div className="flex items-center justify-center h-full py-4">
-            <ActivityRing value={avgReadiness} max={100} color="var(--secondary)" label="System Precision" />
+            <ActivityRing value={avgReadiness} max={100} color="var(--secondary)" label="Readiness Index" />
          </div>
       </BentoCard>
 
@@ -306,7 +306,7 @@ export default function ProjectLabView() {
       <div className="col-span-12 flex flex-col md:flex-row items-center justify-between gap-8 pb-4">
          <div className="flex bg-muted/40 backdrop-blur-md rounded-[24px] p-2 w-full md:w-auto border border-border/10 shadow-lg">
             <div className="px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] text-foreground/70 flex items-center gap-3">
-               <Kanban className="w-5 h-5 text-secondary" /> REPOSITORY STREAMING OPERATIONAL
+               <Kanban className="w-5 h-5 text-secondary" /> PORTFOLIO VIEW ENABLED
             </div>
          </div>
 
@@ -315,7 +315,7 @@ export default function ProjectLabView() {
             className="w-full md:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-primary text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all group shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.03] active:scale-95"
          >
             <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" /> 
-            INITIALIZE NODE
+            ADD PROJECT
          </button>
       </div>
 
@@ -324,8 +324,8 @@ export default function ProjectLabView() {
         {projects.length === 0 ? (
           <motion.div variants={itemVariants} className="py-40 text-center border-2 border-dashed border-muted rounded-[48px] bg-muted/5">
             <Cpu className="w-20 h-20 text-muted-foreground mx-auto mb-8 opacity-10" />
-            <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No architectural nodes mapped to this sector</p>
-            <button onClick={() => setShowModal(true)} className="mt-10 bg-primary/10 border border-primary/20 text-primary px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-foreground transition-all">Launch Initialization Protocol</button>
+            <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No projects found in this collection</p>
+            <button onClick={() => setShowModal(true)} className="mt-10 bg-primary/10 border border-primary/20 text-primary px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-foreground transition-all">Add Your First Project</button>
           </motion.div>
         ) : (
           projects.map((project) => {
@@ -369,7 +369,7 @@ export default function ProjectLabView() {
                         >
                          {project.readinessScore}%
                        </motion.span>
-                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">System Efficiency</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40">Ready Score</span>
                     </div>
                     <div className={`p-4 rounded-2xl bg-muted/30 text-muted-foreground transition-all duration-500 ${isOpen ? 'rotate-180 text-primary bg-primary/10' : ''}`}>
                        <ChevronDown className="w-6 h-6" />
@@ -430,7 +430,7 @@ export default function ProjectLabView() {
                         <div className="space-y-8">
                            <div className="flex items-center justify-between px-1">
                               <h5 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground flex items-center gap-3">
-                                 <Briefcase className="w-5 h-5 text-primary" /> Strategic Interview Synthesis (SAR)
+                                 <Briefcase className="w-5 h-5 text-primary" /> Interview Scenario Analysis (STAR)
                               </h5>
                               <button 
                                 onClick={() => addNewChallenge(project.id)}
@@ -442,7 +442,7 @@ export default function ProjectLabView() {
                            
                            {project.challenges.length === 0 ? (
                               <div className="bg-muted/5 border-2 border-dashed border-border/10 rounded-[40px] py-20 text-center">
-                                 <p className="text-muted-foreground text-[13px] font-bold uppercase tracking-[0.2em] leading-relaxed opacity-60">No strategic scenarios mapped.<br />Initialize SAR vectors for interview deployment.</p>
+                                 <p className="text-muted-foreground text-[13px] font-bold uppercase tracking-[0.2em] leading-relaxed opacity-60">No project modules documented yet.<br />Add project modules for interview preparation.</p>
                               </div>
                            ) : (
                               <div className="grid grid-cols-1 gap-10">
@@ -460,7 +460,7 @@ export default function ProjectLabView() {
 
                         {/* Footer Actions */}
                         <div className="flex items-center gap-6 pt-6 px-1">
-                           <button onClick={() => deleteProject(project.id)} className="flex items-center gap-3 px-8 py-4 rounded-2xl border border-rose-500/20 text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/10 transition-all text-[11px] font-black uppercase tracking-[0.3em]"><Trash2 className="w-4 h-4" /> DECOMMISSION NODE</button>
+                           <button onClick={() => deleteProject(project.id)} className="flex items-center gap-3 px-8 py-4 rounded-2xl border border-rose-500/20 text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/10 transition-all text-[11px] font-black uppercase tracking-[0.3em]"><Trash2 className="w-4 h-4" /> DELETE PROJECT</button>
                         </div>
                       </div>
                     </motion.div>

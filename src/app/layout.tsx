@@ -7,13 +7,13 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   metadataBase: new URL('http://localhost:3000'), // Adjust to your production URL for deployment
-  title: 'PlacePrep — Crack TCS Ninja, Digital & Prime in 3 Months',
+  title: 'PlacePrep — Crack Your Dream Job in 3 Months',
   description:
-    'PlacePrep is your all-in-one placement preparation command center for TCS Ninja, Digital, and Prime roles. Track DSA problems, mock interviews, STAR stories, and your 12-week roadmap — all in one place.',
-  keywords: ['TCS placement', 'TCS Ninja', 'TCS Digital', 'TCS Prime', 'placement tracker', 'DSA tracker', 'campus placement'],
+    'PlacePrep is your all-in-one placement preparation command center for Software Engineering roles. Track DSA problems, mock interviews, STAR stories, and your 12-week roadmap — all in one place.',
+  keywords: ['placement prep', 'SDE prep', 'software engineering', 'placement tracker', 'DSA tracker', 'campus placement'],
   openGraph: {
-    title: 'PlacePrep — Crack TCS in 3 Months',
-    description: 'Your TCS placement preparation command center.',
+    title: 'PlacePrep — Crack Your Dream Job in 3 Months',
+    description: 'Your placement preparation command center.',
     type: 'website',
   },
 };
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning={true}>
         <AppProvider>
           {children}
         </AppProvider>

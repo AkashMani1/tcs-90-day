@@ -17,7 +17,7 @@ import { useApp } from '@/context/AppContext';
 const TAB_LABELS: Record<TabId, { label: string; icon: React.ElementType }> = {
   dashboard: { label: 'Dashboard', icon: LayoutDashboard },
   roadmap: { label: '3-Month Roadmap', icon: GitMerge },
-  dsa: { label: 'The Kill List', icon: Target },
+  dsa: { label: 'DSA Sheet', icon: Target },
   dsaSheet: { label: 'DSA Sheet', icon: Code2 },
   mocks: { label: 'Mock Hub', icon: Video },
   notes: { label: 'Knowledge Base', icon: BookOpen },
@@ -41,10 +41,10 @@ export default function Home() {
       <motion.main 
         initial={false}
         animate={{ 
-          marginLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '280px') 
+          paddingLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '280px') 
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-        className="flex-1 min-w-0 min-h-screen relative pb-24 md:pb-0"
+        className="flex-1 min-w-0 min-h-screen relative pb-24 md:pb-0 transition-all duration-300"
       >
         {/* Decorative Background Elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -52,7 +52,7 @@ export default function Home() {
            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neon-cyan/5 blur-[120px] rounded-full" />
         </div>
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
+        <div className="relative z-10 w-full max-w-[1600px] px-4 md:px-12 py-6 md:py-10">
           {/* Header / Breadcrumb Section */}
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
             <div>
@@ -67,7 +67,7 @@ export default function Home() {
               {activeTab !== 'dsaSheet' ? (
                 <h1 className="text-3xl font-black text-foreground tracking-tight">
                   {activeTab === 'dashboard' ? (
-                    <>Morning, <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{state.userName}</span></>
+                    <><span className="opacity-90">Morning,</span> <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{state.userName}</span></>
                   ) : label}
                 </h1>
               ) : null}
@@ -99,7 +99,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="relative z-10 border-t border-border/20 mt-20 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-widest">
-            PlacePrep NINJA © 2026
+            Career Accelerator © 2026
           </p>
           <div className="flex items-center gap-6">
              <span className="text-muted-foreground/60 text-[10px] font-bold uppercase tracking-widest">Encrypted Local Storage</span>

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcTotalHours, calcCurrentWeek, today, toDateStr, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
+import { DEFAULT_HABIT_GROUPS } from '@/lib/defaultData';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
@@ -40,13 +41,13 @@ const itemVariants = {
 // ── Biometric Monitor components ─────────────────────────────────────────────
 
 const COMMAND_QUOTES = [
-  "THE ARCHITECT OF THE SYSTEM BUILDS FROM THE UNCERTAINTY.",
-  "DIGITAL MASTERY IS BORN FROM THE REPETITION OF THE FUNDAMENTALS.",
-  "THE SYSTEM DOES NOT REWARD SPEED; IT REWARDS CONSISTENCY UNDER PRESSURE.",
-  "ELEVATE TO PRIME BY OPTIMIZING YOUR INTERNAL PROTOCOLS EVERY DAY.",
-  "TCS DIGITAL ACCEPTS ONLY THOSE WHO OUTWORK THEIR OWN UNCERTAINTY.",
-  "SUCCESS IN THE SYSTEM IS A PRODUCT OF 90 DAYS OF DISCIPLINED EXECUTION.",
-  "THE ARCHITECT DOES NOT WAIT FOR MOTIVATION; THEY RELY ON THE PROTOCOL."
+  "CONSISTENCY EXECUTED OVER TIME IS THE ULTIMATE ADVANTAGE.",
+  "EVERY DSA PROBLEM SOLVED IS A STEP CLOSER TO YOUR DREAM OFFER.",
+  "PREPARATION ELIMINATES THE ELEMENT OF SURPRISE IN INTERVIEWS.",
+  "ELEVATE YOUR SKILLS BY OPTIMIZING YOUR STUDY HABITS EVERY DAY.",
+  "THE BEST CANDIDATES ARE THE ONES WHO OUTWORK THEIR OWN UNCERTAINTY.",
+  "SUCCESS IN PLACEMENTS IS A PRODUCT OF FOCUSED, DISCIPLINED EFFORT.",
+  "DO NOT WAIT FOR MOTIVATION; RELY ON YOUR DAILY SYSTEMS."
 ];
 
 function QuoteCard() {
@@ -63,7 +64,7 @@ function QuoteCard() {
     <div className="flex flex-col gap-3 py-2 px-1">
       <div className="flex items-center gap-2 mb-1">
         <Target className="w-3.5 h-3.5 text-primary opacity-50" />
-        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">System Intent</span>
+        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Daily Motivation</span>
       </div>
       <div className="relative min-h-[45px] flex items-center">
         <div className="absolute -left-2 top-0 w-[1px] h-full bg-gradient-to-b from-primary/50 to-transparent" />
@@ -128,11 +129,11 @@ function getDailySubmissionCount(log: DashboardDailyLog) {
 }
 
 function getLeetCodeHeatColor(count: number, isToday: boolean) {
-  if (count === 0) return `bg-muted/60 dark:bg-[#2b2b2b] border-border/40 dark:border-[#2b2b2b] ${isToday ? 'ring-1 ring-orange-400/35' : ''}`;
-  if (count <= 2) return `bg-emerald-200 dark:bg-[#315834] border-emerald-300/50 dark:border-[#315834] ${isToday ? 'ring-1 ring-emerald-400/45' : ''}`;
-  if (count <= 4) return `bg-emerald-400 dark:bg-[#4f8b49] border-emerald-400/70 dark:border-[#4f8b49] ${isToday ? 'ring-1 ring-emerald-400/50' : ''}`;
-  if (count <= 7) return `bg-emerald-500 dark:bg-[#6bc35f] border-emerald-500/70 dark:border-[#6bc35f] ${isToday ? 'ring-1 ring-emerald-400/55' : ''}`;
-  return `bg-emerald-500 dark:bg-[#8cf06a] border-emerald-500 dark:border-[#8cf06a] shadow-[0_0_14px_rgba(140,240,106,0.22)] ${isToday ? 'ring-1 ring-white/30' : ''}`;
+  if (count === 0) return `bg-muted/60 dark:bg-white/5 border-border/40 dark:border-white/5 ${isToday ? 'ring-1 ring-orange-400/35' : ''}`;
+  if (count <= 2) return `bg-indigo-100 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-900/30 ${isToday ? 'ring-1 ring-indigo-400/45' : ''}`;
+  if (count <= 4) return `bg-indigo-300 dark:bg-indigo-700/50 border-indigo-300 dark:border-indigo-700/50 ${isToday ? 'ring-1 ring-indigo-400/50' : ''}`;
+  if (count <= 7) return `bg-indigo-500 dark:bg-indigo-500/80 border-indigo-500 dark:border-indigo-500/80 ${isToday ? 'ring-1 ring-indigo-400/55' : ''}`;
+  return `bg-cyan-400 dark:bg-cyan-400 border-cyan-400 dark:border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.4)] ${isToday ? 'ring-1 ring-white/30' : ''}`;
 }
 
 // ── Monthly heatmap builder ────────────────────────────────────────────────────
@@ -246,8 +247,8 @@ function DeploymentLogPanel() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-baseline gap-3">
-            <h3 className="text-[16px] font-black tracking-[-0.03em] text-[#ff7a59]">Submission</h3>
-            <p className="text-[12px] text-[#ff6c61]">{totalSubmissions} submissions in {selectedYear}</p>
+            <h3 className="text-[16px] font-black tracking-[-0.03em] text-[#ff7a59]">Activity Log</h3>
+            <p className="text-[12px] text-[#ff6c61]">{totalSubmissions} contributions in {selectedYear}</p>
           </div>
           <div className="flex items-center gap-4 text-[12px] text-muted-foreground">
             <p>Active days: <span className="font-semibold text-foreground">{totalActiveDays}</span></p>
@@ -449,7 +450,7 @@ function DSASheetProgressCard() {
 }
 
 
-// ── Streak Pill (inline inside Tactical Overview) ────────────────────────────
+// ── Streak Pill (inline inside Session Overview) ────────────────────────────
 
 function StreakPill() {
   const { state } = useApp();
@@ -514,7 +515,7 @@ function StreakGuard() {
           {status === 'Protected' ? <ShieldCheck className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70 mb-0.5">Persistence Shield</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70 mb-0.5">Focus Shield</p>
           <p className="text-md font-black tracking-tight">{status === 'Protected' ? 'STREAK SECURED' : 'STREAK AT RISK'}</p>
         </div>
       </div>
@@ -527,38 +528,6 @@ function StreakGuard() {
     </motion.div>
   );
 }
-
-// ── Default Protocols ────────────────────────────────────────────────────────
-
-const INITIAL_HABIT_GROUPS = [
-  {
-    id: 'morning',
-    title: 'Morning Block',
-    items: [
-      { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
-      { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
-      { id: 'm_understood', label: 'Logical Lock', detail: 'Understood Topic Fully' },
-    ]
-  },
-  {
-    id: 'afternoon',
-    title: 'Afternoon Block',
-    items: [
-      { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
-      { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
-      { id: 'a_review', label: 'Solution Extraction', detail: 'Reviewed Hard Cases' },
-    ]
-  },
-  {
-    id: 'evening',
-    title: 'Evening Review',
-    items: [
-      { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
-      { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
-      { id: 'e_plan', label: 'Next-Day Intent', detail: 'Planned Next Topics' },
-    ]
-  }
-];
 
 // ── Daily Accountability Console ─────────────────────────────────────────────
 
@@ -586,7 +555,7 @@ function DailyTaskChecklist() {
 
   const habitGroups = state.habitGroups && state.habitGroups.length > 0 
     ? state.habitGroups 
-    : INITIAL_HABIT_GROUPS;
+    : DEFAULT_HABIT_GROUPS;
 
   const handleSave = () => {
     setSaved(true);
@@ -652,12 +621,12 @@ function DailyTaskChecklist() {
            }`}
          >
            {isEditing ? <CheckSquare className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
-           {isEditing ? 'SAVE DEPLOYMENT' : 'CONFIGURE PROTOCOL'}
+           {isEditing ? 'SAVE SESSION' : 'CONFIGURE PLAN'}
          </button>
       </div>
 
       {/* 3-COLUMN TASK GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-2 items-start">
         {habitGroups.map((group) => (
           <div key={group.id} className="space-y-5">
             <div className="flex items-center justify-between border-b border-border/5 pb-2">
@@ -736,7 +705,7 @@ function DailyTaskChecklist() {
            <div className="space-y-6">
               <div className="flex items-center gap-4">
                  <Target className="w-5 h-5 text-primary" />
-                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Target Neutralization:</h4>
+                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Problem Mastery:</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4">
                  {(['easy', 'medium', 'hard'] as const).map(diff => (
@@ -752,49 +721,53 @@ function DailyTaskChecklist() {
               </div>
            </div>
 
-           {/* Extraction Log + Mission Deck — side by side */}
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            {/* Learning Insights + Action Plan — side by side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
 
-              {/* Concepts Learned */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-4">
-                    <PenTool className="w-5 h-5 text-secondary" />
-                    <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Extraction Log (Insights):</h4>
-                 </div>
-                 <div className="space-y-3 pl-4">
-                    {[0, 1, 2].map(i => (
-                      <div key={i} className="flex items-center gap-5">
-                         <span className="text-[11px] font-black text-muted-foreground opacity-20">{i+1}.</span>
-                         <input 
-                            type="text" 
-                            value={(log.conceptsLearned ?? [])[i] || ''}
-                            onChange={(e) => updateConcepts(i, e.target.value)}
-                            className="flex-1 bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors"
-                            placeholder="__________________________________________________________"
-                         />
-                      </div>
-                    ))}
-                 </div>
-              </div>
+               {/* Concepts Learned */}
+               <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                     <PenTool className="w-5 h-5 text-secondary" />
+                     <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Learning Insights (Notes):</h4>
+                  </div>
+                  <div className="pl-4">
+                     <textarea 
+                        value={(log.conceptsLearned ?? [])[0] || ''}
+                        onChange={(e) => updateConcepts(0, e.target.value)}
+                        className="w-full bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors resize-y min-h-[120px]"
+                        placeholder="• Write your learnings here...&#10;• You can press enter for new lines..."
+                     />
+                  </div>
+               </div>
 
-              {/* Tomorrow's Plan */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-4">
-                    <CalendarDays className="w-5 h-5 text-primary" />
-                    <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Mission Deck (Tomorrow):</h4>
-                 </div>
-                 <div className="space-y-4 pl-4">
-                    <div className="flex items-center gap-6 group">
-                       <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Morning:</span>
-                       <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} onChange={(e) => updatePlan('morning', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
-                    </div>
-                    <div className="flex items-center gap-6 group">
-                       <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40 w-24">- Afternoon:</span>
-                       <input type="text" value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} onChange={(e) => updatePlan('afternoon', e.target.value)} className="flex-1 bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors" placeholder="_____________________________________" />
-                    </div>
-                 </div>
-              </div>
-           </div>
+               {/* Tomorrow's Plan */}
+               <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                     <CalendarDays className="w-5 h-5 text-primary" />
+                     <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Action Plan (Tomorrow):</h4>
+                  </div>
+                  <div className="space-y-4 pl-4">
+                     <div className="flex flex-col gap-2 group">
+                        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-80">- Morning:</span>
+                        <textarea 
+                           value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} 
+                           onChange={(e) => updatePlan('morning', e.target.value)} 
+                           className="w-full bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors resize-y min-h-[60px]" 
+                           placeholder="Key objectives..." 
+                        />
+                     </div>
+                     <div className="flex flex-col gap-2 group">
+                        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-80">- Afternoon:</span>
+                        <textarea 
+                           value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} 
+                           onChange={(e) => updatePlan('afternoon', e.target.value)} 
+                           className="w-full bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors resize-y min-h-[60px]" 
+                           placeholder="Key objectives..." 
+                        />
+                     </div>
+                  </div>
+               </div>
+            </div>
 
            {/* Vitals */}
            <div className="space-y-6">
@@ -863,17 +836,17 @@ export default function DashboardView() {
         className="grid grid-cols-12 gap-6 relative z-10"
       >
         
-        {/* TOP ROW: Tactical Overview & DSA Sheet Progress */}
+        {/* TOP ROW: Session Overview & DSA Sheet Progress */}
         <BentoCard className="col-span-12 lg:col-span-7 overflow-hidden relative !p-0">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
           <div className="relative z-10 h-full px-6 py-4 flex flex-col justify-between gap-4">
              <div className="space-y-3">
                 <div className="flex items-center justify-between gap-3">
                    <div>
-                     <h2 className="text-[12px] font-black uppercase tracking-[0.22em] text-foreground mb-1.5 leading-none">Tactical Overview</h2>
+                     <h2 className="text-[12px] font-black uppercase tracking-[0.22em] text-foreground mb-1.5 leading-none">Preparation Overview</h2>
                      <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                        <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-60">Platform Operational</p>
+                        <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-80">Placement Portal</p>
                      </div>
                    </div>
                    {/* Inline Streak Shield */}
@@ -895,11 +868,11 @@ export default function DashboardView() {
              <div className="grid grid-cols-3 gap-6 md:gap-8">
                 <div className="group">
                    <p className="text-[28px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-1">{streak}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Days Streak</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground">Current Streak</p>
                 </div>
                 <div className="group">
                    <p className="text-[28px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-1">{totalDone}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Nodes Mastery</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground">Problems Solved</p>
                 </div>
                 <div className="group">
                    <p className="text-[28px] font-black text-foreground/50 tabular-nums leading-none mb-1">{progressPct}%</p>
@@ -915,7 +888,7 @@ export default function DashboardView() {
 
         {/* MAIN ROW: Workspace & Stats Sidebar */}
         <div className="col-span-12 flex flex-col gap-6">
-           <BentoCard className="flex-1" title="Accountability Log" icon={CheckCheck}>
+           <BentoCard className="flex-1" title="Daily action plan" icon={CheckCheck}>
              <DailyTaskChecklist />
            </BentoCard>
         </div>

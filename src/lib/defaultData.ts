@@ -8,7 +8,7 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
       { id: 'w1t2', label: 'Quant: Percentages, Profit & Loss Basics', done: false },
       { id: 'w1t3', label: 'Logical: Blood Relations & Direction Sense', done: false },
       { id: 'w1t4', label: 'DSA: Master Basic Syntax, Loops, and If-Else patterns', done: false },
-      { id: 'w1t5', label: 'Mock: TCS NQT Cognitive Section Baseline Test', done: false },
+      { id: 'w1t5', label: 'Mock: Cognitive Section Baseline Aptitude Test', done: false },
     ],
   },
   {
@@ -28,17 +28,17 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
       { id: 'w3t2', label: 'Verbal: Reading Comprehension Techniques', done: false },
       { id: 'w3t3', label: 'Logical: Syllogisms & Venn Diagrams', done: false },
       { id: 'w3t4', label: 'DSA Arrays: Max/Min, 2nd Largest, Simple Two Pointers', done: false },
-      { id: 'w3t5', label: 'Mock: NQT Format Test (Verbal + Logical + Quant)', done: false },
+      { id: 'w3t5', label: 'Mock: Standard Pattern Test (Verbal + Logical + Quant)', done: false },
     ],
   },
   {
-    week: 4, phase: 'Ninja', focus: 'TCS Coding Foundation',
+    week: 4, phase: 'Ninja', focus: 'Coding Foundation',
     tasks: [
-      { id: 'w4t1', label: 'DSA Math: GCD, LCM, Prime checks (CodeVita basics)', done: false },
+      { id: 'w4t1', label: 'DSA Math: GCD, LCM, Prime checks (Basics)', done: false },
       { id: 'w4t2', label: 'CS Core: OOPs concepts (Inheritance, Polymorphism)', done: false },
       { id: 'w4t3', label: 'Verbal: Sentence Completion & Error Spotting', done: false },
       { id: 'w4t4', label: 'HR Prep: Draft "Tell me about yourself" (1 min pitch)', done: false },
-      { id: 'w4t5', label: 'Mock: Full TCS Ninja Integrated Test 1', done: false },
+      { id: 'w4t5', label: 'Mock: Full Placement Integrated Test 1', done: false },
     ],
   },
   {
@@ -48,7 +48,7 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
       { id: 'w5t2', label: 'DSA Arrays: Merge Intervals & Sliding Window Basics', done: false },
       { id: 'w5t3', label: 'Logical: Advanced Puzzles & Number Series', done: false },
       { id: 'w5t4', label: 'CS Core: DBMS basics (ACID, Normalization, Keys)', done: false },
-      { id: 'w5t5', label: 'Mock Code: 2 Medium Problems (TCS Digital focus)', done: false },
+      { id: 'w5t5', label: 'Mock Code: 2 Medium Problems (SDE 1 focus)', done: false },
     ],
   },
   {
@@ -68,7 +68,7 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
       { id: 'w7t2', label: 'DSA Linked List: Reverse, Detect Cycle, Middle', done: false },
       { id: 'w7t3', label: 'CS Core: Operating Systems (Threads, Deadlocks)', done: false },
       { id: 'w7t4', label: 'HR Prep: Draft 3 STAR Stories (Leadership, Conflict)', done: false },
-      { id: 'w7t5', label: 'Mock Test: TCS Digital Specific Technical MCQ + Code', done: false },
+      { id: 'w7t5', label: 'Mock Test: Core Specific Technical MCQ + Code', done: false },
     ],
   },
   {
@@ -77,7 +77,7 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
       { id: 'w8t1', label: 'DSA Recursion: Subsets, Permutations, Combinations', done: false },
       { id: 'w8t2', label: 'DSA Greedy: Activity Selection, Fractional Knapsack', done: false },
       { id: 'w8t3', label: 'CS Core: Computer Networks (OSI Model, TCP/UDP)', done: false },
-      { id: 'w8t4', label: 'Resume Review: Tailor technical skills strictly for Digital', done: false },
+      { id: 'w8t4', label: 'Resume Review: Tailor technical skills strictly for SDE Roles', done: false },
       { id: 'w8t5', label: 'Mock: Peer Interview covering OS & CN + 1 Medium code', done: false },
     ],
   },
@@ -87,8 +87,8 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
       { id: 'w9t1', label: 'DSA DP: Climbing Stairs, Coin Change (Memoization)', done: false },
       { id: 'w9t2', label: 'DSA DP: Longest Common Subsequence, 0/1 Knapsack', done: false },
       { id: 'w9t3', label: 'System Design: REST vs SOAP basics', done: false },
-      { id: 'w9t4', label: 'Mock Code: 90 Min Hard DP Problem (TCS Prime level)', done: false },
-      { id: 'w9t5', label: 'HR Prep: "Why TCS Prime?", "Future Goals" alignment', done: false },
+      { id: 'w9t4', label: 'Mock Code: 90 Min Hard DP Problem (SDE 2 level)', done: false },
+      { id: 'w9t5', label: 'HR Prep: "Why our company?", "Future Goals" alignment', done: false },
     ],
   },
   {
@@ -96,19 +96,19 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
     tasks: [
       { id: 'w10t1', label: 'DSA Trees: Traversals, LCA, Validate BST', done: false },
       { id: 'w10t2', label: 'DSA Graphs: BFS/DFS Traversals, Number of Islands', done: false },
-      { id: 'w10t3', label: 'DSA Graphs: Dijkstra\'s shortest path (Crucial for Prime)', done: false },
+      { id: 'w10t3', label: 'DSA Graphs: Dijkstra\'s shortest path (Crucial for Advanced)', done: false },
       { id: 'w10t4', label: 'CS Core: Advanced DBMS (Indexing, B-Trees)', done: false },
-      { id: 'w10t5', label: 'Mock Code: CodeVita Quality Graph Traversal Problem', done: false },
+      { id: 'w10t5', label: 'Mock Code: High Quality Graph Traversal Problem', done: false },
     ],
   },
   {
     week: 11, phase: 'Prime', focus: 'System Design & Revision',
     tasks: [
       { id: 'w11t1', label: 'System Architecture: Microservices, Load Balancing basics', done: false },
-      { id: 'w11t2', label: 'Revision: Flush all "Revisit" marked DSA Kill List items', done: false },
-      { id: 'w11t3', label: 'Revision: Re-calculate high-weight NQT Quant formulas', done: false },
+      { id: 'w11t2', label: 'Revision: Revisit all marked questions in the DSA Sheet', done: false },
+      { id: 'w11t3', label: 'Revision: Re-calculate high-weight Quant formulas', done: false },
       { id: 'w11t4', label: 'Mock: Technical Interview focusing on Project Architecture', done: false },
-      { id: 'w11t5', label: 'Mock Test: Final TCS Prime Full-Length Pattern Test', done: false },
+      { id: 'w11t5', label: 'Mock Test: Final Full-Length Pattern Test', done: false },
     ],
   },
   {
@@ -126,7 +126,7 @@ export const DEFAULT_WEEKS: WeekPlan[] = [
 
 
 export const DEFAULT_MOCKS: MockInterview[] = [
-  { id: 'm1', type: 'TCS NQT Aptitude Pattern', score: 42, maxScore: 60, date: '2026-01-20', feedback: 'Good logic, slow on quant. Memorize percentage/fraction tables.' },
+  { id: 'm1', type: 'Standard Aptitude Pattern', score: 42, maxScore: 60, date: '2026-01-20', feedback: 'Good logic, slow on quant. Memorize percentage/fraction tables.' },
 ];
 
 export const DEFAULT_STARS: StarStory[] = [
@@ -164,22 +164,53 @@ export const DEFAULT_KNOWLEDGE: KnowledgeItem[] = [
   { id: 'k12', category: 'Aptitude', question: 'Percentage Shortcut: A is x% more than B', answer: 'If A is x% more than B, then B is less than A by: [x / (100 + x)] * 100 %\nIf A is x% less than B, then B is more than A by: [x / (100 - x)] * 100 %' },
 
   // --- HR INTERVIEW ---
-  { id: 'k13', category: 'HR', question: 'Tell me about yourself (Framework)', answer: '1. Present: Current status (Branch, College, CGPA).\n2. Past: Relevant projects/internships and the tech stack used.\n3. Alignment: Why your skills align with TCS (mentioning specific interests like Cloud or full-stack).\nKeep it under 90 seconds.' },
-  { id: 'k14', category: 'HR', question: 'Why TCS?', answer: 'TCS offers an unmatched learning ecosystem through initial training (TCS iON/Ignite) and diverse projects across domains. I value job stability, global exposure, and a structured career progression path. (Add a reference to a recent TCS achievement to stand out).' },
-  { id: 'k15', category: 'HR', question: 'Where do you see yourself in 3-5 years?', answer: 'In the short term, I want to become a fundamentally strong full-stack developer contributing to enterprise applications. Within 3-5 years, I see myself taking on architectural responsibilities and mentoring junior team members within TCS.' },
+  { id: 'k13', category: 'HR', question: 'Tell me about yourself (Framework)', answer: '1. Present: Current status (Branch, College, CGPA).\n2. Past: Relevant projects/internships and the tech stack used.\n3. Alignment: Why your skills align with the company (mentioning specific interests like Cloud or full-stack).\nKeep it under 90 seconds.' },
+  { id: 'k14', category: 'HR', question: 'Why Our Company?', answer: 'The company offers an unmatched learning ecosystem and diverse projects across domains. I value job stability, global exposure, and a structured career progression path. (Add a reference to a recent company achievement to stand out).' },
+  { id: 'k15', category: 'HR', question: 'Where do you see yourself in 3-5 years?', answer: 'In the short term, I want to become a fundamentally strong full-stack developer contributing to enterprise applications. Within 3-5 years, I see myself taking on architectural responsibilities and mentoring junior team members.' },
 ];
 
 export const HABIT_TEMPLATES = [
   { id: 'h1', label: '🧠 Revise 1 Core CS Topic (OS/DBMS)', category: 'theory' },
-  { id: 'h2', label: '💻 Solve 2 TCS specific DSA questions', category: 'coding' },
+  { id: 'h2', label: '💻 Solve 2 company specific DSA questions', category: 'coding' },
   { id: 'h3', label: '📝 Practice 1 STAR answer aloud', category: 'hr' },
   { id: 'h4', label: '📊 Solve 10 Aptitude questions (Timed)', category: 'aptitude' },
   { id: 'h5', label: '🔍 Update DSA tracker notes', category: 'review' },
 ];
 
 export const QUOTES = [
-  { text: "TCS tests accuracy and speed, not just complex logic. Master the basics.", author: "PlacePrep Strategy" },
-  { text: "CodeVita is a marathon. Start with the easiest 2 questions quickly.", author: "Digital Target" },
+  { text: "Most companies test accuracy and speed, not just complex logic. Master the basics.", author: "PlacePrep Strategy" },
+  { text: "Coding rounds are marathons. Start with the easiest 2 questions quickly.", author: "Placement Fact" },
   { text: "Aptitude clears the first round. DSA clears the second. HR clears the final. Don't neglect any.", author: "Placement Fact" },
   { text: "Consistency > Cramming. 2 coding problems a day beats 14 on Sunday.", author: "Developer Wisdom" },
 ];
+
+export const DEFAULT_HABIT_GROUPS = [
+  {
+    id: 'morning',
+    title: 'Morning Block',
+    items: [
+      { id: 'm_watched', label: 'Study Theory', detail: 'Watched/Read Concepts' },
+      { id: 'm_notes', label: 'Create Notes', detail: 'Made Prompts/Cheatsheets' },
+      { id: 'm_understood', label: 'Concept Mastered', detail: 'Understood core logic deeply' },
+    ]
+  },
+  {
+    id: 'afternoon',
+    title: 'Afternoon Block',
+    items: [
+      { id: 'a_solved', label: 'Solve Problems', detail: 'Practiced 3-4 questions' },
+      { id: 'a_submit', label: 'Submit Code', detail: 'Successfully submitted' },
+      { id: 'a_review', label: 'Review Solutions', detail: 'Optimized and reviewed edges' },
+    ]
+  },
+  {
+    id: 'evening',
+    title: 'Evening Review',
+    items: [
+      { id: 'e_noted', label: 'Daily Reflection', detail: 'Noted key learnings & mistakes' },
+      { id: 'e_progress', label: 'Update Tracker', detail: 'Logged daily progress' },
+      { id: 'e_plan', label: 'Plan Next Day', detail: 'Set goals for tomorrow' },
+    ]
+  }
+];
+

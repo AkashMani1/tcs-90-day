@@ -9,6 +9,18 @@ export function today(): string {
   return toDateStr(new Date());
 }
 
+export function addDays(dateStr: string, days: number): string {
+  const date = new Date(dateStr);
+  date.setDate(date.getDate() + days);
+  return toDateStr(date);
+}
+
+export function formatDisplayDate(dateStr: string | undefined): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
+}
+
 export function calcStreak(dailyLogs: { date: string; completedHabits: string[]; hours?: number }[]): number {
   if (!dailyLogs.length) return 0;
 

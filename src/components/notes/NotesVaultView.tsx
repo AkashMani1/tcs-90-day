@@ -73,7 +73,7 @@ function StarForm({
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
-           <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.3em] mb-3 block ml-1">Behavioral Vector</label>
+           <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.3em] mb-3 block ml-1">Core Scenario</label>
            <select value={form.tag} onChange={(e) => set('tag', e.target.value)}
             className="w-full bg-muted/40 border border-border/10 rounded-[24px] px-6 py-4 text-foreground text-md font-bold focus:outline-none focus:border-primary/40 appearance-none transition-all cursor-pointer">
             {TAGS.map((t) => <option key={t} className="bg-card text-foreground">{t} Dynamic</option>)}
@@ -84,9 +84,9 @@ function StarForm({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {[
           { k: 'situation' as const, label: 'SITUATION', icon: Database, color: 'text-secondary', placeholder: 'Standardized context/background reporting...' },
-          { k: 'task' as const, label: 'TASK', icon: Target, color: 'text-primary', placeholder: 'Specific mission objectives and responsibilities...' },
-          { k: 'action' as const, label: 'ACTION', icon: Zap, color: 'text-primary', placeholder: 'Tactical execution steps taken...' },
-          { k: 'result' as const, label: 'RESULT', icon: ShieldCheck, color: 'text-emerald-500', placeholder: 'Quantified metrics and mission outcome...' },
+          { k: 'task' as const, label: 'TASK', icon: Target, color: 'text-primary', placeholder: 'Specific project goals and requirements...' },
+          { k: 'action' as const, label: 'ACTION', icon: Zap, color: 'text-primary', placeholder: 'Action items and implementation steps...' },
+          { k: 'result' as const, label: 'RESULT', icon: ShieldCheck, color: 'text-emerald-500', placeholder: 'Quantified metrics and project outcomes...' },
         ].map(({ k, label, icon: Icon, color, placeholder }) => (
           <div key={k} className="space-y-4">
             <div className="flex items-center gap-3 mb-1 px-1">
@@ -107,7 +107,7 @@ function StarForm({
       </div>
 
       <div className="flex gap-6 pt-6">
-        <button onClick={onCancel} className="flex-1 py-5 rounded-[24px] border border-border/10 text-muted-foreground hover:text-foreground hover:bg-muted/40 text-[11px] font-black uppercase tracking-[0.3em] transition-all">Abort Log</button>
+        <button onClick={onCancel} className="flex-1 py-5 rounded-[24px] border border-border/10 text-muted-foreground hover:text-foreground hover:bg-muted/40 text-[11px] font-black uppercase tracking-[0.3em] transition-all">Cancel</button>
         <button onClick={() => valid && onSave(form)} disabled={!valid}
           className="flex-[2] py-5 rounded-[24px] bg-primary text-foreground disabled:opacity-30 text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
           <Save className="w-5 h-5" /> Commit to Vault
@@ -135,10 +135,10 @@ export default function NotesVaultView() {
   const [addingKb, setAddingKb] = useState(false);
 
   const TABS = [
-    { id: 'star' as const, label: 'STAR Stories', icon: Star },
-    { id: 'core' as const, label: 'Core Systems', filter: 'Core CS' as KnowledgeCategory, icon: Cpu },
-    { id: 'aptitude' as const, label: 'Aptitude Lab', filter: 'Aptitude' as KnowledgeCategory, icon: Activity },
-    { id: 'hr' as const, label: 'HR Protocol', filter: 'HR' as KnowledgeCategory, icon: Fingerprint },
+     { id: 'star', label: 'STAR Stories', icon: Star },
+    { id: 'core', label: 'Computer Science', filter: 'Core CS' as KnowledgeCategory, icon: Cpu },
+    { id: 'aptitude', label: 'Aptitude Hub', filter: 'Aptitude' as KnowledgeCategory, icon: Activity },
+    { id: 'hr', label: 'HR Interview', filter: 'HR' as KnowledgeCategory, icon: Fingerprint },
   ];
 
   const currentTabConfig = TABS.find((t) => t.id === tab);
@@ -165,29 +165,29 @@ export default function NotesVaultView() {
                <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-8 border border-primary/30 shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
                   <Library className="w-7 h-7 text-primary" />
                </div>
-               <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">INTELLIGENCE VAULT</h2>
+               <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">KNOWLEDGE BASE</h2>
                <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                  Platform operational. Currently documenting <span className="text-primary font-black">{STORIES_COUNT} tactical star logs</span> and 
-                  <span className="text-primary font-black">{KB_COUNT} neural knowledge nodes</span>.
+                  Central repository for all placement preparation. Currently documenting <span className="text-primary font-black">{STORIES_COUNT} preparation stories</span> and 
+                  <span className="text-primary font-black">{KB_COUNT} key study topics</span>.
                </p>
             </div>
             
             <div className="flex gap-14 items-center">
                <div className="text-center group">
                   <p className="text-6xl font-black text-foreground mb-4 group-hover:text-primary transition-all tabular-nums tracking-tighter">{STORIES_COUNT}</p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Tactical</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Action Plan</p>
                </div>
                <div className="text-center group">
                   <p className="text-6xl font-black text-foreground mb-4 group-hover:text-secondary transition-all tabular-nums tracking-tighter">{KB_COUNT}</p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-secondary/30 decoration-4">Nodes</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-secondary/30 decoration-4">Topics</p>
                </div>
             </div>
          </div>
       </BentoCard>
 
-      <BentoCard className="col-span-12 lg:col-span-4" title="Neural Integrity">
+      <BentoCard className="col-span-12 lg:col-span-4" title="Retention Analytics">
          <div className="flex items-center justify-center h-full py-4">
-            <ActivityRing value={Math.min(100, STORIES_COUNT * 10 + KB_COUNT * 2)} max={100} color="var(--primary)" label="Global Recall" />
+            <ActivityRing value={Math.min(100, STORIES_COUNT * 10 + KB_COUNT * 2)} max={100} color="var(--primary)" label="Overall Revision" />
          </div>
       </BentoCard>
 
@@ -229,7 +229,7 @@ export default function NotesVaultView() {
                   className="w-full lg:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-primary text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all group shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.03] active:scale-95"
                >
                   <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" /> 
-                  NEW TACTICAL STORY
+                  ADD INTERVIEW STORY
                </motion.button>
              )
            ) : (
@@ -243,7 +243,7 @@ export default function NotesVaultView() {
                   className="w-full lg:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-card border border-border/10 text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all group shadow-xl hover:border-secondary/40"
                >
                   <Plus className="w-5 h-5 text-secondary group-hover:rotate-90 transition-transform duration-500" /> 
-                  ADD INTELLIGENCE NODE
+                  ADD TOPIC ENTRY
                </motion.button>
              )
            )}
@@ -283,7 +283,7 @@ export default function NotesVaultView() {
                               <Star className="w-8 h-8" />
                            </div>
                            <div className="flex-1 min-w-0">
-                              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-60 block mb-2">{story.tag} Story Cycle</span>
+                              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-60 block mb-2">{story.tag} Interview Story</span>
                               <h4 className="text-foreground text-2xl font-black tracking-tight line-clamp-1 uppercase group-hover/btn:text-primary transition-colors">{story.situation}</h4>
                            </div>
                            <div className={`p-4 rounded-2xl bg-muted/30 text-muted-foreground transition-all duration-500 ${isOpen ? 'rotate-180 text-primary bg-primary/10' : ''}`}>
@@ -305,8 +305,8 @@ export default function NotesVaultView() {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                      {[
                                        { label: 'SITUATION REPORT', val: story.situation, color: 'text-secondary' },
-                                       { label: 'MISSION TASK', val: story.task, color: 'text-primary' },
-                                       { label: 'TACTICAL ACTION', val: story.action, color: 'text-primary' },
+                                       { label: 'PROJECT TASK', val: story.task, color: 'text-primary' },
+                                       { label: 'KEY ACTION', val: story.action, color: 'text-primary' },
                                        { label: 'VERIFIED RESULT', val: story.result, color: 'text-emerald-500' },
                                      ].map(({ label, val, color }) => (
                                        <div key={label} className="space-y-4">
@@ -349,20 +349,20 @@ export default function NotesVaultView() {
                      <div className="p-3 bg-secondary/10 rounded-xl border border-secondary/20 shadow-[0_0_15px_rgba(var(--secondary-rgb),0.2)]">
                         <Terminal className="w-6 h-6" />
                      </div>
-                     <span className="text-[11px] font-black uppercase tracking-[0.4em]">Node Initialization Protocol</span>
+                     <span className="text-[11px] font-black uppercase tracking-[0.4em]">Topic Entry Setup</span>
                   </div>
                   <input
                     autoFocus
                     value={newKbQ}
                     onChange={(e) => setNewKbQ(e.target.value)}
-                    placeholder="Identify specific node designation (e.g. Memory Overlays, IPC Vectors)..."
+                    placeholder="Identify specific topic category (e.g. Memory Management, API Design)..."
                     className="w-full bg-card/60 border border-border/20 rounded-[28px] px-8 py-5 text-foreground text-xl font-black focus:outline-none focus:border-secondary transition-all placeholder:opacity-20 shadow-inner"
                   />
                   <div className="flex gap-6">
                     <button onClick={() => { if (newKbQ.trim() && currentTabConfig.filter) { addKnowledgeItem(newKbQ.trim(), currentTabConfig.filter); setNewKbQ(''); setAddingKb(false); } }}
-                      className="px-10 py-5 bg-secondary text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_10px_30px_rgba(var(--secondary-rgb),0.2)] transition-all hover:scale-[1.03] active:scale-95">Open Node</button>
+                      className="px-10 py-5 bg-secondary text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_10px_30px_rgba(var(--secondary-rgb),0.2)] transition-all hover:scale-[1.03] active:scale-95">Save Topic</button>
                     <button onClick={() => { setAddingKb(false); setNewKbQ(''); }}
-                      className="px-10 py-5 border border-border/10 text-muted-foreground hover:text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all">Abort Protocol</button>
+                      className="px-10 py-5 border border-border/10 text-muted-foreground hover:text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all">Cancel setup</button>
                   </div>
                 </motion.div>
               )}
@@ -393,7 +393,7 @@ export default function NotesVaultView() {
                       />
                       <div className="flex gap-4">
                         <button onClick={() => { updateKnowledgeItem(qa.id, kbDraft); setEditKbId(null); }}
-                          className="px-8 py-3 bg-secondary text-foreground rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-secondary/20 transition-all hover:scale-105 active:scale-95">Commit Protocol</button>
+                          className="px-8 py-3 bg-secondary text-foreground rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-secondary/20 transition-all hover:scale-105 active:scale-95">Save Topic</button>
                         <button onClick={() => setEditKbId(null)} className="px-8 py-3 border border-border/10 text-muted-foreground rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:text-foreground transition-all">Discard</button>
                       </div>
                     </div>
@@ -401,7 +401,7 @@ export default function NotesVaultView() {
                     <div className="space-y-8 relative z-10">
                       <div className="bg-muted/20 rounded-[32px] p-8 border border-border/5 relative shadow-inner">
                         <p className="text-foreground text-[14px] leading-relaxed whitespace-pre-wrap font-bold opacity-80">
-                          {qa.answer || 'NODE_EMPTY: Operational logic not mapped for this sector. Initiate recordings immediately.'}
+                          {qa.answer || 'EMPTY: No details provided for this topic. Update with notes immediately.'}
                         </p>
                       </div>
                       <button onClick={() => { setEditKbId(qa.id); setKbDraft(qa.answer); }}
@@ -409,7 +409,7 @@ export default function NotesVaultView() {
                         <div className="p-2 rounded-lg bg-muted/40 group-hover/edit:bg-secondary/10 border border-border/5 group-hover/edit:border-secondary/20 transition-all">
                            <Edit3 className="w-4 h-4" />
                         </div>
-                        Modify Intelligence Node
+                        Update Topic Entry
                       </button>
                     </div>
                   )}
@@ -420,7 +420,7 @@ export default function NotesVaultView() {
             {filteredKnowledge.length === 0 && !addingKb && (
                <motion.div variants={itemVariants} className="text-center py-32 border-2 border-dashed border-border/10 rounded-[48px] bg-muted/5">
                   <Cpu className="w-16 h-16 text-muted-foreground mx-auto mb-8 opacity-10" />
-                  <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No neural node mapped to this intelligence sector</p>
+                  <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No topic entries found in this category</p>
                </motion.div>
             )}
           </div>

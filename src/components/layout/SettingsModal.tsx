@@ -52,10 +52,12 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
             <label className="text-slate-400 text-xs font-semibold mb-1.5 block">Target Role</label>
             <select value={role} onChange={(e) => setRole(e.target.value)}
               className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:border-indigo-500">
-              <option>TCS Ninja</option>
-              <option>TCS Digital</option>
-              <option>TCS Prime</option>
-              <option>All Roles</option>
+              <option>Software Engineer</option>
+              <option>SDE 1</option>
+              <option>Frontend Developer</option>
+              <option>Backend Developer</option>
+              <option>Full Stack Developer</option>
+              <option>Data Analyst</option>
             </select>
           </div>
           <div>

@@ -73,7 +73,7 @@ function AddProblemModal({ onClose, activeCategory }: { onClose: () => void, act
              <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)]">
                 <Target className="w-6 h-6 text-primary" />
              </div>
-             <h2 className="text-foreground font-black uppercase tracking-[0.2em] text-sm">Target Identity Log</h2>
+             <h2 className="text-foreground font-black uppercase tracking-[0.2em] text-sm">Add New Problem</h2>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-muted/50 rounded-2xl transition-all">
             <X className="w-6 h-6 text-muted-foreground" />
@@ -82,7 +82,7 @@ function AddProblemModal({ onClose, activeCategory }: { onClose: () => void, act
         
         <div className="p-10 space-y-8">
           <div>
-            <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Target Designation</label>
+            <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Problem Title</label>
             <input
               autoFocus value={form.name} onChange={(e) => set('name', e.target.value)}
               placeholder="e.g. 4Sum, LRU Cache, Number System Phase 1..."
@@ -99,10 +99,10 @@ function AddProblemModal({ onClose, activeCategory }: { onClose: () => void, act
               </select>
             </div>
             <div className="col-span-1">
-               <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Execution Source</label>
+               <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Practice Platform</label>
                <select value={form.platform} onChange={(e) => set('platform', e.target.value as Platform)}
                  className="w-full bg-muted/40 border border-border/10 rounded-[20px] px-6 py-4 text-foreground text-sm font-bold focus:outline-none focus:border-primary appearance-none cursor-pointer">
-                 {(['LeetCode', 'GFG', 'CodeVita', 'Other'] as Platform[]).map((p) => <option key={p} className="bg-card text-foreground">{p} Protocol</option>)}
+                 {(['LeetCode', 'GFG', 'CodeVita', 'Other'] as Platform[]).map((p) => <option key={p} className="bg-card text-foreground">{p} Format</option>)}
                </select>
             </div>
           </div>
@@ -114,10 +114,10 @@ function AddProblemModal({ onClose, activeCategory }: { onClose: () => void, act
           </div>
 
           <div>
-            <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Strategic Intelligence Report</label>
+            <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Notes & Solution Logic</label>
             <textarea
               value={form.notes} onChange={(e) => set('notes', e.target.value)}
-              placeholder="Record the core algorithmic realization or mission-critical blockers encountered..."
+              placeholder="Record the core algorithmic logic or key blockers encountered..."
               rows={3}
               className="w-full bg-muted/40 border border-border/10 rounded-[24px] px-6 py-5 text-foreground text-sm font-medium focus:outline-none focus:border-primary transition-all resize-none leading-relaxed placeholder:opacity-30"
             />
@@ -125,12 +125,12 @@ function AddProblemModal({ onClose, activeCategory }: { onClose: () => void, act
         </div>
 
         <div className="bg-muted/20 p-10 flex gap-6">
-           <button onClick={onClose} className="flex-1 py-5 rounded-[24px] border border-border/10 text-muted-foreground font-black uppercase tracking-[0.3em] text-[11px] hover:text-foreground hover:bg-muted/40 transition-all">Abort Log</button>
+           <button onClick={onClose} className="flex-1 py-5 rounded-[24px] border border-border/10 text-muted-foreground font-black uppercase tracking-[0.3em] text-[11px] hover:text-foreground hover:bg-muted/40 transition-all">Cancel</button>
            <button 
              onClick={submit} disabled={!form.name.trim() || !form.topic.trim()}
              className="flex-[2] py-5 rounded-[24px] bg-primary text-foreground font-black uppercase tracking-[0.3em] text-[11px] shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
            >
-             Neutralize & Commit
+             Complete & Save
            </button>
         </div>
       </motion.div>
@@ -138,7 +138,7 @@ function AddProblemModal({ onClose, activeCategory }: { onClose: () => void, act
   );
 }
 
-// ── The Kill List View ────────────────────────────────────────────────────────
+// ── PERSONAL DSA SHEET View ────────────────────────────────────────────────────────
 
 export default function DSATrackerView() {
   const { state, updateProblem, deleteProblem } = useApp();
@@ -206,17 +206,17 @@ export default function DSATrackerView() {
               <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-8 border border-primary/30 shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
                  <Target className="w-7 h-7 text-primary" />
               </div>
-              <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">THE KILL LIST</h2>
+              <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">PERSONAL DSA SHEET</h2>
               <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                 Active recruitment pipeline. Currently tracking <span className="text-primary font-black">{stats.total} tactical targets</span>. 
-                 Mastery level is currently at <span className="text-primary font-black">{Math.round((stats.done / stats.total) * 100 || 0)}% neutralization</span>.
+                 Active preparation pipeline. Currently tracking <span className="text-primary font-black">{stats.total} total problems</span>. 
+                 Mastery level is currently at <span className="text-primary font-black">{Math.round((stats.done / stats.total) * 100 || 0)}% completed</span>.
               </p>
            </div>
            
            <div className="flex gap-14 items-center">
               <div className="text-center group">
                  <p className="text-6xl font-black text-foreground mb-4 group-hover:text-primary transition-all tabular-nums tracking-tighter">{stats.done}</p>
-                 <p className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Neutralized</p>
+                 <p className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Completed</p>
               </div>
               <div className="text-center group">
                  <p className="text-6xl font-black text-foreground mb-4 group-hover:text-amber-500 transition-all tabular-nums tracking-tighter">{stats.prio}</p>
@@ -226,9 +226,9 @@ export default function DSATrackerView() {
         </div>
       </BentoCard>
 
-      <BentoCard className="col-span-12 lg:col-span-4" title="Mission Accuracy">
+      <BentoCard className="col-span-12 lg:col-span-4" title="Prep Accuracy">
          <div className="flex items-center justify-center h-full py-4">
-            <ActivityRing value={stats.done} max={stats.total} color="var(--primary)" label="Sector Mastery" />
+            <ActivityRing value={stats.done} max={stats.total} color="var(--primary)" label="Topic Mastery" />
          </div>
       </BentoCard>
 
@@ -263,7 +263,7 @@ export default function DSATrackerView() {
             className="w-full md:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-card border border-border/10 hover:border-primary/40 text-foreground rounded-[24px] text-xs font-black uppercase tracking-[0.3em] transition-all group shadow-xl"
          >
             <Plus className="w-5 h-5 text-primary group-hover:rotate-90 transition-transform duration-500" /> 
-            IDENTIFY NEW TARGET
+            TRACK NEW PROBLEM
          </button>
       </div>
 
@@ -276,7 +276,7 @@ export default function DSATrackerView() {
                   <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground opacity-40" />
                   <input
                     value={search} onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search tactical targets..."
+                    placeholder="Search problems..."
                     className="w-full bg-card/60 border border-border/10 rounded-[18px] pl-14 pr-6 py-4 text-foreground text-sm font-bold focus:outline-none focus:border-primary/40 placeholder:opacity-30"
                   />
                </div>
@@ -306,7 +306,7 @@ export default function DSATrackerView() {
                     className="py-32 text-center border-2 border-dashed border-border/10 rounded-[40px] bg-muted/5"
                   >
                      <AlertTriangle className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-10" />
-                     <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No active targets in terminal sector</p>
+                     <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No problems found in this category</p>
                   </motion.div>
                ) : (
                   groupedProblems.map(([topic, groupProps]) => (
@@ -318,7 +318,7 @@ export default function DSATrackerView() {
                           className="flex items-center gap-4 px-4 py-2"
                         >
                            <div className="w-2.5 h-8 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]" />
-                           <span className="text-sm font-black text-foreground uppercase tracking-[0.3em]">{topic} <span className="opacity-30 ml-2 font-bold">[{groupProps.length} NODES]</span></span>
+                           <span className="text-sm font-black text-foreground uppercase tracking-[0.3em]">{topic} <span className="opacity-30 ml-2 font-bold">[{groupProps.length} PROBLEMS]</span></span>
                         </motion.div>
                         <div className="space-y-4">
                            {groupProps.map((p) => (
@@ -342,7 +342,7 @@ export default function DSATrackerView() {
                                       <div className="flex items-center gap-4 mb-2 flex-wrap">
                                          <h4 className={`text-xl font-black tracking-tight truncate ${p.status === 'Done' ? 'text-muted-foreground/50' : 'text-foreground'}`}>{p.name}</h4>
                                          {p.isPriority && (
-                                            <span className="bg-rose-500/10 text-rose-500 border border-rose-500/30 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">Critical Vector</span>
+                                            <span className="bg-rose-500/10 text-rose-500 border border-rose-500/30 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">High Priority</span>
                                          )}
                                       </div>
                                       {editingNote === p.id ? (
@@ -354,7 +354,7 @@ export default function DSATrackerView() {
                                          />
                                       ) : (
                                          <p onClick={() => { setEditingNote(p.id); setNoteDraft(p.notes); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-all cursor-pointer truncate max-w-xl italic opacity-60 hover:opacity-100">
-                                            {p.notes || '+ Deploy Strategic Note'}
+                                            {p.notes || '+ Add Topic Note'}
                                          </p>
                                       )}
                                    </div>
@@ -392,12 +392,12 @@ export default function DSATrackerView() {
 
       {/* Sidebar Metrics */}
       <div className="col-span-12 lg:col-span-3 space-y-10">
-         <BentoCard title="Operational Load" icon={BookOpen} className="h-fit">
+         <BentoCard title="Study Load" icon={BookOpen} className="h-fit">
             <div className="space-y-8 py-4">
                {[
-                 { label: 'Neutralized', count: stats.done, color: 'text-emerald-500', total: stats.total },
+                 { label: 'Completed', count: stats.done, color: 'text-emerald-500', total: stats.total },
                  { label: 'High Priority', count: stats.prio, color: 'text-primary', total: stats.total },
-                 { label: 'Active Targets', count: stats.total - stats.done, color: 'text-muted-foreground', total: stats.total },
+                 { label: 'Pending Problems', count: stats.total - stats.done, color: 'text-muted-foreground', total: stats.total },
                ].map((item) => {
                  const percentage = item.total ? Math.round((item.count / item.total) * 100) : 0;
                  return (
@@ -427,7 +427,7 @@ export default function DSATrackerView() {
                </div>
                <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Elite Mastery</p>
-                  <p className="text-sm font-black text-foreground">Critical Vectors</p>
+                  <p className="text-sm font-black text-foreground">High Priority Topics</p>
                </div>
             </div>
             <div className="space-y-4 relative z-10">

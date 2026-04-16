@@ -2,49 +2,22 @@
 > study-os@1.0.0 dev
 > next dev
 
+ ⚠ Port 3000 is in use, trying 3001 instead.
    ▲ Next.js 14.1.0
-   - Local:        http://localhost:3000
+   - Local:        http://localhost:3001
 
- ✓ Ready in 2.1s
+ ✓ Ready in 1350ms
  ○ Compiling / ...
- ✓ Compiled / in 3.3s (1402 modules)
- ✓ Compiled in 236ms (705 modules)
- ✓ Compiled in 614ms (1393 modules)
- ✓ Compiled in 270ms (1393 modules)
- ✓ Compiled in 1921ms (1393 modules)
- ✓ Compiled in 3.1s (1393 modules)
- ✓ Compiled in 5.8s (1393 modules)
- ✓ Compiled in 2.5s (1393 modules)
- ✓ Compiled in 393ms (1393 modules)
- ✓ Compiled in 453ms (1393 modules)
- ✓ Compiled in 332ms (1393 modules)
- ✓ Compiled in 587ms (1393 modules)
- ✓ Compiled in 362ms (1393 modules)
- ✓ Compiled in 2.1s (1393 modules)
- ✓ Compiled in 4.6s (1393 modules)
- ✓ Compiled in 3s (1393 modules)
- ⨯ ./src/components/dashboard/DashboardView.tsx
-Error: 
-  [31mx[0m Unexpected token `div`. Expected jsx identifier
-     ,-[[36;1;4m/Users/akashmani/Placement/study-os/src/components/dashboard/DashboardView.tsx[0m:375:1]
- [2m375[0m |   const pct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
- [2m376[0m | 
- [2m377[0m |   return (
- [2m378[0m |     <div className="flex flex-col gap-8">
-     : [31;1m     ^^^[0m
- [2m379[0m |       {/* Worksheet Header */}
- [2m380[0m |       <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10 px-2">
- [2m381[0m |          <div className="flex items-center gap-8">
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/dashboard/DashboardView.tsx
-./src/app/page.tsx
- ✓ Compiled in 2.7s (1393 modules)
- ✓ Compiled in 1519ms (1393 modules)
- ✓ Compiled in 12.9s (1393 modules)
- ✓ Compiled in 4.9s (1393 modules)
- ✓ Compiled in 9.7s (1393 modules)
+ ✓ Compiled / in 3.5s (1430 modules)
+ ✓ Compiled in 231ms (719 modules)
+ ✓ Compiled in 794ms (1421 modules)
+ ✓ Compiled in 461ms (1421 modules)
+ ✓ Compiled in 221ms (1421 modules)
+ ✓ Compiled in 577ms (1421 modules)
+ ✓ Compiled in 765ms (1421 modules)
+ ✓ Compiled in 217ms (1421 modules)
+ ✓ Compiled in 710ms (1421 modules)
+ ✓ Compiled in 251ms (1421 modules)
+ ✓ Compiled in 325ms (1421 modules)
+ ✓ Compiled in 266ms (1421 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/akashmani/Placement/study-os/.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/akashmani/Placement/study-os/.next/cache/webpack/server-development/0.pack.gz'

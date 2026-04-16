@@ -18,10 +18,12 @@ import {
   Trash2,
   CheckCircle2,
   Link2,
-  Building2,
+  Calendar,
+  History,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { DSASheetItem, Difficulty } from '@/lib/types';
+import { today, addDays, formatDisplayDate } from '@/lib/utils';
 
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1T5-nGsJ9WNwna44e9WWRD0jlZIT5KxVOGvylcvvVrY8/edit?gid=0#gid=0';
 
@@ -29,12 +31,6 @@ const DIFFICULTY_STYLE: Record<Difficulty, string> = {
   Easy: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300',
   Medium: 'bg-amber-500/15 text-amber-600 dark:text-amber-300',
   Hard: 'bg-rose-500/15 text-rose-600 dark:text-rose-300',
-};
-
-const TIMER_STYLE: Record<Difficulty, string> = {
-  Easy: '30 Min',
-  Medium: '45 Min',
-  Hard: '60 Min',
 };
 
 const HERO_USERS = ['User 1', 'User 2', 'User 3', 'User 4'];
@@ -48,6 +44,8 @@ type FormState = {
   resourceLinks: string;
   videoUrl: string;
   companies: string;
+  submissionDate: string;
+  revisionDate: string;
   notes: string;
 };
 
@@ -207,6 +205,8 @@ function toFormState(item?: DSASheetItem): FormState {
     resourceLinks: item?.resourceLinks.join('\n') || '',
     videoUrl: item?.videoUrl || '',
     companies: item?.companies.join(', ') || '',
+    submissionDate: item?.submissionDate || '',
+    revisionDate: item?.revisionDate || '',
     notes: item?.notes || '',
   };
 }
@@ -360,9 +360,14 @@ function SheetEditor({
             <input value={form.videoUrl} onChange={(e) => update('videoUrl', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="https://youtube.com/..." />
           </label>
 
-          <label className="md:col-span-2">
-            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Interview Companies</span>
-            <input value={form.companies} onChange={(e) => update('companies', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" placeholder="Amazon, Google, TCS, Infosys" />
+          <label>
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Submission Date</span>
+            <input type="date" value={form.submissionDate} onChange={(e) => update('submissionDate', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" />
+          </label>
+
+          <label>
+            <span className="block text-[11px] uppercase tracking-[0.24em] text-muted-foreground font-black mb-2">Revision Date</span>
+            <input type="date" value={form.revisionDate} onChange={(e) => update('revisionDate', e.target.value)} className="w-full rounded-2xl bg-muted/20 border border-border/30 px-5 py-4 text-foreground focus:outline-none focus:border-primary/40" />
           </label>
 
           <label className="md:col-span-2">
@@ -393,7 +398,7 @@ export default function DSASheetView() {
   const [difficultyFilter, setDifficultyFilter] = useState<Difficulty | 'All'>('All');
   const [sectionFilter, setSectionFilter] = useState('All');
   const [savedOnly, setSavedOnly] = useState(false);
-  const [completedOnly, setCompletedOnly] = useState(false);
+  const [revisionDueOnly, setRevisionDueOnly] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [editingItem, setEditingItem] = useState<DSASheetItem | null>(null);
   const [noteItem, setNoteItem] = useState<DSASheetItem | null>(null);
@@ -424,11 +429,11 @@ export default function DSASheetView() {
           (difficultyFilter === 'All' || item.difficulty === difficultyFilter) &&
           (sectionFilter === 'All' || item.section === sectionFilter) &&
           (!savedOnly || item.saved) &&
-          (!completedOnly || item.completed)
+          (!revisionDueOnly || (item.completed && item.revisionDate && item.revisionDate <= today()))
         );
       })
       .sort((a, b) => (a.sectionOrder === b.sectionOrder ? a.order - b.order : a.sectionOrder - b.sectionOrder));
-  }, [completedOnly, deferredSearch, difficultyFilter, items, savedOnly, sectionFilter]);
+  }, [deferredSearch, difficultyFilter, items, savedOnly, sectionFilter, revisionDueOnly]);
 
   const groupedItems = useMemo(() => {
     const map = new Map<string, DSASheetItem[]>();
@@ -484,6 +489,8 @@ export default function DSASheetView() {
       resourceLinks,
       videoUrl: form.videoUrl.trim(),
       companies: parseCompanyList(form.companies),
+      submissionDate: form.submissionDate,
+      revisionDate: form.revisionDate,
       notes: form.notes.trim(),
       completed: editingItem?.completed ?? false,
       saved: editingItem?.saved ?? false,
@@ -572,7 +579,7 @@ export default function DSASheetView() {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search problem, company, notes, section"
+              placeholder="Search problem, dates, notes, section"
               className="w-full rounded-2xl bg-muted/20 border border-border/30 pl-11 pr-4 py-3.5 text-foreground focus:outline-none focus:border-[#ff7a59]/40"
             />
           </label>
@@ -595,8 +602,8 @@ export default function DSASheetView() {
             Saved only
           </button>
 
-          <button onClick={() => setCompletedOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${completedOnly ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border/30 text-muted-foreground hover:text-foreground'}`}>
-            Completed only
+          <button onClick={() => setRevisionDueOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${revisionDueOnly ? 'border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'border-border/30 text-muted-foreground hover:text-foreground'}`}>
+            Revision needed
           </button>
         </div>
       </div>
@@ -621,14 +628,14 @@ export default function DSASheetView() {
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
                   <div className="w-full">
-                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 px-4 py-3.5 border border-border/30 bg-muted/20 text-foreground text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
+                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_100px_100px_56px_56px] gap-3 px-4 py-3.5 border border-border/30 bg-muted/20 text-foreground text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
                     <span></span>
                     <span>Problem</span>
                     <span>Youtube</span>
                     <span>Practice</span>
                     <span>Level</span>
-                    <span>Timer</span>
-                    <span>Company</span>
+                    <span>Submitted</span>
+                    <span>Revision</span>
                     <span>Notes</span>
                     <span>Save</span>
                   </div>
@@ -656,8 +663,24 @@ export default function DSASheetView() {
                           ) : null}
                           {subgroupItems.map((item) => {
                           return (
-                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_90px_120px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-border/20 bg-muted/5 hover:bg-muted/10 transition-colors">
-                          <button onClick={() => updateDsaSheetItem(item.id, { completed: !item.completed })} className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_100px_100px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-border/20 bg-muted/5 hover:bg-muted/10 transition-colors">
+                          <button 
+                            onClick={() => {
+                              const isCompleting = !item.completed;
+                              const subDate = isCompleting ? today() : '';
+                              let revDate = '';
+                              if (isCompleting) {
+                                const days = item.difficulty === 'Hard' ? 1 : item.difficulty === 'Medium' ? 3 : 7;
+                                revDate = addDays(subDate, days);
+                              }
+                              updateDsaSheetItem(item.id, { 
+                                completed: isCompleting, 
+                                submissionDate: subDate, 
+                                revisionDate: revDate 
+                              });
+                            }} 
+                            className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground"
+                          >
                             {item.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5" />}
                           </button>
 
@@ -716,34 +739,34 @@ export default function DSASheetView() {
                             <span className={`inline-flex rounded-full px-2.5 py-1.5 text-[11px] font-bold ${DIFFICULTY_STYLE[item.difficulty]}`}>{item.difficulty}</span>
                           </div>
 
-                          <div className="flex items-center gap-3 text-foreground">
-                            <span className="text-[14px] font-semibold tracking-[-0.01em]">{TIMER_STYLE[item.difficulty]}</span>
+                          <div className="flex items-center gap-2">
+                             <div className="relative group px-3 py-1.5 rounded-xl border border-emerald-500/10 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all cursor-pointer flex items-center gap-2 min-w-[110px]">
+                               <History className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 pointer-events-none shrink-0" />
+                               <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 pointer-events-none whitespace-nowrap">
+                                 {formatDisplayDate(item.submissionDate) || 'Pending'}
+                               </span>
+                               <input 
+                                 type="date" 
+                                 value={item.submissionDate || ''} 
+                                 onChange={(e) => updateDsaSheetItem(item.id, { submissionDate: e.target.value })}
+                                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                               />
+                             </div>
                           </div>
 
-                          <div className="flex items-center lg:justify-center">
-                            {item.companies.length ? (
-                              <div className="flex items-center pl-1">
-                                {item.companies.slice(0, 4).map((company, companyIndex) => (
-                                  <div
-                                    key={`${item.id}-${company}`}
-                                    className={companyIndex === 0 ? '' : '-ml-2.5'}
-                                    style={{ zIndex: 10 - companyIndex }}
-                                  >
-                                    <CompanyBadge company={company} />
-                                  </div>
-                                ))}
-                                {item.companies.length > 4 ? (
-                                  <div className="-ml-2.5 w-10 h-10 shrink-0 rounded-full border-2 border-card bg-muted text-foreground flex items-center justify-center text-xs font-black" style={{ zIndex: 1 }}>
-                                    +{item.companies.length - 4}
-                                  </div>
-                                ) : null}
-                              </div>
-                            ) : (
-                              <button onClick={() => openEdit(item)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-                                <Building2 className="w-4 h-4" />
-                                Add
-                              </button>
-                            )}
+                          <div className="flex items-center gap-2">
+                             <div className="relative group px-3 py-1.5 rounded-xl border border-primary/10 bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer flex items-center gap-2 min-w-[110px]">
+                               <Calendar className="w-3.5 h-3.5 text-primary pointer-events-none shrink-0" />
+                               <span className="text-[11px] font-bold text-primary pointer-events-none whitespace-nowrap">
+                                 {formatDisplayDate(item.revisionDate) || '---'}
+                               </span>
+                               <input 
+                                 type="date" 
+                                 value={item.revisionDate || ''} 
+                                 onChange={(e) => updateDsaSheetItem(item.id, { revisionDate: e.target.value })}
+                                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                               />
+                             </div>
                           </div>
 
                           <div className="flex lg:justify-center">

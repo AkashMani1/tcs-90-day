@@ -11,7 +11,7 @@ export type TabId = 'dashboard' | 'roadmap' | 'dsa' | 'dsaSheet' | 'mocks' | 'no
 const NAV_ITEMS: { id: TabId; icon: React.ElementType; label: string; badge?: string }[] = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { id: 'roadmap', icon: GitMerge, label: '3-Month Roadmap' },
-  { id: 'dsa', icon: Target, label: 'The Kill List' },
+  { id: 'dsa', icon: Target, label: 'Must Do List' },
   { id: 'dsaSheet', icon: Code2, label: 'DSA Sheet' },
   { id: 'mocks', icon: Video, label: 'Mock Hub' },
   { id: 'notes', icon: BookOpen, label: 'Knowledge Base' },
@@ -63,7 +63,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
                 <span className="text-foreground font-black text-xl tracking-tighter">PLACE</span>
                 <span className="text-primary font-black text-xl tracking-tighter">PREP</span>
               </div>
-              <p className="text-muted-foreground text-[9px] font-black uppercase tracking-[0.3em] -mt-1 opacity-60">Architect v1.0</p>
+              <p className="text-muted-foreground text-[9px] font-black uppercase tracking-[0.3em] -mt-1 opacity-60">Placement Portal</p>
             </motion.div>
           )}
         </div>
@@ -72,7 +72,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
       {/* Navigation */}
       <nav className="flex-1 px-4 py-10 space-y-2 overflow-y-auto custom-scrollbar">
         {isExpanded && (
-          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.4em] mb-6 px-4 opacity-40">Tactical Control</p>
+          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.4em] mb-6 px-4 opacity-40">Preferences</p>
         )}
         {NAV_ITEMS.map(({ id, icon: Icon, label, badge }) => (
           <button
@@ -129,7 +129,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
           className={`group flex items-center transition-all duration-300 text-left border border-transparent hover:border-primary/10 hover:bg-primary/5 ${
             isExpanded ? 'gap-4 px-4 py-3 rounded-[18px]' : 'justify-center p-2 rounded-xl'
           }`}
-          title="Edit Tactical Profile"
+          title="Edit Profile"
         >
           <div className="w-9 h-9 rounded-[14px] bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-[11px] shadow-lg shadow-primary/10 border-t border-white/20 group-hover:scale-105 transition-transform">
             {(state.userName || 'S').charAt(0).toUpperCase()}

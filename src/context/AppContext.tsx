@@ -9,6 +9,7 @@ import {
   DEFAULT_STARS,
   DEFAULT_KNOWLEDGE,
   HABIT_TEMPLATES,
+  DEFAULT_HABIT_GROUPS,
 } from '@/lib/defaultData';
 import { KILL_LIST_PROBLEMS } from '@/lib/killListData';
 import { DEFAULT_DSA_SHEET_ITEMS, mergeDsaSheetItems } from '@/lib/dsaSheetSeed';
@@ -27,33 +28,33 @@ const INITIAL_STATE: AppState = {
       id: 'morning',
       title: 'Morning Block (2.5-3h)',
       items: [
-        { id: 'm_watched', label: 'Theory Deep-Dive', detail: 'Watched/Read Concept' },
-        { id: 'm_notes', label: 'Synthesized Data', detail: 'Made Notes/Flashcards' },
-        { id: 'm_understood', label: 'Logical Lock', detail: 'Understood Topic Fully' },
+        { id: 'm_watched', label: 'Study Theory', detail: 'Watched/Read Concepts' },
+        { id: 'm_notes', label: 'Create Notes', detail: 'Made Prompts/Cheatsheets' },
+        { id: 'm_understood', label: 'Concept Mastered', detail: 'Understood core logic deeply' },
       ]
     },
     {
       id: 'afternoon',
-      title: 'Afternoon Block (2-2.5h)',
+      title: 'AFTERNOON BLOCK',
       items: [
-        { id: 'a_solved', label: 'Neutralized Targets', detail: 'Solved 3-4 Problems' },
-        { id: 'a_submit', label: 'Uplink Established', detail: 'Submitted on Platform' },
-        { id: 'a_review', label: 'Solution Extraction', detail: 'Reviewed Hard Cases' },
+        { id: 'a_solved', label: 'Solve Problems', detail: 'Practiced 3-4 questions' },
+        { id: 'a_submit', label: 'Submit Code', detail: 'Successfully submitted' },
+        { id: 'a_review', label: 'Review Solutions', detail: 'Optimized and reviewed edges' },
       ]
     },
     {
       id: 'evening',
-      title: 'Evening Review (30-60m)',
+      title: 'EVENING REVIEW',
       items: [
-        { id: 'e_noted', label: 'Intelligence Log', detail: 'Noted Key Learnings' },
-        { id: 'e_progress', label: 'Telemetry Update', detail: 'Sync Progress Tracker' },
-        { id: 'e_plan', label: 'Next-Day Intent', detail: 'Planned Next Topics' },
+        { id: 'e_noted', label: 'Daily Reflection', detail: 'Noted key learnings & mistakes' },
+        { id: 'e_progress', label: 'Update Tracker', detail: 'Logged daily progress' },
+        { id: 'e_plan', label: 'Plan Next Day', detail: 'Set goals for tomorrow' },
       ]
     }
   ],
   startDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   userName: 'Student',
-  targetRole: 'TCS Digital',
+  targetRole: 'Software Engineer',
   sidebarCollapsed: false,
   projects: [],
   theme: 'dark',
@@ -381,39 +382,51 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // ── Habit Management ────────────────────────────────────────────────────────
   const addHabitItem = useCallback((groupId: string, label: string, detail: string) => {
-    mutate((s) => ({
-      ...s,
-      habitGroups: (s.habitGroups || []).map((g) =>
-        g.id === groupId ? { ...g, items: [...g.items, { id: generateId(), label, detail }] } : g
-      ),
-    }));
+    mutate((s) => {
+      const currentGroups = s.habitGroups && s.habitGroups.length > 0 ? s.habitGroups : DEFAULT_HABIT_GROUPS;
+      return {
+        ...s,
+        habitGroups: currentGroups.map((g) =>
+          g.id === groupId ? { ...g, items: [...g.items, { id: generateId(), label, detail }] } : g
+        ),
+      };
+    });
   }, [mutate]);
 
   const updateHabitItem = useCallback((groupId: string, itemId: string, updates: Partial<{ label: string; detail: string }>) => {
-    mutate((s) => ({
-      ...s,
-      habitGroups: (s.habitGroups || []).map((g) =>
-        g.id === groupId
-          ? { ...g, items: g.items.map((it) => (it.id === itemId ? { ...it, ...updates } : it)) }
-          : g
-      ),
-    }));
+    mutate((s) => {
+      const currentGroups = s.habitGroups && s.habitGroups.length > 0 ? s.habitGroups : DEFAULT_HABIT_GROUPS;
+      return {
+        ...s,
+        habitGroups: currentGroups.map((g) =>
+          g.id === groupId
+            ? { ...g, items: g.items.map((it) => (it.id === itemId ? { ...it, ...updates } : it)) }
+            : g
+        ),
+      };
+    });
   }, [mutate]);
 
   const deleteHabitItem = useCallback((groupId: string, itemId: string) => {
-    mutate((s) => ({
-      ...s,
-      habitGroups: (s.habitGroups || []).map((g) =>
-        g.id === groupId ? { ...g, items: g.items.filter((it) => it.id !== itemId) } : g
-      ),
-    }));
+    mutate((s) => {
+      const currentGroups = s.habitGroups && s.habitGroups.length > 0 ? s.habitGroups : DEFAULT_HABIT_GROUPS;
+      return {
+        ...s,
+        habitGroups: currentGroups.map((g) =>
+          g.id === groupId ? { ...g, items: g.items.filter((it) => it.id !== itemId) } : g
+        ),
+      };
+    });
   }, [mutate]);
 
   const updateHabitGroupTitle = useCallback((groupId: string, title: string) => {
-    mutate((s) => ({
-      ...s,
-      habitGroups: (s.habitGroups || []).map((g) => (g.id === groupId ? { ...g, title } : g)),
-    }));
+    mutate((s) => {
+      const currentGroups = s.habitGroups && s.habitGroups.length > 0 ? s.habitGroups : DEFAULT_HABIT_GROUPS;
+      return {
+        ...s,
+        habitGroups: currentGroups.map((g) => (g.id === groupId ? { ...g, title } : g)),
+      };
+    });
   }, [mutate]);
 
   const value: AppContextType = {

@@ -1,4 +1,4 @@
-// Auto-generated 300 Problem Kill List Data - Highly Specific TCS Mapping
+// Auto-generated 300 Problem DSA Sheet Data - Highly Curated Placement Mapping
 import { Problem } from './types';
 
 export const KILL_LIST_PROBLEMS: Problem[] = [

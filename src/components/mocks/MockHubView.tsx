@@ -41,20 +41,21 @@ const itemVariants = {
 // ── Mock Data & Config ────────────────────────────────────────────────────────
 
 const MOCK_TYPES = [
-  'TCS NQT Pattern',
+  'Aptitude Round',
   'Technical (DSA)',
   'HR Round',
-  'TCS Digital Coding',
+  'Technical Interview',
   'System Design',
   'Behavioral',
   'Full Loop Mock',
 ];
 
 const TIPS: Record<string, string[]> = {
-  'TCS NQT': ['Practice 30 aptitude questions in 30 min daily', 'Focus on verbal reasoning (4-5 questions)', 'Programming MCQ needs C/Java/Python proficiency'],
-  'Technical': ['Always explain your thought process aloud', 'Start with brute force, then optimize', 'Ask clarifying questions before coding'],
-  'HR Round': ['Prepare 3 STAR stories for different traits', 'Research TCS values and programs', 'Have 2-3 questions ready to ask the interviewer'],
-  'Coding': ['Practice medium-hard LeetCode under time pressure', 'Know space-time complexity cold', 'CodeVita problems are 2-3 hour marathons'],
+  'Aptitude Round': ['Practice 30 aptitude questions in 30 min daily', 'Focus on verbal reasoning (4-5 questions)', 'Programming MCQ needs C/Java/Python proficiency'],
+  'Technical (DSA)': ['Master graph and tree transversals', 'Practice 2 Medium level questions daily', 'Focus on time complexity optimization'],
+  'Technical Interview': ['Prepare object-oriented programming concepts', 'Know your resume inside out', 'Be ready to explain your projects deeply'],
+  'HR Round': ['Prepare 3 STAR stories for different traits', 'Research the company values and programs', 'Have 2-3 questions ready to ask the interviewer'],
+  'System Design': ['Understand load balancing and caching', 'Practice designing scalability for high traffic', 'Draw the architecture diagrams clearly'],
 };
 
 // ── Modal Form ───────────────────────────────────────────────────────────────
@@ -78,7 +79,7 @@ function AddMockModal({ onClose }: { onClose: () => void }) {
             <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)]">
               <Video className="w-6 h-6 text-primary" />
             </div>
-            <h2 className="text-foreground font-black uppercase tracking-[0.2em] text-sm">Initiate Simulation Protocol</h2>
+            <h2 className="text-foreground font-black uppercase tracking-[0.2em] text-sm">Start Interview Practice</h2>
           </div>
           <button onClick={onClose} className="p-3 rounded-2xl text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"><X className="w-6 h-6" /></button>
         </div>
@@ -86,7 +87,7 @@ function AddMockModal({ onClose }: { onClose: () => void }) {
         <div className="p-10 space-y-8">
           <div className="grid grid-cols-2 gap-8">
             <div className="col-span-2">
-              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Simulation Module</label>
+              <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Interview Module</label>
               <select value={form.type} onChange={(e) => set('type', e.target.value)}
                 className="w-full bg-muted/40 border border-border/10 rounded-[24px] px-6 py-4 text-foreground text-md font-bold focus:outline-none focus:border-primary appearance-none cursor-pointer">
                 {MOCK_TYPES.map((t) => <option key={t} className="bg-card text-foreground">{t}</option>)}
@@ -94,7 +95,7 @@ function AddMockModal({ onClose }: { onClose: () => void }) {
             </div>
 
             <div>
-               <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Diagnostic Score</label>
+               <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Practice Score</label>
                <input type="number" value={form.score} onChange={(e) => set('score', Number(e.target.value))} min={0} max={form.maxScore}
                 className="w-full bg-muted/40 border border-border/10 rounded-[20px] px-6 py-4 text-foreground text-sm font-bold focus:outline-none focus:border-primary transition-all" />
             </div>
@@ -106,7 +107,7 @@ function AddMockModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-             <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Engagement Date</label>
+             <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Practice Date</label>
              <div className="relative">
                 <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40" />
                 <input type="date" value={form.date} onChange={(e) => set('date', e.target.value)}
@@ -115,18 +116,18 @@ function AddMockModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Mission Debrief (Tactical Intelligence)</label>
+            <label className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Interview Debrief (Self Feedback)</label>
             <textarea value={form.feedback} onChange={(e) => set('feedback', e.target.value)} rows={4}
-              placeholder="Identify core blockers, tactical successes, and technical pivots required..."
+              placeholder="Identify core blockers, mistakes, and areas for improvement..."
               className="w-full bg-muted/40 border border-border/10 rounded-[28px] px-6 py-5 text-foreground text-sm font-medium focus:outline-none focus:border-primary transition-all resize-none leading-relaxed placeholder:opacity-30" />
           </div>
         </div>
 
         <div className="flex gap-6 px-10 pb-10 pt-6 bg-muted/20">
-          <button onClick={onClose} className="flex-1 py-5 rounded-[24px] border border-border/20 text-muted-foreground hover:text-foreground hover:bg-muted/40 text-[11px] font-black uppercase tracking-[0.3em] transition-all">Abort Simulation</button>
+          <button onClick={onClose} className="flex-1 py-5 rounded-[24px] border border-border/20 text-muted-foreground hover:text-foreground hover:bg-muted/40 text-[11px] font-black uppercase tracking-[0.3em] transition-all">Cancel</button>
           <button onClick={() => { addMock(form); onClose(); }}
             className="flex-[2] py-5 rounded-[24px] bg-primary text-foreground text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
-            <Save className="w-5 h-5" /> Finalize Record
+            <Save className="w-5 h-5" /> Save Mock Result
           </button>
         </div>
       </motion.div>
@@ -162,16 +163,16 @@ export default function MockHubView() {
                <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-8 border border-primary/30 shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
                   <PlayCircle className="w-7 h-7 text-primary" />
                </div>
-               <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">MOCK INTELLIGENCE</h2>
+               <h2 className="text-4xl font-black text-foreground mb-4 leading-none tracking-tight uppercase">INTERVIEW INSIGHTS</h2>
                <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                  Neutralizing recruitment barriers through simulation. Documenting <span className="text-primary font-black">{mocks.length} completed sessions</span>. Goal: 7 high-fidelity simulations.
+                  Refining interview skills through realistic practice. Documenting <span className="text-primary font-black">{mocks.length} completed sessions</span>. Goal: 7 high-quality mock interviews.
                </p>
             </div>
             
             <div className="flex gap-14 items-center">
                <div className="text-center group">
                   <p className="text-6xl font-black text-foreground mb-4 group-hover:text-primary transition-all tabular-nums tracking-tighter">{mocks.length}</p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Simulations</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground underline underline-offset-[14px] decoration-primary/30 decoration-4">Practice Sessions</p>
                </div>
                <div className="text-center group">
                   <p className="text-6xl font-black text-foreground mb-4 group-hover:text-secondary transition-all tabular-nums tracking-tighter">{7 - mocks.length > 0 ? 7 - mocks.length : 0}</p>
@@ -183,7 +184,7 @@ export default function MockHubView() {
 
       <BentoCard className="col-span-12 lg:col-span-4" title="Average Precision">
          <div className="flex items-center justify-center h-full py-4">
-            <ActivityRing value={avgScore} max={100} color="var(--primary)" label="Diagnostic Accuracy" />
+            <ActivityRing value={avgScore} max={100} color="var(--primary)" label="Preparation Score" />
          </div>
       </BentoCard>
 
@@ -200,17 +201,17 @@ export default function MockHubView() {
             className="w-full md:w-auto flex items-center justify-center gap-4 px-10 py-5 bg-primary text-foreground rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] transition-all group shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.03] active:scale-95"
          >
             <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" /> 
-            INITIATE SIMULATION
+            START NEW MOCK
          </button>
       </div>
 
-      {/* Row 3: Logs & Tactical Feedback */}
+      {/* Row 3: Logs & Feedback */}
       <div className="col-span-12 lg:col-span-8 space-y-10">
          <div className="space-y-6">
             {mocks.length === 0 ? (
                <motion.div variants={itemVariants} className="py-40 text-center border-2 border-dashed border-muted rounded-[48px] bg-muted/5">
                   <Video className="w-20 h-20 text-muted-foreground mx-auto mb-8 opacity-10" />
-                  <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No active simulation nodes in mission history</p>
+                  <p className="text-muted-foreground text-[13px] font-black uppercase tracking-[0.4em]">No practice sessions found in history</p>
                </motion.div>
             ) : (
                mocks.map((m, idx) => {
@@ -264,16 +265,16 @@ export default function MockHubView() {
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
                                    <div className="md:col-span-8 space-y-6">
                                       <h5 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground flex items-center gap-3 px-1">
-                                         <MessageSquare className="w-5 h-5 text-primary" /> Tactical Intelligence Report
+                                         <MessageSquare className="w-5 h-5 text-primary" /> Session Performance Review
                                       </h5>
                                       <p className="text-foreground text-[15px] leading-relaxed font-bold bg-muted/10 p-8 rounded-[32px] border border-border/5 shadow-inner">
-                                         {m.feedback || 'No technical debrief mapped for this simulation segment.'}
+                                         {m.feedback || 'No feedback was recorded for this test.'}
                                       </p>
                                    </div>
                                    <div className="md:col-span-4 flex flex-col justify-between items-end gap-10">
                                       <div className="bg-muted/10 p-8 rounded-[32px] border border-border/10 w-full text-center relative overflow-hidden group/ring ring-inset ring-1 ring-white/5">
                                          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/ring:opacity-100 transition-opacity" />
-                                         <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground block mb-6 px-1">Engagement Core</span>
+                                         <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground block mb-6 px-1">Score Analysis</span>
                                          <div className="flex items-baseline justify-center gap-2">
                                             <span className={`text-6xl font-black ${colorClass} tracking-tighter`}>{pct}</span>
                                             <span className="text-muted-foreground font-black text-2xl">%</span>
@@ -283,7 +284,7 @@ export default function MockHubView() {
                                         onClick={() => deleteMock(m.id)}
                                         className="flex items-center gap-3 px-8 py-4 rounded-2xl border border-rose-500/20 text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/10 transition-all text-[11px] font-black uppercase tracking-[0.3em]"
                                       >
-                                         <Trash2 className="w-4 h-4" /> PURGE MISSION
+                                         <Trash2 className="w-4 h-4" /> REMOVE LOG
                                       </button>
                                    </div>
                                 </div>
@@ -300,7 +301,7 @@ export default function MockHubView() {
 
       {/* Sidebar Insights */}
       <div className="col-span-12 lg:col-span-4 space-y-10">
-         <BentoCard title="Strategic Briefing" icon={Lightbulb} badge="Expert Layer">
+         <BentoCard title="Preparation Briefing" icon={Lightbulb} badge="Expert Tips">
             <div className="space-y-10 py-4">
                <div className="flex gap-2.5 flex-wrap">
                  {Object.keys(TIPS).map((key) => (
@@ -337,9 +338,9 @@ export default function MockHubView() {
                   <TrendingUp className="w-10 h-10 text-secondary" />
                </div>
                <div>
-                  <h4 className="text-foreground font-black text-3xl mb-4 tracking-tighter uppercase">SYSTEM ASCENSION</h4>
+                  <h4 className="text-foreground font-black text-3xl mb-4 tracking-tighter uppercase">SKILL GROWTH</h4>
                   <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                     Diagnostic accuracy improved by <span className="text-secondary font-black">12%</span> this cycle. Neutralize 2 more targets to reach <span className="text-secondary font-black">Platinum Readiness</span>.
+                     Practice consistency improved by <span className="text-secondary font-black">12%</span> this cycle. Complete 2 more sessions to reach <span className="text-secondary font-black">Platinum Readiness</span>.
                   </p>
                </div>
                <button className="w-full py-4 rounded-2xl bg-secondary/10 border border-secondary/20 text-secondary text-[11px] font-black uppercase tracking-[0.3em] hover:bg-secondary hover:text-foreground transition-all">View Leaderboard</button>

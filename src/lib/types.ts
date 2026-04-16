@@ -31,6 +31,8 @@ export interface DSASheetItem {
   companies: string[];
   notes?: string;
   completed: boolean;
+  submissionDate?: string;
+  revisionDate?: string;
   saved: boolean;
   source?: DSASheetSource;
   hidden?: boolean;
