@@ -135,10 +135,10 @@ export default function NotesVaultView() {
   const [addingKb, setAddingKb] = useState(false);
 
   const TABS = [
-     { id: 'star', label: 'STAR Stories', icon: Star },
-    { id: 'core', label: 'Computer Science', filter: 'Core CS' as KnowledgeCategory, icon: Cpu },
-    { id: 'aptitude', label: 'Aptitude Hub', filter: 'Aptitude' as KnowledgeCategory, icon: Activity },
-    { id: 'hr', label: 'HR Interview', filter: 'HR' as KnowledgeCategory, icon: Fingerprint },
+     { id: 'star' as const, label: 'STAR Stories', icon: Star },
+    { id: 'core' as const, label: 'Computer Science', filter: 'Core CS' as KnowledgeCategory, icon: Cpu },
+    { id: 'aptitude' as const, label: 'Aptitude Hub', filter: 'Aptitude' as KnowledgeCategory, icon: Activity },
+    { id: 'hr' as const, label: 'HR Interview', filter: 'HR' as KnowledgeCategory, icon: Fingerprint },
   ];
 
   const currentTabConfig = TABS.find((t) => t.id === tab);
