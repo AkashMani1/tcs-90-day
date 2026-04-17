@@ -130,8 +130,8 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           
-          {/* Avatar & Status Pip - Standardized Rail */}
-          <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center relative">
+          {/* Avatar & Status Pip - Standardized Rail (Stationary) */}
+          <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center relative z-20">
              <div className="w-10 h-10 rounded-[18px] bg-gradient-to-tr from-primary via-primary/80 to-secondary flex items-center justify-center text-white font-black text-[13px] shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:rotate-[5deg] overflow-hidden border border-white/10">
                 {user?.user_metadata.avatar_url ? (
                   <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -172,10 +172,10 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
         <div className="flex items-center px-3">
           <button 
             onClick={toggleTheme} 
-            className={`flex items-center justify-start rounded-[20px] bg-white/[0.02] hover:bg-white/[0.06] transition-all duration-300 group/ctrl w-full ${isExpanded ? 'py-3' : 'h-12'}`}
+            className={`flex items-center justify-start rounded-[20px] bg-white/[0.02] hover:bg-white/[0.06] transition-colors duration-300 group/ctrl w-full ${isExpanded ? 'py-3' : 'h-12'}`}
             title="Switch Theme"
           >
-            <div className="w-12 h-full flex-shrink-0 flex items-center justify-center">
+            <div className="w-12 h-full flex-shrink-0 flex items-center justify-center relative z-20">
               {state.theme === 'dark' ? (
                 <Sun className={`w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform duration-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.2)]`} />
               ) : (
