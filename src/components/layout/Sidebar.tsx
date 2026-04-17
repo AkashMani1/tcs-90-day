@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { calcStreak, calcCurrentWeek, getStreakStatus } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export type TabId = 'dashboard' | 'roadmap' | 'dsa' | 'dsaSheet' | 'mocks' | 'notes' | 'projects';
 
@@ -77,9 +78,14 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
           <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.4em] mb-6 px-4 opacity-40">Preferences</p>
         )}
         {NAV_ITEMS.map(({ id, icon: Icon, label, badge }) => (
-          <button
+          <Link
             key={id}
-            onClick={() => onTabChange(id)}
+            href={id === 'dashboard' ? '/' : `/${id}`}
+            onClick={(e) => {
+              // Standard Next.js Link behavior will update URL, 
+              // but we call onTabChange to update local state immediately for animation
+              onTabChange(id);
+            }}
             className={`w-full group relative flex items-center gap-4 rounded-[18px] transition-all duration-300 text-left ${
               isExpanded ? 'px-4 py-3.5' : 'justify-center p-3'
             } ${
@@ -103,7 +109,7 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
             {isExpanded && badge && (
               <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${activeTab === id ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>{badge}</span>
             )}
-          </button>
+          </Link>
         ))}
       </nav>
 

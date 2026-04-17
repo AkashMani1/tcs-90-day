@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 import Sidebar, { TabId } from '@/components/layout/Sidebar';
 import SettingsModal from '@/components/layout/SettingsModal';
 import DashboardView from '@/components/dashboard/DashboardView';
@@ -26,8 +28,25 @@ const TAB_LABELS: Record<TabId, { label: string; icon: React.ElementType }> = {
 
 export default function Home() {
   const { state } = useApp();
-  const [activeTab, setActiveTab] = useState<TabId>('dashboard');
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  // Derive active tab from pathname, default to 'dashboard'
+  const currentTab = (pathname.split('/').filter(Boolean)[0] || 'dashboard') as TabId;
+  const [activeTab, setActiveTab] = useState<TabId>(currentTab);
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // Sync state with URL changes
+  useEffect(() => {
+    if (currentTab !== activeTab && TAB_LABELS[currentTab]) {
+      setActiveTab(currentTab);
+    }
+  }, [currentTab, activeTab]);
+
+  const handleTabChange = (id: TabId) => {
+    setActiveTab(id);
+    router.push(id === 'dashboard' ? '/' : `/${id}`);
+  };
 
   const { label, icon: Icon } = TAB_LABELS[activeTab];
   const collapsed = state.sidebarCollapsed;
@@ -35,7 +54,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-obsidian selection:bg-neon-indigo/30 selection:text-white">
       {/* Sidebar */}
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} onSettingsOpen={() => setSettingsOpen(true)} />
+      <Sidebar activeTab={activeTab} onTabChange={handleTabChange} onSettingsOpen={() => setSettingsOpen(true)} />
 
       {/* Main content */}
       <motion.main 
@@ -57,7 +76,7 @@ export default function Home() {
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
             <div>
               <div className="flex items-center gap-2 mb-3 text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
-                <span className="hover:text-primary transition-colors cursor-pointer">PlacePrep</span>
+                <Link href="/" className="hover:text-primary transition-colors cursor-pointer">PlacePrep</Link>
                 <span className="text-border">/</span>
                 <div className="flex items-center gap-1.5 text-primary font-black">
                   <Icon className="w-3.5 h-3.5" />
@@ -113,7 +132,7 @@ export default function Home() {
         {(Object.entries(TAB_LABELS) as [TabId, { label: string; icon: React.ElementType }][]).map(([id, { label, icon: Icon }]) => (
           <button
             key={id}
-            onClick={() => setActiveTab(id)}
+            onClick={() => handleTabChange(id)}
             className={`flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-wider transition-all ${activeTab === id ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Icon className="w-5 h-5 mb-0.5" />
