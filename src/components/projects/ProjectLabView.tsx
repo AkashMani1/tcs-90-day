@@ -1,3 +1,4 @@
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 'use client';
 
 import { useState } from 'react';

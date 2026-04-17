@@ -1,3 +1,4 @@
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 'use client';
 
 import { FormEvent, useDeferredValue, useMemo, useState } from 'react';
@@ -306,23 +307,25 @@ function DifficultyTracker({ stats }: { stats: any }) {
   ];
 
   return (
-    <div className="flex flex-col gap-2.5 min-w-[240px]">
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
       {levels.map((level) => {
         const progress = Math.round((level.solved / level.total) * 100 || 0);
         return (
-          <div key={level.label} className="flex items-center gap-4">
-            <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground w-12">{level.label}</span>
-            <div className="flex-1 h-1.5 rounded-full bg-muted/20 overflow-hidden relative">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{ backgroundColor: level.color }}
-              />
+          <div key={level.label} className="flex items-center gap-3 min-w-[120px]">
+            <div className="flex flex-col gap-1 flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/60">{level.label}</span>
+                <span className="text-[10px] font-black text-foreground/80 tabular-nums">{level.solved}/{level.total}</span>
+              </div>
+              <div className="h-1 rounded-full bg-muted/20 overflow-hidden relative">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  className="absolute inset-y-0 left-0 rounded-full shadow-[0_0_8px_rgba(var(--color-rgb),0.4)]"
+                  style={{ backgroundColor: level.color }}
+                />
+              </div>
             </div>
-            <span className="text-[11px] font-black text-foreground w-12 text-right tabular-nums">
-              {level.solved}/{level.total}
-            </span>
           </div>
         );
       })}
@@ -579,57 +582,82 @@ export default function DSASheetView() {
         />
       )}
 
-      <section className="rounded-[34px] border border-border/30 bg-card overflow-hidden relative shadow-xl">
-        <div className="absolute inset-0 opacity-20 dark:opacity-35 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(128,128,128,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.1) 1px, transparent 1px)', backgroundSize: '86px 86px' }} />
-        <div className="relative z-10 px-8 md:px-10 py-6 md:py-7">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <section className="rounded-[38px] border border-border/20 bg-card/40 backdrop-blur-3xl overflow-hidden relative shadow-2xl group">
+        {/* Animated Accent Background */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] bg-[#ff7a59]/20 blur-[100px] rounded-full" />
+        </div>
+        
+        <div className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] blend-overlay" />
+        
+        <div className="relative z-10 px-8 md:px-12 py-7 md:py-9">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 md:gap-10">
+            
+            {/* Left: Branding & Performance */}
+            <div className="flex-1 space-y-7">
+               <h2 className="text-[24px] md:text-[32px] leading-[1.1] font-black tracking-tight text-foreground flex items-center flex-wrap gap-3">
+                 <span className="bg-gradient-to-r from-[#ff7a59] to-[#ff4d24] bg-clip-text text-transparent">DSA Sheet</span>
+                 <span className="w-2 h-2 rounded-full bg-border/40" />
+                 <span className="opacity-40 font-medium text-[20px] md:text-[24px]">Most Important Interview Questions</span>
+               </h2>
 
-            {/* Left: title + meta */}
-            <div>
-              <h2 className="text-[22px] md:text-[26px] leading-[1.2] font-black tracking-tight text-foreground">
-                <span className="text-[#ff7a59]">DSA Sheet</span> — Most Important Interview Questions
-              </h2>
-              <div className="mt-6 flex flex-col md:flex-row md:items-end gap-x-12 gap-y-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-4 text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
-                    <span>Solved Progress</span>
-                    <span className="text-border">•</span>
-                    <span className="text-foreground">{stats.completed}/{stats.total} total</span>
+               <div className="flex flex-wrap items-end gap-x-14 gap-y-8">
+                  {/* Progress Block */}
+                  <div className="space-y-4">
+                     <div className="flex items-center gap-3">
+                        <div className="px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/20 flex items-center gap-2">
+                           <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Solved Progress</span>
+                        </div>
+                        <span className="text-[13px] font-bold text-foreground tabular-nums opacity-80">{stats.completed}/{stats.total} <span className="text-muted-foreground font-medium opacity-60">Total Questions</span></span>
+                     </div>
+                     <DifficultyTracker stats={stats} />
                   </div>
-                  <DifficultyTracker stats={stats} />
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex -space-x-2">
-                    {HERO_USERS.map((label, index) => (
-                      <div
-                        key={label}
-                        title={label}
-                        className={`w-7 h-7 rounded-full border-2 border-card flex items-center justify-center font-black text-[10px] ${
-                          index === 0 ? 'bg-[#c084fc] text-white' : index === 1 ? 'bg-[#f9a8d4] text-[#111319]' : index === 2 ? 'bg-[#86efac] text-[#111319]' : 'bg-[#fbbf24] text-[#111319]'
-                        }`}
-                      >
-                        {label.split(' ').map((part) => part[0]).join('')}
-                      </div>
-                    ))}
+
+                  {/* Community Stats */}
+                  <div className="flex flex-col gap-3 py-1 px-4 border-l border-border/10">
+                    <div className="flex -space-x-2.5">
+                      {HERO_USERS.map((label, index) => (
+                        <div
+                          key={label}
+                          title={label}
+                          className={`w-8 h-8 rounded-full border-2 border-background flex items-center justify-center font-black text-[10px] shadow-lg ${
+                            index === 0 ? 'bg-[#c084fc] text-white' : index === 1 ? 'bg-[#f9a8d4] text-[#111319]' : index === 2 ? 'bg-[#86efac] text-[#111319]' : 'bg-[#fbbf24] text-[#111319]'
+                          }`}
+                        >
+                          {label.split(' ').map((part) => part[0]).join('')}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-foreground">{Math.max(372, stats.total + 121)}+</span> solving now
+                    </p>
                   </div>
-                  <p className="text-[12px] font-semibold text-muted-foreground tracking-tight">
-                    <span className="text-foreground font-black">{Math.max(372, stats.total + 121)}+</span> solving now
-                  </p>
-                </div>
-              </div>
+               </div>
             </div>
 
-            {/* Right: action buttons */}
-            <div className="flex flex-wrap gap-2 shrink-0">
-              <button onClick={openCreate} className="rounded-full border border-border/40 px-4 py-2 text-[12px] font-bold text-foreground hover:border-[#ff7a59]/50">
-                <span className="inline-flex items-center gap-2"><Plus className="w-3.5 h-3.5" /> Add Question</span>
-              </button>
-              <a href={SHEET_URL} target="_blank" rel="noreferrer" className="rounded-full border border-border/40 px-4 py-2 text-[12px] font-bold text-foreground hover:border-[#ff7a59]/50">
-                <span className="inline-flex items-center gap-2"><Link2 className="w-3.5 h-3.5" /> Source Sheet</span>
-              </a>
-              <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-full border px-4 py-2 text-[12px] font-bold ${savedOnly ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-300 bg-emerald-500/10' : 'border-border/40 text-foreground'}`}>
-                <span className="inline-flex items-center gap-2"><BookmarkCheck className="w-3.5 h-3.5" /> Saved</span>
-              </button>
+            {/* Right: Actions */}
+            <div className="flex flex-wrap lg:flex-nowrap gap-3 shrink-0 lg:self-start">
+               <button onClick={openCreate} className="group flex items-center gap-2.5 rounded-[22px] bg-primary px-6 py-4.5 text-[13px] font-black text-white shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                  <Plus className="w-4 h-4" />
+                  <span>Add Question</span>
+               </button>
+               <a href={SHEET_URL} target="_blank" rel="noreferrer" className="flex items-center gap-2.5 rounded-[22px] bg-muted/20 border border-border/30 px-6 py-4.5 text-[13px] font-bold text-foreground hover:bg-muted/40 transition-all">
+                  <Link2 className="w-4 h-4 text-muted-foreground" />
+                  <span>Source Sheet</span>
+               </a>
+               <button 
+                  onClick={() => setSavedOnly((prev) => !prev)} 
+                  className={`flex items-center gap-2.5 rounded-[22px] border px-6 py-4.5 text-[13px] font-bold transition-all ${
+                    savedOnly 
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500' 
+                      : 'bg-muted/20 border-border/30 text-foreground hover:bg-muted/40'
+                  }`}
+               >
+                  <BookmarkCheck className={`w-4 h-4 ${savedOnly ? 'text-emerald-500' : 'text-muted-foreground'}`} />
+                  <span>Saved</span>
+               </button>
             </div>
           </div>
         </div>
@@ -637,7 +665,7 @@ export default function DSASheetView() {
 
 
       <div className="rounded-[30px] border border-border/30 bg-card p-5 md:p-6 shadow-md">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_repeat(4,auto)] gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_repeat(3,auto)] gap-4">
           <label className="relative">
             <Search className="w-4 h-4 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2" />
             <input
@@ -662,13 +690,15 @@ export default function DSASheetView() {
             ))}
           </select>
 
-          <button onClick={() => setSavedOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${savedOnly ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'border-border/30 text-muted-foreground hover:text-foreground'}`}>
-            Saved only
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setSavedOnly((prev) => !prev)} className={`flex-1 lg:flex-none rounded-2xl px-5 py-3.5 text-[13px] font-bold border transition-all ${savedOnly ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/10'}`}>
+              Saved Questions
+            </button>
 
-          <button onClick={() => setRevisionDueOnly((prev) => !prev)} className={`rounded-2xl px-4 py-3.5 text-sm font-bold border ${revisionDueOnly ? 'border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'border-border/30 text-muted-foreground hover:text-foreground'}`}>
-            Revision needed
-          </button>
+            <button onClick={() => setRevisionDueOnly((prev) => !prev)} className={`flex-1 lg:flex-none rounded-2xl px-5 py-3.5 text-[13px] font-bold border transition-all ${revisionDueOnly ? 'border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.1)]' : 'border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/10'}`}>
+              Revision Questions
+            </button>
+          </div>
         </div>
       </div>
 

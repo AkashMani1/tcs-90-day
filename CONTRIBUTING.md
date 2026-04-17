@@ -1,6 +1,6 @@
-# Contributing to StudyOS
+# Contributing to PlacePrep
 
-First off, thank you for considering contributing to StudyOS! It's people like you that make StudyOS such a great tool for students.
+First off, thank you for considering contributing to PlacePrep! It's people like you that make PlacePrep such a great tool for students.
 
 ## 🚀 How Can I Contribute?
 

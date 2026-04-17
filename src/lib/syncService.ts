@@ -1,3 +1,4 @@
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 import { supabase } from './supabase';
 import { AppState, DailyLog, Problem, DSASheetItem } from './types';
 

@@ -1,3 +1,4 @@
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';

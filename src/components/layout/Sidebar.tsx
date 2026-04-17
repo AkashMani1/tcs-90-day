@@ -1,5 +1,9 @@
 'use client';
 
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
+
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
+
 import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, Flame, Trophy, Layers, Sun, Moon, Pin, PinOff, LogIn, LogOut, Cloud, CloudOff } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
@@ -209,6 +213,15 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
             {isExpanded && (collapsed ? "UNPINNED" : "PINNED")}
           </button>
         </div>
+
+        {/* Developer Watermark */}
+        {isExpanded && (
+          <div className="pt-2 px-4 pb-1">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-30 text-center">
+              Developed by <span>Akash Mani</span>
+            </p>
+          </div>
+        )}
       </div>
     </motion.aside>
   );

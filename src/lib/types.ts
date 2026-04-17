@@ -1,3 +1,4 @@
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export type ProblemStatus = 'Todo' | 'Done' | 'Revisit';
 export type Platform = 'LeetCode' | 'GFG' | 'CodeVita' | 'Other';

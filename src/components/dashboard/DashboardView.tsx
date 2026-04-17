@@ -1,3 +1,4 @@
+/* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 'use client';
 
 import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
@@ -7,7 +8,7 @@ import {
   Save, CheckCheck, Activity, ShieldCheck, AlertTriangle, 
   Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb, 
   Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target,
-  Heart, Zap, Shield, Timer, Settings, ChevronLeft, ChevronRight
+  Heart, Zap, Shield, Timer, Settings, ChevronLeft, ChevronRight, History
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcStreak, calcTotalHours, calcCurrentWeek, today, toDateStr, getStreakStatus, getHoursUntilMidnight } from '@/lib/utils';
@@ -822,6 +823,7 @@ export default function DashboardView() {
 
   const streak = calcStreak(state.dailyLogs);
   const totalHours = calcTotalHours(state.dailyLogs);
+  const dailyHours = state.dailyLogs.find(l => l.date === today())?.hours || 0;
   const currentWeek = calcCurrentWeek(state.startDate);
   const totalDone = state.problems.filter((p) => p.status === 'Done').length;
   const progressPct = Math.round((currentWeek / 12) * 100);
@@ -858,25 +860,31 @@ export default function DashboardView() {
                       <p className="text-primary text-[11px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
                    </div>
                    <div className="w-[1px] h-4 bg-border/20 mx-1" />
-                   <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/10 rounded-lg border border-border/10 group-hover:border-primary/20 transition-all">
-                      <Timer className="w-3.5 h-3.5 text-primary opacity-60" />
-                      <p className="text-foreground text-[11px] font-black tabular-nums">{totalHours.toFixed(1)}<span className="text-muted-foreground text-[8px] font-bold uppercase ml-1">Hrs Logged</span></p>
+                   <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+                      <History className="w-3.5 h-3.5 text-indigo-400 opacity-60" />
+                      <p className="text-foreground text-[11px] font-black tabular-nums">{totalHours.toFixed(0)}<span className="text-muted-foreground text-[8px] font-bold uppercase ml-1">Journey Hrs</span></p>
                    </div>
                 </div>
              </div>
              
-             <div className="grid grid-cols-3 gap-6 md:gap-8">
+             <div className="grid grid-cols-4 gap-4 md:gap-8">
                 <div className="group">
                    <p className="text-[28px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-1">{streak}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground">Current Streak</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Current Streak</p>
                 </div>
                 <div className="group">
                    <p className="text-[28px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-1">{totalDone}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground">Problems Solved</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Solved</p>
                 </div>
                 <div className="group">
-                   <p className="text-[28px] font-black text-foreground/50 tabular-nums leading-none mb-1">{progressPct}%</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground opacity-40">Effective</p>
+                   <p className="text-[28px] font-black text-foreground transition-colors tabular-nums leading-none mb-1 group-hover:text-emerald-500">
+                     {dailyHours}<span className="text-[14px] ml-1 text-muted-foreground font-black opacity-40 group-hover:opacity-60 transition-opacity">HR</span>
+                   </p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Hrs Today</p>
+                </div>
+                <div className="group">
+                   <p className="text-[28px] font-black text-foreground/40 transition-colors tabular-nums leading-none mb-1 group-hover:text-foreground/80">{progressPct}%</p>
+                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-40 transition-opacity whitespace-nowrap">Effective</p>
                 </div>
              </div>
           </div>

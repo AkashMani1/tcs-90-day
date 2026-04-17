@@ -28,3 +28,13 @@
 
  ✓ Ready in 1945ms
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/akashmani/Placement/study-os/.next/cache/webpack/client-development/8.pack.gz_' -> '/Users/akashmani/Placement/study-os/.next/cache/webpack/client-development/8.pack.gz'
+ ⚠ Failed to reload dynamic routes: Error: You cannot define a route with the same specificity as a optional catch-all route ("/" and "/[[...tab]]").
+    at UrlNode._smoosh (/Users/akashmani/Placement/study-os/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:42:23)
+    at UrlNode.smoosh (/Users/akashmani/Placement/study-os/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:16:21)
+    at getSortedRoutes (/Users/akashmani/Placement/study-os/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:167:17)
+    at Watchpack.<anonymous> (/Users/akashmani/Placement/study-os/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js:1598:65)
+ ⚠ Failed to reload dynamic routes: Error: You cannot define a route with the same specificity as a optional catch-all route ("/" and "/[[...tab]]").
+    at UrlNode._smoosh (/Users/akashmani/Placement/study-os/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:42:23)
+    at UrlNode.smoosh (/Users/akashmani/Placement/study-os/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:16:21)
+    at getSortedRoutes (/Users/akashmani/Placement/study-os/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:167:17)
+    at Watchpack.<anonymous> (/Users/akashmani/Placement/study-os/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js:1598:65)
