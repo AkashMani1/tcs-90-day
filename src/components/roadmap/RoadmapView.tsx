@@ -246,7 +246,7 @@ export default function RoadmapView() {
               </div>
               <h2 className="text-4xl font-black text-foreground mb-4 tracking-tight leading-none uppercase">PROGRESS ROADMAP</h2>
               <p className="text-muted-foreground text-md font-medium leading-relaxed">
-                Strategic 12-week deployment. Transitioning from <span className="text-secondary font-black">Ninja Fundamentals</span> to <span className="text-primary font-black">Prime Production Readiness</span>.
+                Strategic {(state.goalDurationMonths || 3) * 4}-week deployment. Transitioning from <span className="text-secondary font-black">Ninja Fundamentals</span> to <span className="text-primary font-black">Prime Production Readiness</span>.
               </p>
            </div>
            

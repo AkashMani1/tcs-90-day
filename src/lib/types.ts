@@ -136,6 +136,7 @@ export interface AppState {
   startDate: string; // ISO string when user started
   userName: string;
   targetRole: string;
+  goalDurationMonths: number;
   sidebarCollapsed?: boolean;
   projects?: ProjectRecord[];
   theme?: 'light' | 'dark';

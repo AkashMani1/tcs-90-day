@@ -3,10 +3,10 @@
 
 import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle, 
-  Save, CheckCheck, Activity, ShieldCheck, AlertTriangle, 
-  Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb, 
+import {
+  Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle,
+  Save, CheckCheck, Activity, ShieldCheck, AlertTriangle,
+  Plus, Minus, CheckSquare, Square, BookOpen, PenTool, Lightbulb,
   Code, UploadCloud, Eye, BookMarked, BarChart3, ListTodo, Target,
   Heart, Zap, Shield, Timer, Settings, ChevronLeft, ChevronRight, History
 } from 'lucide-react';
@@ -29,11 +29,11 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { 
-      duration: 0.8, 
+    transition: {
+      duration: 0.8,
       ease: [0.16, 1, 0.3, 1] as const
     }
   }
@@ -70,7 +70,7 @@ function QuoteCard() {
       <div className="relative min-h-[45px] flex items-center">
         <div className="absolute -left-2 top-0 w-[1px] h-full bg-gradient-to-b from-primary/50 to-transparent" />
         <AnimatePresence mode="wait">
-          <motion.p 
+          <motion.p
             key={index}
             initial={{ opacity: 0, x: -5 }}
             animate={{ opacity: 0.9, x: 0 }}
@@ -90,7 +90,7 @@ function QuoteCard() {
 
 function BentoCard({ children, className = '', title = '', icon: Icon, badge = '', delay = 0 }: { children: React.ReactNode; className?: string; title?: string; icon?: any; badge?: string; delay?: number }) {
   return (
-    <motion.div 
+    <motion.div
       variants={itemVariants}
       whileHover={{ y: -6, transition: { duration: 0.3 } }}
       className={`bento-card p-6 flex flex-col group ${className}`}
@@ -157,11 +157,11 @@ function buildMonthlyGroups(logs: DashboardDailyLog[], year: number): MonthGroup
   const todayStr = today();
 
   return Array.from({ length: 12 }, (_, m) => {
-    const firstDay   = new Date(year, m, 1);
+    const firstDay = new Date(year, m, 1);
     const daysInMonth = new Date(year, m + 1, 0).getDate();
     // Mon=0 … Sun=6
-    const startDow   = (firstDay.getDay() + 6) % 7;
-    const numWeeks   = Math.ceil((startDow + daysInMonth) / 7);
+    const startDow = (firstDay.getDay() + 6) % 7;
+    const numWeeks = Math.ceil((startDow + daysInMonth) / 7);
 
     // weeks[w][d] = HeatCell | null (null = padding)
     const weeks: (HeatCell | null)[][] = Array.from({ length: numWeeks }, () =>
@@ -169,11 +169,11 @@ function buildMonthlyGroups(logs: DashboardDailyLog[], year: number): MonthGroup
     );
 
     for (let d = 0; d < daysInMonth; d++) {
-      const ci   = startDow + d;
-      const w    = Math.floor(ci / 7);
-      const dow  = ci % 7;
+      const ci = startDow + d;
+      const w = Math.floor(ci / 7);
+      const dow = ci % 7;
       const date = new Date(year, m, d + 1);
-      const key  = toDateStr(date);
+      const key = toDateStr(date);
       weeks[w][dow] = {
         date,
         key,
@@ -183,7 +183,7 @@ function buildMonthlyGroups(logs: DashboardDailyLog[], year: number): MonthGroup
     }
 
     return {
-      name:  firstDay.toLocaleString('default', { month: 'long' }),
+      name: firstDay.toLocaleString('default', { month: 'long' }),
       short: firstDay.toLocaleString('default', { month: 'short' }),
       weeks,
     };
@@ -350,16 +350,16 @@ function DSASheetProgressCard() {
   const cy = SVG / 2;
 
   const diffRows = [
-    { label: 'Easy',   color: '#36b4b8', solved: easySolved,   total: easyTotal   },
+    { label: 'Easy', color: '#36b4b8', solved: easySolved, total: easyTotal },
     { label: 'Medium', color: '#c7992d', solved: mediumSolved, total: mediumTotal },
-    { label: 'Hard',   color: '#c44343', solved: hardSolved,   total: hardTotal   },
+    { label: 'Hard', color: '#c44343', solved: hardSolved, total: hardTotal },
   ];
 
   // Ring radii and stroke – outer→Easy, middle→Medium, inner→Hard
   const ringDefs = [
-    { r: 60, sw: 8, color: '#36b4b8', solved: easySolved,   total: easyTotal   },
+    { r: 60, sw: 8, color: '#36b4b8', solved: easySolved, total: easyTotal },
     { r: 44, sw: 8, color: '#c7992d', solved: mediumSolved, total: mediumTotal },
-    { r: 28, sw: 8, color: '#c44343', solved: hardSolved,   total: hardTotal   },
+    { r: 28, sw: 8, color: '#c44343', solved: hardSolved, total: hardTotal },
   ];
 
   return (
@@ -469,11 +469,10 @@ function StreakPill() {
 
   return (
     <div
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] font-black shrink-0 ${
-        isProtected
+      className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] font-black shrink-0 ${isProtected
           ? 'bg-secondary/10 border-secondary/25 text-secondary'
           : 'bg-primary/10 border-primary/25 text-primary animate-pulse'
-      }`}
+        }`}
     >
       {isProtected
         ? <ShieldCheck className="w-3.5 h-3.5" />
@@ -504,12 +503,11 @@ function StreakGuard() {
   if (status === 'None') return null;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className={`p-5 rounded-[24px] border flex items-center justify-between transition-all ${
-        status === 'Protected' ? 'bg-secondary/5 border-secondary/20 text-secondary' : 'bg-primary/5 border-primary/20 text-primary'
-      }`}
+      className={`p-5 rounded-[24px] border flex items-center justify-between transition-all ${status === 'Protected' ? 'bg-secondary/5 border-secondary/20 text-secondary' : 'bg-primary/5 border-primary/20 text-primary'
+        }`}
     >
       <div className="flex items-center gap-4">
         <div className={`p-3 rounded-2xl ${status === 'Protected' ? 'bg-secondary/20 shadow-[0_0_15px_rgba(var(--secondary-rgb),0.3)]' : 'bg-primary/20 animate-pulse'}`}>
@@ -533,14 +531,14 @@ function StreakGuard() {
 // ── Daily Accountability Console ─────────────────────────────────────────────
 
 function DailyTaskChecklist() {
-  const { 
-    state, updateDailyLog, toggleHabit, 
-    addHabitItem, updateHabitItem, deleteHabitItem, updateHabitGroupTitle 
+  const {
+    state, updateDailyLog, toggleHabit,
+    addHabitItem, updateHabitItem, deleteHabitItem, updateHabitGroupTitle
   } = useApp();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
-  
+
   const todayStr = today();
   const log = state.dailyLogs.find(l => l.date === todayStr) || {
     date: todayStr,
@@ -554,8 +552,8 @@ function DailyTaskChecklist() {
     tomorrowPlan: { morning: '', afternoon: '' }
   };
 
-  const habitGroups = state.habitGroups && state.habitGroups.length > 0 
-    ? state.habitGroups 
+  const habitGroups = state.habitGroups && state.habitGroups.length > 0
+    ? state.habitGroups
     : DEFAULT_HABIT_GROUPS;
 
   const handleSave = () => {
@@ -593,37 +591,36 @@ function DailyTaskChecklist() {
     <div className="flex flex-col gap-8">
       {/* Worksheet Header */}
       <div className="flex flex-wrap items-center justify-between gap-6 py-4 border-b border-border/10 px-2">
-         <div className="flex items-center gap-8">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date Status</span>
-              <span className="text-sm font-black text-foreground">{todayStr}</span>
+        <div className="flex items-center gap-8">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Date Status</span>
+            <span className="text-sm font-black text-foreground">{todayStr}</span>
+          </div>
+          <div className="w-[1px] h-6 bg-border/20" />
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Phase Progress</span>
+            <span className="text-sm font-black text-primary uppercase">Week {currentWeek} / {(state.goalDurationMonths || 3) * 4}</span>
+          </div>
+          <div className="w-[1px] h-6 bg-border/20 hidden sm:block" />
+          <div className="hidden sm:flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency Rating</span>
+            <div className="flex items-center gap-3">
+              <div className="h-1.5 w-24 bg-muted/20 rounded-full overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+              </div>
+              <span className="text-[11px] font-black text-primary tabular-nums">{pct}%</span>
             </div>
-            <div className="w-[1px] h-6 bg-border/20" />
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Phase Progress</span>
-              <span className="text-sm font-black text-primary uppercase">Week {currentWeek} / 12</span>
-            </div>
-            <div className="w-[1px] h-6 bg-border/20 hidden sm:block" />
-            <div className="hidden sm:flex flex-col">
-               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Efficiency Rating</span>
-               <div className="flex items-center gap-3">
-                  <div className="h-1.5 w-24 bg-muted/20 rounded-full overflow-hidden">
-                     <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="text-[11px] font-black text-primary tabular-nums">{pct}%</span>
-               </div>
-            </div>
-         </div>
-         
-         <button 
-           onClick={() => setIsEditing(!isEditing)}
-           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-             isEditing ? 'bg-primary text-white' : 'bg-muted/10 text-muted-foreground hover:bg-muted-foreground/20'
-           }`}
-         >
-           {isEditing ? <CheckSquare className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
-           {isEditing ? 'SAVE SESSION' : 'CONFIGURE PLAN'}
-         </button>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${isEditing ? 'bg-primary text-white' : 'bg-muted/10 text-muted-foreground hover:bg-muted-foreground/20'
+            }`}
+        >
+          {isEditing ? <CheckSquare className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
+          {isEditing ? 'SAVE SESSION' : 'CONFIGURE PLAN'}
+        </button>
       </div>
 
       {/* 3-COLUMN TASK GRID */}
@@ -632,9 +629,9 @@ function DailyTaskChecklist() {
           <div key={group.id} className="space-y-5">
             <div className="flex items-center justify-between border-b border-border/5 pb-2">
               {isEditing ? (
-                  <input 
-                  type="text" 
-                  value={group.title} 
+                <input
+                  type="text"
+                  value={group.title}
                   onChange={(e) => updateHabitGroupTitle(group.id, e.target.value)}
                   className="bg-muted/10 border border-border/10 rounded-lg px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-primary focus:outline-none w-full mr-2"
                 />
@@ -644,7 +641,7 @@ function DailyTaskChecklist() {
                 </h4>
               )}
             </div>
-            
+
             <div className="flex flex-col gap-2">
               {group.items.map((item) => {
                 const isChecked = log.completedHabits.includes(item.id);
@@ -652,39 +649,37 @@ function DailyTaskChecklist() {
                   <div key={item.id} className="group relative">
                     {isEditing ? (
                       <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-muted/5 border border-border/5">
-                         <div className="flex items-center justify-between">
-                            <input 
-                              type="text" value={item.label} 
-                              onChange={(e) => updateHabitItem(group.id, item.id, { label: e.target.value })}
-                              className="bg-transparent text-[11px] font-bold tracking-tight w-full focus:outline-none text-foreground"
-                            />
-                            <button onClick={() => deleteHabitItem(group.id, item.id)} className="text-rose-500 opacity-40 hover:opacity-100 transition-opacity"><Minus className="w-3 h-3" /></button>
-                         </div>
-                         <input 
-                           type="text" value={item.detail} 
-                           onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
-                           className="bg-transparent text-[9px] font-medium opacity-50 w-full focus:outline-none"
-                           placeholder="Short strategy..."
-                         />
+                        <div className="flex items-center justify-between">
+                          <input
+                            type="text" value={item.label}
+                            onChange={(e) => updateHabitItem(group.id, item.id, { label: e.target.value })}
+                            className="bg-transparent text-[11px] font-bold tracking-tight w-full focus:outline-none text-foreground"
+                          />
+                          <button onClick={() => deleteHabitItem(group.id, item.id)} className="text-rose-500 opacity-40 hover:opacity-100 transition-opacity"><Minus className="w-3 h-3" /></button>
+                        </div>
+                        <input
+                          type="text" value={item.detail}
+                          onChange={(e) => updateHabitItem(group.id, item.id, { detail: e.target.value })}
+                          className="bg-transparent text-[9px] font-medium opacity-50 w-full focus:outline-none"
+                          placeholder="Short strategy..."
+                        />
                       </div>
                     ) : (
-                      <button 
+                      <button
                         onClick={() => toggleHabit(item.id)}
-                        className={`w-full flex items-start gap-3 p-3 rounded-xl border transition-all text-left ${
-                          isChecked 
-                            ? 'bg-primary/5 border-primary/20 text-foreground' 
+                        className={`w-full flex items-start gap-3 p-3 rounded-xl border transition-all text-left ${isChecked
+                            ? 'bg-primary/5 border-primary/20 text-foreground'
                             : 'bg-muted/5 border-border/5 hover:border-primary/20 text-muted-foreground'
-                        }`}
+                          }`}
                       >
-                         <div className={`mt-0.5 w-4 h-4 rounded-sm border flex items-center justify-center transition-all ${
-                            isChecked ? 'bg-primary border-primary text-white' : 'border-muted-foreground/30'
-                         }`}>
-                           {isChecked && <CheckCheck className="w-3 h-3" />}
-                         </div>
-                         <div>
-                           <p className="text-sm font-bold tracking-tight leading-tight">{item.label}</p>
-                           {item.detail && <p className="text-[11px] opacity-40 font-medium tracking-tight mt-1">{item.detail}</p>}
-                         </div>
+                        <div className={`mt-0.5 w-4 h-4 rounded-sm border flex items-center justify-center transition-all ${isChecked ? 'bg-primary border-primary text-white' : 'border-muted-foreground/30'
+                          }`}>
+                          {isChecked && <CheckCheck className="w-3 h-3" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold tracking-tight leading-tight">{item.label}</p>
+                          {item.detail && <p className="text-[11px] opacity-40 font-medium tracking-tight mt-1">{item.detail}</p>}
+                        </div>
                       </button>
                     )}
                   </div>
@@ -702,114 +697,113 @@ function DailyTaskChecklist() {
 
       {/* VERTICAL WORKSHEET DATA */}
       <div className="space-y-12 pt-10 border-t border-border/5 px-2 max-w-4xl">
-           {/* Problems Solved */}
-           <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                 <Target className="w-5 h-5 text-primary" />
-                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Problem Mastery:</h4>
+        {/* Problems Solved */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Target className="w-5 h-5 text-primary" />
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Problem Mastery:</h4>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4">
+            {(['easy', 'medium', 'hard'] as const).map(diff => (
+              <div key={diff} className="flex flex-col gap-3">
+                <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">{diff} Problems Solved</span>
+                <div className="flex items-center gap-5">
+                  <button onClick={() => updateProbs(diff, -1)} className="w-8 h-8 rounded border border-border/5 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-3 h-3" /></button>
+                  <span className="text-lg font-black text-foreground tabular-nums w-6 text-center">{(log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 })[diff]}</span>
+                  <button onClick={() => updateProbs(diff, 1)} className="w-8 h-8 rounded border border-primary/20 bg-primary/10 flex items-center justify-center text-primary transition-colors"><Plus className="w-3 h-3" /></button>
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pl-4">
-                 {(['easy', 'medium', 'hard'] as const).map(diff => (
-                   <div key={diff} className="flex flex-col gap-3">
-                      <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">{diff} Problems Solved</span>
-                      <div className="flex items-center gap-5">
-                         <button onClick={() => updateProbs(diff, -1)} className="w-8 h-8 rounded border border-border/5 bg-muted/5 hover:bg-muted/20 flex items-center justify-center text-muted-foreground"><Minus className="w-3 h-3"/></button>
-                         <span className="text-lg font-black text-foreground tabular-nums w-6 text-center">{(log.problemsSolved ?? { easy: 0, medium: 0, hard: 0 })[diff]}</span>
-                         <button onClick={() => updateProbs(diff, 1)} className="w-8 h-8 rounded border border-primary/20 bg-primary/10 flex items-center justify-center text-primary transition-colors"><Plus className="w-3 h-3"/></button>
-                      </div>
-                   </div>
-                 ))}
-              </div>
-           </div>
+            ))}
+          </div>
+        </div>
 
-            {/* Learning Insights + Action Plan — side by side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        {/* Learning Insights + Action Plan — side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
 
-               {/* Concepts Learned */}
-               <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                     <PenTool className="w-5 h-5 text-secondary" />
-                     <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Learning Insights (Notes):</h4>
-                  </div>
-                  <div className="pl-4">
-                     <textarea 
-                        value={(log.conceptsLearned ?? [])[0] || ''}
-                        onChange={(e) => updateConcepts(0, e.target.value)}
-                        className="w-full bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors resize-y min-h-[120px]"
-                        placeholder="• Write your learnings here...&#10;• You can press enter for new lines..."
-                     />
-                  </div>
-               </div>
-
-               {/* Tomorrow's Plan */}
-               <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                     <CalendarDays className="w-5 h-5 text-primary" />
-                     <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Action Plan (Tomorrow):</h4>
-                  </div>
-                  <div className="space-y-4 pl-4">
-                     <div className="flex flex-col gap-2 group">
-                        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-80">- Morning:</span>
-                        <textarea 
-                           value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning} 
-                           onChange={(e) => updatePlan('morning', e.target.value)} 
-                           className="w-full bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors resize-y min-h-[60px]" 
-                           placeholder="Key objectives..." 
-                        />
-                     </div>
-                     <div className="flex flex-col gap-2 group">
-                        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-80">- Afternoon:</span>
-                        <textarea 
-                           value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon} 
-                           onChange={(e) => updatePlan('afternoon', e.target.value)} 
-                           className="w-full bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors resize-y min-h-[60px]" 
-                           placeholder="Key objectives..." 
-                        />
-                     </div>
-                  </div>
-               </div>
+          {/* Concepts Learned */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <PenTool className="w-5 h-5 text-secondary" />
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Learning Insights (Notes):</h4>
             </div>
+            <div className="pl-4">
+              <textarea
+                value={(log.conceptsLearned ?? [])[0] || ''}
+                onChange={(e) => updateConcepts(0, e.target.value)}
+                className="w-full bg-transparent border-b border-border/10 py-1.5 text-[12px] font-medium text-foreground focus:outline-none focus:border-primary/50 placeholder:opacity-5 transition-colors resize-y min-h-[120px]"
+                placeholder="• Write your learnings here...&#10;• You can press enter for new lines..."
+              />
+            </div>
+          </div>
 
-           {/* Vitals */}
-           <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                 <Activity className="w-5 h-5 text-rose-500" />
-                 <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Biometric Sync:</h4>
+          {/* Tomorrow's Plan */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <CalendarDays className="w-5 h-5 text-primary" />
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Action Plan (Tomorrow):</h4>
+            </div>
+            <div className="space-y-4 pl-4">
+              <div className="flex flex-col gap-2 group">
+                <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-80">- Morning:</span>
+                <textarea
+                  value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).morning}
+                  onChange={(e) => updatePlan('morning', e.target.value)}
+                  className="w-full bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors resize-y min-h-[60px]"
+                  placeholder="Key objectives..."
+                />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 pl-4">
-                 <div className="space-y-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Energy (1-10)</p>
-                    <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-3xl font-black text-rose-500 tabular-nums">
-                       {log.energy < 10 ? `0${log.energy}` : '10'}
-                    </button>
-                 </div>
-                 <div className="space-y-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Confidence (1-10)</p>
-                    <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-3xl font-black text-primary tabular-nums">
-                       {log.confidence < 10 ? `0${log.confidence}` : '10'}
-                    </button>
-                 </div>
-                 <div className="space-y-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Hours Logged</p>
-                    <div className="flex items-baseline gap-2">
-                       <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-3xl focus:outline-none w-16" />
-                       <span className="text-[11px] font-black text-muted-foreground opacity-40 uppercase">HR</span>
-                    </div>
-                 </div>
+              <div className="flex flex-col gap-2 group">
+                <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-80">- Afternoon:</span>
+                <textarea
+                  value={(log.tomorrowPlan ?? { morning: '', afternoon: '' }).afternoon}
+                  onChange={(e) => updatePlan('afternoon', e.target.value)}
+                  className="w-full bg-transparent border-b border-border/10 py-2 text-sm font-medium focus:outline-none focus:border-primary/50 transition-colors resize-y min-h-[60px]"
+                  placeholder="Key objectives..."
+                />
               </div>
-           </div>
+            </div>
+          </div>
+        </div>
 
-            <div className="pt-12">
-              <button
-                onClick={handleSave}
-                className={`flex items-center gap-5 px-12 py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all ${
-                  saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:translate-y-[-2px] active:translate-y-0'
-                }`}
-              >
-                {saved ? <ShieldCheck className="w-6 h-6" /> : <Save className="w-6 h-6" />}
-                {saved ? 'DATA COMMITTED' : 'COMMIT DAILY LOG'}
+        {/* Vitals */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Activity className="w-5 h-5 text-rose-500" />
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Biometric Sync:</h4>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 pl-4">
+            <div className="space-y-3">
+              <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Energy (1-10)</p>
+              <button onClick={() => updateVitals('energy', (log.energy % 10) + 1)} className="text-3xl font-black text-rose-500 tabular-nums">
+                {log.energy < 10 ? `0${log.energy}` : '10'}
               </button>
-           </div>
+            </div>
+            <div className="space-y-3">
+              <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Confidence (1-10)</p>
+              <button onClick={() => updateVitals('confidence', (log.confidence % 10) + 1)} className="text-3xl font-black text-primary tabular-nums">
+                {log.confidence < 10 ? `0${log.confidence}` : '10'}
+              </button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground opacity-40">Hours Logged</p>
+              <div className="flex items-baseline gap-2">
+                <input type="number" step="0.5" value={log.hours} onChange={(e) => updateVitals('hours', Number(e.target.value))} className="bg-transparent font-black text-foreground text-3xl focus:outline-none w-16" />
+                <span className="text-[11px] font-black text-muted-foreground opacity-40 uppercase">HR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-12">
+          <button
+            onClick={handleSave}
+            className={`flex items-center gap-5 px-12 py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all ${saved ? 'bg-secondary/20 text-secondary border border-secondary/40' : 'bg-primary text-foreground shadow-lg hover:translate-y-[-2px] active:translate-y-0'
+              }`}
+          >
+            {saved ? <ShieldCheck className="w-6 h-6" /> : <Save className="w-6 h-6" />}
+            {saved ? 'DATA COMMITTED' : 'COMMIT DAILY LOG'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -826,67 +820,65 @@ export default function DashboardView() {
   const dailyHours = state.dailyLogs.find(l => l.date === today())?.hours || 0;
   const currentWeek = calcCurrentWeek(state.startDate);
   const totalDone = state.problems.filter((p) => p.status === 'Done').length;
-  const progressPct = Math.round((currentWeek / 12) * 100);
+  const goalWeeks = (state.goalDurationMonths || 3) * 4;
+  const progressPct = Math.min(100, Math.round((currentWeek / goalWeeks) * 100));
 
   return (
     <div className="relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary-rgb),0.03),transparent_70%)] pointer-events-none" />
-      <motion.div 
+      <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-12 gap-6 relative z-10"
       >
-        
+
         {/* TOP ROW: Session Overview & DSA Sheet Progress */}
         <BentoCard className="col-span-12 lg:col-span-7 overflow-hidden relative !p-0">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
           <div className="relative z-10 h-full px-6 py-4 flex flex-col justify-between gap-4">
-             <div className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                   <div>
-                     <h2 className="text-[12px] font-black uppercase tracking-[0.22em] text-foreground mb-1.5 leading-none">Preparation Overview</h2>
-                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                        <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-80">Placement Portal</p>
-                     </div>
-                   </div>
-                   {/* Inline Streak Shield */}
-                   <StreakPill />
-                </div>
+            <div className="space-y-3">
+               <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                     <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.18em] opacity-80">Placement Portal</p>
+                  </div>
+                  {/* Inline Streak Shield */}
+                  <StreakPill />
+               </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                   <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
-                      <p className="text-primary text-[11px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ 12</span></p>
-                   </div>
-                   <div className="w-[1px] h-4 bg-border/20 mx-1" />
-                   <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
-                      <History className="w-3.5 h-3.5 text-indigo-400 opacity-60" />
-                      <p className="text-foreground text-[11px] font-black tabular-nums">{totalHours.toFixed(0)}<span className="text-muted-foreground text-[8px] font-bold uppercase ml-1">Journey Hrs</span></p>
-                   </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
+                  <p className="text-primary text-[11px] font-black uppercase tracking-[0.2em]">Week {currentWeek} <span className="opacity-40">/ {(state.goalDurationMonths || 3) * 4}</span></p>
                 </div>
-             </div>
-             
-             <div className="grid grid-cols-4 gap-4 md:gap-8">
-                <div className="group">
-                   <p className="text-[28px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-1">{streak}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Current Streak</p>
+                <div className="w-[1px] h-4 bg-border/20 mx-1" />
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+                  <History className="w-3.5 h-3.5 text-indigo-400 opacity-60" />
+                  <p className="text-foreground text-[11px] font-black tabular-nums">{totalHours.toFixed(0)}<span className="text-muted-foreground text-[8px] font-bold uppercase ml-1">Journey Hrs</span></p>
                 </div>
-                <div className="group">
-                   <p className="text-[28px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-1">{totalDone}</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Solved</p>
-                </div>
-                <div className="group">
-                   <p className="text-[28px] font-black text-foreground transition-colors tabular-nums leading-none mb-1 group-hover:text-emerald-500">
-                     {dailyHours}<span className="text-[14px] ml-1 text-muted-foreground font-black opacity-40 group-hover:opacity-60 transition-opacity">HR</span>
-                   </p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Hrs Today</p>
-                </div>
-                <div className="group">
-                   <p className="text-[28px] font-black text-foreground/40 transition-colors tabular-nums leading-none mb-1 group-hover:text-foreground/80">{progressPct}%</p>
-                   <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-40 transition-opacity whitespace-nowrap">Effective</p>
-                </div>
-             </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-4 md:gap-8">
+              <div className="group">
+                <p className="text-[28px] font-black text-foreground group-hover:text-primary transition-colors tabular-nums leading-none mb-1">{streak}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Current Streak</p>
+              </div>
+              <div className="group">
+                <p className="text-[28px] font-black text-foreground group-hover:text-secondary transition-colors tabular-nums leading-none mb-1">{totalDone}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Solved</p>
+              </div>
+              <div className="group">
+                <p className="text-[28px] font-black text-foreground transition-colors tabular-nums leading-none mb-1 group-hover:text-emerald-500">
+                  {dailyHours}<span className="text-[14px] ml-1 text-muted-foreground font-black opacity-40 group-hover:opacity-60 transition-opacity">HR</span>
+                </p>
+                <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-60 transition-opacity">Hrs Today</p>
+              </div>
+              <div className="group">
+                <p className="text-[28px] font-black text-foreground/40 transition-colors tabular-nums leading-none mb-1 group-hover:text-foreground/80">{progressPct}%</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.24em] text-muted-foreground group-hover:opacity-100 opacity-40 transition-opacity whitespace-nowrap">Effective</p>
+              </div>
+            </div>
           </div>
         </BentoCard>
 
@@ -896,9 +888,9 @@ export default function DashboardView() {
 
         {/* MAIN ROW: Workspace & Stats Sidebar */}
         <div className="col-span-12 flex flex-col gap-6">
-           <BentoCard className="flex-1" title="Daily action plan" icon={CheckCheck}>
-             <DailyTaskChecklist />
-           </BentoCard>
+          <BentoCard className="flex-1" title="Daily action plan" icon={CheckCheck}>
+            <DailyTaskChecklist />
+          </BentoCard>
         </div>
 
       </motion.div>

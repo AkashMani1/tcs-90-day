@@ -4,7 +4,7 @@
 
 /* Developed by Akash Mani - This site is developed by Akash Mani. Original watermark of Akash Mani. */
 
-import { Target, LayoutDashboard, GitMerge, Code2, Video, BookOpen, Settings, Flame, Trophy, Layers, Sun, Moon, Pin, PinOff, LogIn, LogOut, Cloud, CloudOff } from 'lucide-react';
+import { Target, LayoutDashboard, Compass, ListChecks, Code2, PlayCircle, Library, FlaskConical, Settings, Sun, Moon, Cloud, ChevronRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { calcStreak, calcCurrentWeek, getStreakStatus } from '@/lib/utils';
@@ -16,12 +16,12 @@ export type TabId = 'dashboard' | 'roadmap' | 'dsa' | 'dsaSheet' | 'mocks' | 'no
 
 const NAV_ITEMS: { id: TabId; icon: React.ElementType; label: string; badge?: string }[] = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { id: 'roadmap', icon: GitMerge, label: '3-Month Roadmap' },
-  { id: 'dsa', icon: Target, label: 'Must Do List' },
+  { id: 'roadmap', icon: Compass, label: '3-Month Roadmap' },
+  { id: 'dsa', icon: ListChecks, label: 'Must Do List' },
   { id: 'dsaSheet', icon: Code2, label: 'DSA Sheet' },
-  { id: 'mocks', icon: Video, label: 'Mock Hub' },
-  { id: 'notes', icon: BookOpen, label: 'Knowledge Base' },
-  { id: 'projects', icon: Layers, label: 'Project Lab' },
+  { id: 'mocks', icon: PlayCircle, label: 'Mock Hub' },
+  { id: 'notes', icon: Library, label: 'Knowledge Base' },
+  { id: 'projects', icon: FlaskConical, label: 'Project Lab' },
 ];
 
 interface SidebarProps {
@@ -34,12 +34,12 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
   const { state, toggleSidebar, toggleTheme } = useApp();
   const { user, signInWithGoogle, signOut } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const collapsed = state.sidebarCollapsed;
-  const isExpanded = !collapsed || isHovered;
+  const isExpanded = isHovered; // Purely hover-based expansion
   
   const streak = calcStreak(state.dailyLogs);
   const currentWeek = calcCurrentWeek(state.startDate);
-  const progressPct = Math.round((currentWeek / 12) * 100);
+  const goalWeeks = (state.goalDurationMonths || 3) * 4;
+  const progressPct = Math.min(100, Math.round((currentWeek / goalWeeks) * 100));
   const totalDone = state.problems.filter((p) => p.status === 'Done').length;
 
   return (
@@ -47,15 +47,15 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
       initial={false}
       animate={{ 
         width: isExpanded ? '280px' : '80px',
-        boxShadow: isHovered && collapsed ? '20px 0 50px rgba(0,0,0,0.3)' : '0 0 0 rgba(0,0,0,0)'
+        boxShadow: isHovered ? '20px 0 50px rgba(0,0,0,0.3)' : '0 0 0 rgba(0,0,0,0)'
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="fixed left-0 top-0 h-screen glass border-r border-border/10 hidden md:flex flex-col z-50 select-none overflow-hidden"
     >
       {/* Logo Area */}
-      <div className={`py-8 flex items-center border-b border-border/10 ${isExpanded ? 'px-6 justify-between' : 'justify-center'}`}>
-        <div className="flex items-center gap-4 overflow-hidden">
+      <div className="py-8 flex items-center border-b border-border/10 px-3">
+        <div className="flex items-center gap-2 overflow-hidden">
           <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/5 flex-shrink-0 relative group">
             <div className="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             <Target className="w-6 h-6 text-primary relative z-10" />
@@ -64,162 +64,136 @@ export default function Sidebar({ activeTab, onTabChange, onSettingsOpen }: Side
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap ml-1"
             >
               <div className="flex items-baseline gap-1">
                 <span className="text-foreground font-black text-xl tracking-tighter">PLACE</span>
                 <span className="text-primary font-black text-xl tracking-tighter">PREP</span>
               </div>
-              <p className="text-muted-foreground text-[9px] font-black uppercase tracking-[0.3em] -mt-1 opacity-60">Placement Portal</p>
             </motion.div>
           )}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-10 space-y-2 overflow-y-auto custom-scrollbar">
-        {isExpanded && (
-          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.4em] mb-6 px-4 opacity-40">Preferences</p>
-        )}
+      <nav className="flex-1 py-10 space-y-2 overflow-y-auto custom-scrollbar pt-12">
         {NAV_ITEMS.map(({ id, icon: Icon, label, badge }) => (
           <Link
             key={id}
             href={id === 'dashboard' ? '/' : `/${id}`}
             onClick={(e) => {
-              // Standard Next.js Link behavior will update URL, 
-              // but we call onTabChange to update local state immediately for animation
               onTabChange(id);
             }}
-            className={`w-full group relative flex items-center gap-4 rounded-[18px] transition-all duration-300 text-left ${
-              isExpanded ? 'px-4 py-3.5' : 'justify-center p-3'
-            } ${
+            className={`w-full group relative flex items-center rounded-[18px] transition-all duration-300 text-left px-3 ${
               activeTab === id
                 ? 'bg-primary text-white shadow-[0_10px_25px_rgba(var(--primary-rgb),0.2)]'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/20'
             }`}
           >
-            <div className={`relative transition-transform duration-300 ${activeTab === id ? 'scale-110' : 'group-hover:scale-110'}`}>
-               <Icon className={`w-5 h-5 flex-shrink-0 ${activeTab === id ? 'text-white' : 'group-hover:text-primary'}`} />
+            <div className={`w-12 h-12 flex-shrink-0 flex items-center justify-center transition-transform duration-300 ${activeTab === id ? 'scale-110' : 'group-hover:scale-110'}`}>
+               <Icon className={`w-5 h-5 ${activeTab === id ? 'text-white' : 'group-hover:text-primary'}`} />
             </div>
             {isExpanded && (
               <motion.span 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex-1 text-sm font-bold tracking-tight whitespace-nowrap"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="flex-1 text-sm font-bold tracking-tight whitespace-nowrap ml-1"
               >
                 {label}
               </motion.span>
             )}
             {isExpanded && badge && (
-              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${activeTab === id ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>{badge}</span>
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ml-auto mr-1 ${activeTab === id ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}
+              >
+                {badge}
+              </motion.span>
             )}
           </Link>
         ))}
       </nav>
-
-      {/* Bottom Area */}
-      <div className={`border-t border-border/5 space-y-4 bg-background/20 backdrop-blur-xl ${collapsed ? 'p-2' : 'p-4'}`}>
-        {/* Streak/Trophy Minimal Strip */}
-        {isExpanded && (
-          <div className="bg-muted/10 rounded-[20px] p-1.5 flex gap-1.5 border border-border/5">
-             <div className="flex-1 bg-card/40 rounded-[16px] py-2 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
-                <div className="absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <Flame className={`w-4 h-4 relative z-10 ${streak > 0 ? 'text-orange-500' : 'text-muted-foreground opacity-40'}`} />
-                <span className="text-[10px] font-black text-foreground relative z-10 tabular-nums">{streak}d</span>
+      {/* ── Control Hub (Professional Grade Footer) ─────────────────────────────────── */}
+      <div className={`mt-auto border-t border-white/[0.03] transition-all duration-500 bg-white/[0.01] backdrop-blur-3xl py-3 px-0 gap-3 flex flex-col`}>
+        
+        {/* Profile Control Hub */}
+        <button 
+          onClick={onSettingsOpen}
+          className={`group flex items-center transition-all duration-500 text-left relative overflow-hidden px-3 ${
+            isExpanded 
+              ? 'py-3 rounded-[24px] bg-white/[0.03] hover:bg-white/[0.06] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]' 
+              : 'w-full py-3 rounded-2xl bg-white/[0.03] hover:bg-primary/5'
+          }`}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          
+          {/* Avatar & Status Pip - Standardized Rail */}
+          <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center relative">
+             <div className="w-10 h-10 rounded-[18px] bg-gradient-to-tr from-primary via-primary/80 to-secondary flex items-center justify-center text-white font-black text-[13px] shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:rotate-[5deg] overflow-hidden border border-white/10">
+                {user?.user_metadata.avatar_url ? (
+                  <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="opacity-90">{(user?.user_metadata.full_name || state.userName || 'S').charAt(0).toUpperCase()}</span>
+                )}
              </div>
-             <div className="flex-1 bg-card/40 rounded-[16px] py-2 flex flex-col items-center justify-center gap-1 border border-border/5 group relative overflow-hidden">
-                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <Trophy className="w-4 h-4 text-primary relative z-10" />
-                <span className="text-[10px] font-black text-foreground relative z-10 tabular-nums">{totalDone}</span>
-             </div>
+             {/* Dynamic Status Indicator */}
+             <motion.div 
+               animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }} 
+               transition={{ duration: 4, repeat: Infinity }}
+               className={`absolute top-1 right-1 w-3 h-3 rounded-full border-2 border-[#09090b] ${user ? 'bg-emerald-500' : 'bg-orange-500'} shadow-[0_0_10px_rgba(16,185,129,0.3)]`} 
+             />
           </div>
-        )}
 
-        {/* Student Profile (Interactive) or Login */}
-        {user ? (
-          <button 
-            onClick={onSettingsOpen}
-            className={`group flex items-center transition-all duration-300 text-left border border-transparent hover:border-primary/10 hover:bg-primary/5 ${
-              isExpanded ? 'gap-4 px-4 py-3 rounded-[18px]' : 'justify-center p-2 rounded-xl'
-            }`}
-            title="Edit Profile"
-          >
-            <div className="w-9 h-9 rounded-[14px] bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 text-white font-black text-[11px] shadow-lg shadow-primary/10 border-t border-white/20 group-hover:scale-105 transition-transform overflow-hidden">
-              {user.user_metadata.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                (user.user_metadata.full_name || state.userName || 'S').charAt(0).toUpperCase()
-              )}
-            </div>
-            {isExpanded && (
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-foreground text-[11px] font-black truncate leading-none mb-1 group-hover:text-primary transition-colors">
-                    {user.user_metadata.full_name || state.userName || 'Student'}
-                  </p>
-                  <Settings className="w-3 h-3 text-muted-foreground transition-all group-hover:rotate-90 group-hover:text-primary" />
-                </div>
-                <div className="flex items-center gap-1">
-                  <Cloud className="w-2.5 h-2.5 text-emerald-500" />
-                  <p className="text-muted-foreground text-[8px] font-black uppercase tracking-widest truncate opacity-50">Cloud Sync Active</p>
+          {isExpanded && (
+            <div className="flex-1 min-w-0 relative z-10 ml-1">
+              <div className="flex items-center justify-between gap-1">
+                <p className="text-foreground text-[14px] font-bold truncate tracking-tight group-hover:text-primary transition-colors duration-300">
+                  {user?.user_metadata.full_name || state.userName || 'Student'}
+                </p>
+                <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0 mr-4">
+                  <Settings className="w-3.5 h-3.5 text-muted-foreground/60 group-hover:text-primary animate-[spin_4s_linear_infinite]" />
                 </div>
               </div>
-            )}
-          </button>
-        ) : (
-          <button 
-            onClick={signInWithGoogle}
-            className={`group flex items-center transition-all duration-300 text-left border border-dashed border-border/20 hover:border-primary/50 hover:bg-primary/5 ${
-              isExpanded ? 'gap-4 px-4 py-3 rounded-[18px]' : 'justify-center p-2 rounded-xl'
-            }`}
-            title="Sign in with Google"
-          >
-            <div className="w-9 h-9 rounded-[14px] bg-muted/20 flex items-center justify-center flex-shrink-0 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-            </div>
-            {isExpanded && (
-              <div className="flex-1 min-w-0">
-                <p className="text-foreground text-[11px] font-black truncate leading-none mb-1 group-hover:text-primary transition-colors">Sign in to sync</p>
-                <div className="flex items-center gap-1">
-                  <CloudOff className="w-2.5 h-2.5 text-orange-500/50" />
-                  <p className="text-muted-foreground text-[8px] font-black uppercase tracking-widest truncate opacity-50">Local Only</p>
-                </div>
+              <div className="flex items-center gap-1.5 overflow-hidden">
+                 <p className={`text-[9.5px] font-black uppercase tracking-[0.15em] whitespace-nowrap transition-colors duration-500 ${user ? 'text-emerald-500/80' : 'text-orange-500/80 shadow-[0_0_10px_rgba(var(--orange-rgb),0.2)]'}`}>
+                   {user ? 'Verified Access' : 'Local Instance'}
+                 </p>
+                 {!user && <span className="w-1 h-1 rounded-full bg-white/10" />}
+                 {!user && <button onClick={(e) => { e.stopPropagation(); signInWithGoogle(); }} className="text-[9px] font-bold text-primary hover:underline underline-offset-2">CONNECT</button>}
               </div>
-            )}
-          </button>
-        )}
+            </div>
+          )}
+        </button>
 
-        {/* Theme Toggle & Pin Toggle */}
-        <div className={`flex ${isExpanded ? 'gap-2' : 'flex-col items-center gap-4'}`}>
+        {/* Action Controls Strip */}
+        <div className="flex items-center px-3">
           <button 
             onClick={toggleTheme} 
-            className={`rounded-[14px] text-muted-foreground bg-muted/5 hover:text-primary hover:bg-primary/10 transition-all border border-border/5 hover:border-primary/20 ${isExpanded ? 'px-4 py-3' : 'p-3'}`}
-            title={`Switch to ${state.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            className={`flex items-center justify-start rounded-[20px] bg-white/[0.02] hover:bg-white/[0.06] transition-all duration-300 group/ctrl w-full ${isExpanded ? 'py-3' : 'h-12'}`}
+            title="Switch Theme"
           >
-            {state.theme === 'dark' ? <Sun className={`${isExpanded ? 'w-4 h-4' : 'w-5 h-5'} text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]`} /> : <Moon className={`${isExpanded ? 'w-4 h-4' : 'w-5 h-5'} text-primary`} />}
-          </button>
-          
-          <button 
-            onClick={toggleSidebar}
-            className={`flex items-center justify-center gap-2 rounded-[14px] text-muted-foreground bg-muted/5 hover:text-foreground hover:bg-muted/20 transition-all border border-border/5 hover:border-border/10 font-black text-[9px] uppercase tracking-[0.3em] ${isExpanded ? 'flex-1 py-3' : 'p-3'}`}
-            title={collapsed ? "Pin Sidebar" : "Unpin Sidebar"}
-          >
-            {collapsed ? <PinOff className={isExpanded ? 'w-3.5 h-3.5' : 'w-5 h-5'} /> : <Pin className={isExpanded ? 'w-3.5 h-3.5' : 'w-5 h-5'} />}
-            {isExpanded && (collapsed ? "UNPINNED" : "PINNED")}
+            <div className="w-12 h-full flex-shrink-0 flex items-center justify-center">
+              {state.theme === 'dark' ? (
+                <Sun className={`w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform duration-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.2)]`} />
+              ) : (
+                <Moon className={`w-4 h-4 text-sh-blue-400 group-hover:-rotate-12 transition-transform duration-500`} />
+              )}
+            </div>
+            {isExpanded && <span className="flex-1 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors ml-1">{state.theme === 'dark' ? 'Day' : 'Night'}</span>}
           </button>
         </div>
 
-        {/* Developer Watermark */}
+        {/* Simplified Brand Signature */}
         {isExpanded && (
-          <div className="pt-2 px-4 pb-1">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-30 text-center">
-              Developed by <span>Akash Mani</span>
+          <div className="pt-2 px-1 flex items-center justify-center gap-2 group/sig">
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/[0.03]" />
+            <p className="text-[8.5px] font-black uppercase tracking-[0.5em] text-white/10 group-hover/sig:text-white/30 transition-colors duration-1000">
+              AKASH MANI
             </p>
+            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/[0.03]" />
           </div>
         )}
       </div>

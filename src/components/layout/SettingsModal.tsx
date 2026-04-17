@@ -16,10 +16,11 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
   const [name, setName] = useState(state.userName);
   const [role, setRole] = useState(state.targetRole);
   const [startDate, setStartDate] = useState(state.startDate);
+  const [goalDuration, setGoalDuration] = useState(state.goalDurationMonths || 3);
   const [isSyncing, setIsSyncing] = useState(false);
 
   const save = () => {
-    updateProfile(name.trim() || 'Student', role, startDate);
+    updateProfile(name.trim() || 'Student', role, startDate, goalDuration);
     onClose();
   };
 
@@ -132,7 +133,22 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
               <label className="text-slate-500 text-[10px] font-bold mb-1.5 block">Prep Start Date</label>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
                 className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:border-indigo-500" />
-              <p className="text-slate-600 text-[9px] mt-1.5 leading-relaxed italic">Defines your progress across the 12-week roadmap sprint.</p>
+              <p className="text-slate-600 text-[9px] mt-1.5 leading-relaxed italic">Defines your starting point for the roadmap trajectory.</p>
+            </div>
+            <div>
+              <label className="text-slate-500 text-[10px] font-bold mb-1.5 block">Goal Duration (Months)</label>
+              <div className="flex items-center gap-4">
+                <input 
+                  type="range" min="1" max="12" step="1" 
+                  value={goalDuration} 
+                  onChange={(e) => setGoalDuration(parseInt(e.target.value))}
+                  className="flex-1 accent-indigo-500 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                />
+                <span className="text-slate-100 text-xs font-black min-w-[2.5rem] text-center bg-slate-800/80 px-2 py-1 rounded border border-slate-700">
+                  {goalDuration} M
+                </span>
+              </div>
+              <p className="text-slate-600 text-[9px] mt-1.5 leading-relaxed italic">Currently set to {goalDuration * 4} weeks.</p>
             </div>
           </div>
         </div>

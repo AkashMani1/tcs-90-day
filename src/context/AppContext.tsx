@@ -59,6 +59,7 @@ const INITIAL_STATE: AppState = {
   startDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   userName: 'Student',
   targetRole: 'Software Engineer',
+  goalDurationMonths: 3,
   sidebarCollapsed: false,
   projects: [],
   theme: 'dark',
@@ -70,7 +71,7 @@ interface AppContextType {
   cloudSyncing: boolean;
 
   // Profile
-  updateProfile: (name: string, role: string, startDate: string) => void;
+  updateProfile: (name: string, role: string, startDate: string, goalDurationMonths: number) => void;
   toggleSidebar: () => void;
 
   // Daily Log
@@ -232,8 +233,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [mutate]);
 
   // ── Profile ──────────────────────────────────────────────────────────────
-  const updateProfile = useCallback((userName: string, targetRole: string, startDate: string) => {
-    mutate((s) => ({ ...s, userName, targetRole, startDate }));
+  const updateProfile = useCallback((userName: string, targetRole: string, startDate: string, goalDurationMonths: number) => {
+    mutate((s) => ({ ...s, userName, targetRole, startDate, goalDurationMonths }));
   }, [mutate]);
 
   const toggleSidebar = useCallback(() => {

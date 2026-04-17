@@ -73,31 +73,27 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 w-full max-w-[1600px] px-4 md:px-12 py-6 md:py-10">
-          {/* Header / Breadcrumb Section */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
-            <div>
-              <div className="flex items-center gap-2 mb-3 text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
-                <Link href="/" className="hover:text-primary transition-colors cursor-pointer">PlacePrep</Link>
-                <span className="text-border">/</span>
-                <div className="flex items-center gap-1.5 text-primary font-black">
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{label}</span>
+          {/* Header / Breadcrumb Section - Only visible on Dashboard now */}
+          {activeTab === 'dashboard' && (
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8 md:mb-12">
+              <div>
+                <div className="flex items-center gap-2 mb-3 text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
+                  <Link href="/" className="hover:text-primary transition-colors cursor-pointer">PlacePrep</Link>
+                  <span className="text-border">/</span>
+                  <div className="flex items-center gap-1.5 text-primary font-black">
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{label}</span>
+                  </div>
                 </div>
-              </div>
-              {activeTab !== 'dsaSheet' ? (
                 <h1 className="text-3xl font-black text-foreground tracking-tight">
-                  {activeTab === 'dashboard' ? (
-                    <><span className="opacity-90">Morning,</span> <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{state.userName}</span></>
-                  ) : label}
+                  <span className="opacity-90">Morning,</span> <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{state.userName}</span>
                 </h1>
-              ) : null}
-            </div>
-            
-            {/* Global Actions can go here */}
-          </header>
+              </div>
+            </header>
+          )}
 
           {/* Tab content */}
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             <motion.div
               key={activeTab}
               initial={{ opacity: 0, y: 20 }}
