@@ -176,6 +176,25 @@ function isYouTubeUrl(url: string) {
   return /youtube\.com|youtu\.be/i.test(url);
 }
 
+function getPlatformLogoUrl(url: string) {
+  if (!url) return '';
+  let domain = '';
+  try {
+    const host = new URL(url).hostname.replace('www.', '');
+    domain = host;
+  } catch (e) {
+    if (url.includes('leetcode')) domain = 'leetcode.com';
+    else if (url.includes('geeksforgeeks')) domain = 'geeksforgeeks.org';
+    else if (url.includes('interviewbit')) domain = 'interviewbit.com';
+    else if (url.includes('hackerrank')) domain = 'hackerrank.com';
+    else if (url.includes('codeforces')) domain = 'codeforces.com';
+    else if (url.includes('codechef')) domain = 'codechef.com';
+  }
+  
+  if (!domain) return '';
+  return `https://www.google.com/s2/favicons?sz=64&domain_url=https://${domain}`;
+}
+
 function parseCompanyList(value: string) {
   return Array.from(
     new Set(
@@ -275,6 +294,38 @@ function ProgressRing({ progress }: { progress: number }) {
         <span className="text-5xl font-black text-emerald-500 dark:text-emerald-400">{progress}%</span>
         <span className="text-[11px] tracking-[0.28em] uppercase text-muted-foreground font-black mt-2">Progress</span>
       </div>
+    </div>
+  );
+}
+
+function DifficultyTracker({ stats }: { stats: any }) {
+  const levels = [
+    { label: 'Easy', solved: stats.solvedEasy, total: stats.easy, color: '#10b981' },
+    { label: 'Medium', solved: stats.solvedMedium, total: stats.medium, color: '#f59e0b' },
+    { label: 'Hard', solved: stats.solvedHard, total: stats.hard, color: '#f43f5e' },
+  ];
+
+  return (
+    <div className="flex flex-col gap-2.5 min-w-[240px]">
+      {levels.map((level) => {
+        const progress = Math.round((level.solved / level.total) * 100 || 0);
+        return (
+          <div key={level.label} className="flex items-center gap-4">
+            <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground w-12">{level.label}</span>
+            <div className="flex-1 h-1.5 rounded-full bg-muted/20 overflow-hidden relative">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{ backgroundColor: level.color }}
+              />
+            </div>
+            <span className="text-[11px] font-black text-foreground w-12 text-right tabular-nums">
+              {level.solved}/{level.total}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -450,8 +501,18 @@ export default function DSASheetView() {
     const easy = items.filter((item) => item.difficulty === 'Easy').length;
     const medium = items.filter((item) => item.difficulty === 'Medium').length;
     const hard = items.filter((item) => item.difficulty === 'Hard').length;
+    
+    const solvedEasy = items.filter((item) => item.completed && item.difficulty === 'Easy').length;
+    const solvedMedium = items.filter((item) => item.completed && item.difficulty === 'Medium').length;
+    const solvedHard = items.filter((item) => item.completed && item.difficulty === 'Hard').length;
+    
     const progress = Math.round((completed / total) * 100 || 0);
-    return { total, completed, easy, medium, hard, progress };
+    return { 
+      total, completed, 
+      easy, medium, hard, 
+      solvedEasy, solvedMedium, solvedHard,
+      progress 
+    };
   }, [items]);
 
   const openCreate = () => {
@@ -528,30 +589,33 @@ export default function DSASheetView() {
               <h2 className="text-[22px] md:text-[26px] leading-[1.2] font-black tracking-tight text-foreground">
                 <span className="text-[#ff7a59]">DSA Sheet</span> — Most Important Interview Questions
               </h2>
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted-foreground font-medium">
-                <span>All DSA topics covered</span>
-                <span className="text-border">•</span>
-                <span>Easy: <span className="text-emerald-500 dark:text-emerald-400 font-bold">{stats.easy}</span></span>
-                <span>Medium: <span className="text-amber-500 dark:text-amber-400 font-bold">{stats.medium}</span></span>
-                <span>Hard: <span className="text-rose-500 dark:text-rose-400 font-bold">{stats.hard}</span></span>
-                <span className="text-border">•</span>
-                <span className="text-foreground font-semibold">{stats.completed}/{stats.total} solved</span>
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  {HERO_USERS.map((label, index) => (
-                    <div
-                      key={label}
-                      title={label}
-                      className={`w-7 h-7 rounded-full border-2 border-card flex items-center justify-center font-black text-[10px] ${
-                        index === 0 ? 'bg-[#c084fc] text-white' : index === 1 ? 'bg-[#f9a8d4] text-[#111319]' : index === 2 ? 'bg-[#86efac] text-[#111319]' : 'bg-[#fbbf24] text-[#111319]'
-                      }`}
-                    >
-                      {label.split(' ').map((part) => part[0]).join('')}
-                    </div>
-                  ))}
+              <div className="mt-6 flex flex-col md:flex-row md:items-end gap-x-12 gap-y-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-4 text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
+                    <span>Solved Progress</span>
+                    <span className="text-border">•</span>
+                    <span className="text-foreground">{stats.completed}/{stats.total} total</span>
+                  </div>
+                  <DifficultyTracker stats={stats} />
                 </div>
-                <p className="text-[12px] font-semibold text-muted-foreground">{Math.max(372, stats.total + 121)}+ solving now</p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex -space-x-2">
+                    {HERO_USERS.map((label, index) => (
+                      <div
+                        key={label}
+                        title={label}
+                        className={`w-7 h-7 rounded-full border-2 border-card flex items-center justify-center font-black text-[10px] ${
+                          index === 0 ? 'bg-[#c084fc] text-white' : index === 1 ? 'bg-[#f9a8d4] text-[#111319]' : index === 2 ? 'bg-[#86efac] text-[#111319]' : 'bg-[#fbbf24] text-[#111319]'
+                        }`}
+                      >
+                        {label.split(' ').map((part) => part[0]).join('')}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[12px] font-semibold text-muted-foreground tracking-tight">
+                    <span className="text-foreground font-black">{Math.max(372, stats.total + 121)}+</span> solving now
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -725,8 +789,26 @@ export default function DSASheetView() {
 
                           <div className="flex lg:justify-center">
                             {item.practiceLinks[0] ? (
-                              <a href={item.practiceLinks[0]} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground">
-                                <Code2 className="w-5 h-5" />
+                              <a href={item.practiceLinks[0]} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors group/link overflow-hidden shadow-sm">
+                                {(() => {
+                                  const logoUrl = getPlatformLogoUrl(item.practiceLinks[0]);
+                                  if (logoUrl) {
+                                    return (
+                                      <img 
+                                        src={logoUrl} 
+                                        alt="Platform" 
+                                        className="w-5 h-5 object-contain group-hover/link:scale-110 transition-transform" 
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = 'none';
+                                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                          if (fallback) fallback.style.display = 'block';
+                                        }}
+                                      />
+                                    );
+                                  }
+                                  return <Code2 className="w-5 h-5 text-muted-foreground group-hover/link:text-foreground" />;
+                                })()}
+                                <Code2 className="w-5 h-5 text-muted-foreground group-hover/link:text-foreground hidden" />
                               </a>
                             ) : (
                               <button onClick={() => openEdit(item)} className="w-10 h-10 rounded-full border border-dashed border-border/30 flex items-center justify-center text-muted-foreground">
