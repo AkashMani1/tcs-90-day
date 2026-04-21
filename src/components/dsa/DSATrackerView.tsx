@@ -5,14 +5,14 @@ import { useState, useMemo } from 'react';
 import { Plus, Trash2, Target, Filter, Search, ChevronUp, ChevronDown, X, ShieldCheck, Zap, Activity, BookOpen, Star, AlertTriangle, FileText, LayoutGrid } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Problem, Difficulty, ProblemStatus, Platform } from '@/lib/types';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { BentoCard, ActivityRing } from '@/components/ui/Bento';
 import { List } from 'react-window';
 import React, { memo } from 'react';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -23,7 +23,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
