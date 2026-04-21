@@ -24,14 +24,12 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, scale: 0.98, y: 15 },
+  hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
-    scale: 1,
-    y: 0,
     transition: { 
-      duration: 0.5, 
-      ease: [0.16, 1, 0.3, 1] as const
+      duration: 0.4, 
+      ease: 'easeOut'
     }
   }
 };

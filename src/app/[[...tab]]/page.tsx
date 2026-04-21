@@ -28,7 +28,7 @@ const TAB_LABELS: Record<TabId, { label: string; icon: React.ElementType }> = {
 };
 
 export default function Home() {
-  const { state } = useApp();
+  const { state, isSidebarHovered } = useApp();
   const router = useRouter();
   const pathname = usePathname();
   
@@ -61,7 +61,7 @@ export default function Home() {
       <motion.main 
         initial={false}
         animate={{ 
-          paddingLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (collapsed ? '80px' : '280px') 
+          paddingLeft: typeof window !== 'undefined' && window.innerWidth < 768 ? '0px' : (isSidebarHovered ? '240px' : (collapsed ? '80px' : '240px')) 
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         className="flex-1 min-w-0 min-h-screen relative pb-24 md:pb-0 transition-all duration-300"
@@ -93,13 +93,13 @@ export default function Home() {
           )}
 
           {/* Tab content */}
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
               {activeTab === 'dashboard' && <DashboardView />}
               {activeTab === 'roadmap' && <RoadmapView />}
@@ -114,8 +114,10 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="relative z-10 border-t border-border/20 mt-20 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-widest">
-            Career Accelerator © 2026
+          <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
+            Career Accelerator © 2026 
+            <span className="w-1 h-1 rounded-full bg-border" />
+            <span className="text-primary/60">Designed by Akash Mani</span>
           </p>
           <div className="flex items-center gap-6">
              <span className="text-muted-foreground/60 text-[10px] font-bold uppercase tracking-widest">Encrypted Local Storage</span>

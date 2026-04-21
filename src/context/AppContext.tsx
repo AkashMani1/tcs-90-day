@@ -125,6 +125,10 @@ interface AppContextType {
   // Theme
   toggleTheme: () => void;
  
+  // UI State (Transient)
+  isSidebarHovered: boolean;
+  setSidebarHovered: (val: boolean) => void;
+
   // Utility
   touchToday: () => void;
 }
@@ -135,6 +139,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState, initialized] = useLocalStorage<AppState>('placeprep_v5', INITIAL_STATE);
   const { user } = useAuth();
   const [cloudSyncing, setCloudSyncing] = React.useState(false);
+  const [isSidebarHovered, setSidebarHovered] = React.useState(false);
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialLoad = useRef(true);
 
@@ -540,6 +545,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     deleteHabitItem,
     updateHabitGroupTitle,
     toggleTheme,
+    isSidebarHovered,
+    setSidebarHovered,
     touchToday,
   };
 
