@@ -2,7 +2,7 @@
 'use client';
 
 import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import {
   Flame, Clock, TrendingUp, CalendarDays, CheckCircle2, Circle,
   Save, CheckCheck, Activity, ShieldCheck, AlertTriangle,
@@ -16,7 +16,7 @@ import { DEFAULT_HABIT_GROUPS } from '@/lib/defaultData';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -27,7 +27,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
