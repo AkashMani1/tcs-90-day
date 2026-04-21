@@ -774,6 +774,10 @@ export default function DSASheetView() {
                               if (isCompleting && !item.revisionDate) {
                                 revPhase = 0;
                                 revDate = addDays(subDate, SRS_INTERVALS[0]);
+                              } else if (isCompleting && item.revisionDate && item.revisionDate <= today()) {
+                                // Background SRS Trigger on toggle
+                                revPhase = Math.min(revPhase + 1, SRS_INTERVALS.length - 1);
+                                revDate = addDays(subDate, SRS_INTERVALS[revPhase]);
                               }
                               
                               updateDsaSheetItem(item.id, { 
@@ -870,7 +874,23 @@ export default function DSASheetView() {
                                <input 
                                  type="date" 
                                  value={item.submissionDate || ''} 
-                                 onChange={(e) => updateDsaSheetItem(item.id, { submissionDate: e.target.value })}
+                                 onChange={(e) => {
+                                   const newSubDate = e.target.value;
+                                   let revPhase = item.revisionPhase || 0;
+                                   let revDate = item.revisionDate || '';
+                                   
+                                   // Background SRS Engine
+                                   if (item.completed && newSubDate && revDate && revDate <= today()) {
+                                     revPhase = Math.min(revPhase + 1, SRS_INTERVALS.length - 1);
+                                     revDate = addDays(newSubDate, SRS_INTERVALS[revPhase]);
+                                   }
+                                   
+                                   updateDsaSheetItem(item.id, { 
+                                     submissionDate: newSubDate,
+                                     revisionPhase: revPhase,
+                                     revisionDate: revDate
+                                   });
+                                 }}
                                  onClick={(e) => {
                                    try {
                                      (e.currentTarget as any).showPicker();
@@ -882,35 +902,6 @@ export default function DSASheetView() {
                           </div>
 
                           <div className="flex flex-col gap-1.5 min-w-[110px]">
-                            {item.completed && item.revisionDate && item.revisionDate <= today() ? (
-                              <div className="flex items-center gap-1.5">
-                                <button
-                                  onClick={() => {
-                                    const nextPhase = Math.min((item.revisionPhase || 0) + 1, SRS_INTERVALS.length - 1);
-                                    updateDsaSheetItem(item.id, {
-                                      revisionPhase: nextPhase,
-                                      revisionDate: addDays(today(), SRS_INTERVALS[nextPhase])
-                                    });
-                                  }}
-                                  title={`Solid (Next in ${SRS_INTERVALS[Math.min((item.revisionPhase || 0) + 1, SRS_INTERVALS.length - 1)]} days)`}
-                                  className="flex-1 flex items-center justify-center gap-1 py-2 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500 hover:text-white transition-all border border-emerald-500/20 group/btn shadow-inner"
-                                >
-                                  <TrendingUp className="w-3.5 h-3.5 group-hover/btn:scale-110 transition-transform" />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    updateDsaSheetItem(item.id, {
-                                      revisionPhase: 0,
-                                      revisionDate: addDays(today(), SRS_INTERVALS[0])
-                                    });
-                                  }}
-                                  title={`Forgot (Review again tomorrow)`}
-                                  className="flex-1 flex items-center justify-center gap-1 py-2 bg-rose-500/10 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all border border-rose-500/20 group/btn shadow-inner"
-                                >
-                                  <RotateCcw className="w-3.5 h-3.5 group-hover/btn:-rotate-90 transition-transform" />
-                                </button>
-                              </div>
-                            ) : (
                                <div className="relative group px-3 py-1.5 rounded-xl border border-primary/10 bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer flex items-center justify-between gap-2">
                                  <div className="flex items-center gap-1.5 hidden lg:flex">
                                    <Calendar className="w-3 h-3 text-primary pointer-events-none shrink-0" />
@@ -935,7 +926,6 @@ export default function DSASheetView() {
                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                                  />
                                </div>
-                            )}
                           </div>
 
                           <div className="flex lg:justify-center">
