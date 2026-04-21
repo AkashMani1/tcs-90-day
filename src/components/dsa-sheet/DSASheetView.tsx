@@ -728,7 +728,7 @@ export default function DSASheetView() {
               {!collapsed && (
                 <div className="px-4 md:px-6 pb-6">
                   <div className="w-full">
-                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_100px_100px_56px_56px] gap-3 px-4 py-3.5 border border-border/30 bg-muted/20 text-foreground text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
+                  <div className="hidden lg:grid grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_110px_115px_56px_56px] gap-3 px-4 py-3.5 border border-border/30 bg-muted/20 text-foreground text-[11px] font-bold rounded-t-[18px] uppercase tracking-[0.12em]">
                     <span></span>
                     <span>Problem</span>
                     <span>Youtube</span>
@@ -763,7 +763,7 @@ export default function DSASheetView() {
                           ) : null}
                           {subgroupItems.map((item) => {
                           return (
-                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_100px_100px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-border/20 bg-muted/5 hover:bg-muted/10 transition-colors">
+                            <div key={item.id} className="grid grid-cols-1 lg:grid-cols-[44px_minmax(160px,2fr)_72px_72px_72px_110px_115px_56px_56px] gap-3 items-center px-4 py-3.5 border-t border-border/20 bg-muted/5 hover:bg-muted/10 transition-colors">
                           <button 
                             onClick={() => {
                               const isCompleting = !item.completed;
