@@ -34,6 +34,7 @@ export interface DSASheetItem {
   completed: boolean;
   submissionDate?: string;
   revisionDate?: string;
+  revisionPhase?: number;
   saved: boolean;
   source?: DSASheetSource;
   hidden?: boolean;
