@@ -8,14 +8,14 @@ import {
   PenTool, Eye, Search, Layers, Activity, Lock, Unlock, Terminal,
   Cpu, LayoutDashboard, Target
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { StarStory, KnowledgeCategory } from '@/lib/types';
 import { BentoCard, ActivityRing } from '@/components/ui/Bento';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -26,7 +26,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 

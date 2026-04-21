@@ -5,12 +5,12 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight, Plus, Trash2, Check, Edit3, GitMerge, Target, ShieldCheck, Zap, Activity, BookOpen, ListTodo, Star } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { calcCurrentWeek } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { BentoCard, ActivityRing } from '@/components/ui/Bento';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -21,7 +21,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 

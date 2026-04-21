@@ -8,14 +8,14 @@ import {
   Layout, Kanban, Database, BarChart3, AlertCircle, CheckCircle2,
   Trophy, MessageSquare, Briefcase
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { ProjectRecord, ProjectChallenge } from '@/lib/types';
 import { BentoCard, ActivityRing } from '@/components/ui/Bento';
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -26,7 +26,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
