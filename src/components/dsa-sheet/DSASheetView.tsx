@@ -39,7 +39,11 @@ const DIFFICULTY_STYLE: Record<Difficulty, string> = {
 
 const HERO_USERS = ['User 1', 'User 2', 'User 3', 'User 4'];
 
-const SRS_INTERVALS = [1, 3, 7, 14, 30, 60, 90];
+const SRS_INTERVALS: Record<Difficulty, number[]> = {
+  Easy: [2, 7, 15, 30, 60, 120, 180],
+  Medium: [1, 3, 7, 14, 30, 60, 90],
+  Hard: [1, 2, 4, 7, 14, 21, 30, 60]
+};
 
 type FormState = {
   title: string;
@@ -773,11 +777,11 @@ export default function DSASheetView() {
                               
                               if (isCompleting && !item.revisionDate) {
                                 revPhase = 0;
-                                revDate = addDays(subDate, SRS_INTERVALS[0]);
+                                revDate = addDays(subDate, SRS_INTERVALS[item.difficulty][0]);
                               } else if (isCompleting && item.revisionDate && item.revisionDate <= today()) {
                                 // Background SRS Trigger on toggle
-                                revPhase = Math.min(revPhase + 1, SRS_INTERVALS.length - 1);
-                                revDate = addDays(subDate, SRS_INTERVALS[revPhase]);
+                                revPhase = Math.min(revPhase + 1, SRS_INTERVALS[item.difficulty].length - 1);
+                                revDate = addDays(subDate, SRS_INTERVALS[item.difficulty][revPhase]);
                               }
                               
                               updateDsaSheetItem(item.id, { 
@@ -881,8 +885,8 @@ export default function DSASheetView() {
                                    
                                    // Background SRS Engine
                                    if (item.completed && newSubDate && revDate && revDate <= today()) {
-                                     revPhase = Math.min(revPhase + 1, SRS_INTERVALS.length - 1);
-                                     revDate = addDays(newSubDate, SRS_INTERVALS[revPhase]);
+                                     revPhase = Math.min(revPhase + 1, SRS_INTERVALS[item.difficulty].length - 1);
+                                     revDate = addDays(newSubDate, SRS_INTERVALS[item.difficulty][revPhase]);
                                    }
                                    
                                    updateDsaSheetItem(item.id, { 
